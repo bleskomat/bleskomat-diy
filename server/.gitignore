@@ -1,0 +1,3 @@
+node_modules/
+c-lightning.sock
+config.json

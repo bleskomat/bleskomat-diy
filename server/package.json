@@ -1,0 +1,27 @@
+{
+  "name": "bleskomat-lnurl-server",
+  "version": "1.0.0",
+  "description": "LNURL server for the Bleskomat Lightning Network ATM",
+  "main": "server.js",
+  "private": true,
+  "scripts": {
+    "start": "node server.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/samotari/bleskomat.git"
+  },
+  "author": {
+    "name": "Charles Hill",
+    "email": "chill@degreesofzero.com"
+  },
+  "bugs": {
+    "url": "https://github.com/samotari/bleskomat/issues"
+  },
+  "homepage": "https://github.com/samotari/bleskomat",
+  "dependencies": {
+    "bignumber.js": "9.0.0",
+    "lnurl": "0.6.0"
+  }
+}

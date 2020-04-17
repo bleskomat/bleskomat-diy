@@ -18,7 +18,7 @@ TFT_eSPI tft = TFT_eSPI();
 std::string apiKeyId = "";
 std::string apiKeySecret = "";
 // The base URL for the lnurl server instance:
-std::string baseUrl = "https://t1.bleskomat.com/u?";
+std::string baseUrl = "http://localhost:3000/u?";
 // The symbol of the fiat currency which the coin acceptor is configured to accept:
 std::string fiatCurrency = "CZK";
 // The amount by which to increase the internal accumulated fiat value for each signal from the coin acceptor:
