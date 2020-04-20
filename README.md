@@ -32,7 +32,8 @@ To build the physical device:
 	* Coin Acceptor
 	* 12V DC power adaptor
 * Software:
-	* [Arduino IDE](https://www.arduino.cc/en/Main/Software)
+	* [Arduino IDE](https://www.arduino.cc/en/Main/Software); alternative:
+		* [Sublime Text 3](https://www.sublimetext.com/3) + [Deviot (Arduino IDE)](https://packagecontrol.io/packages/Deviot%20(Arduino%20IDE))
 	* [M5Stack](https://github.com/m5stack/M5Stack) - Arduino library for the ESP32 used for this project
 	* [TFT_eSPI.zip](https://github.com/samotari/bleskomat/tree/master/atm/libraries/TFT_eSPI.zip) - Additional library needed for the TFT screen
 
