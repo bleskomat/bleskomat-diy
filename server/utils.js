@@ -1,8 +1,22 @@
+/*
+	Copyright (C) 2020 Samotari (Charles Hill, Carlos Garcia Ortiz)
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU Affero General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU Affero General Public License for more details.
+
+	You should have received a copy of the GNU Affero General Public License
+	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+*/
+
 const BigNumber = require('bignumber.js');
-const fs = require('fs');
 const https = require('https');
-const lnurl = require('lnurl');
-const path = require('path');
 
 const getRates = function(options) {
 	if (typeof options !== 'object') {
@@ -66,45 +80,7 @@ const toMilliSatoshis = function(amount, rate) {
 	return toSatoshis(amount, rate) * 1000;
 };
 
-const loadConfig = (function() {
-
-	const configExampleFilePath = path.join(__dirname, 'config-example.json');
-	const configFilePath = path.join(__dirname, 'config.json');
-
-	const generateConfigFile = function() {
-		// Use the example config file as a starting point.
-		let config = require(configExampleFilePath);
-		// Generate an API key and add it to config.
-		config.auth.apiKeys = [
-			lnurl.generateApiKey({ encoding: 'base64' })
-		];
-		// Save to config.json.
-		fs.writeFileSync(configFilePath, JSON.stringify(config, null, 4).replace(/ {4,4}/g,'\t'));
-	};
-
-	const configFileExists = function() {
-		try {
-			fs.statSync(configFilePath);
-		} catch (error) {
-			if (error.message.substr(0, 'ENOENT: no such file or directory'.length) !== 'ENOENT: no such file or directory') {
-				console.error(error);
-				process.exit(1);
-			}
-			return false;
-		}
-		return true;
-	};
-
-	return function() {
-		if (!configFileExists()) {
-			generateConfigFile();
-		}
-		return require(configFilePath);
-	};
-})();
-
 module.exports = {
-	loadConfig,
 	getRates,
 	toSatoshis,
 	toMilliSatoshis,

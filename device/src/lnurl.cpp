@@ -1,6 +1,42 @@
+/*
+	Copyright (C) 2020 Samotari (Charles Hill, Carlos Garcia Ortiz)
+
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
+
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
+
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
+
 #include "lnurl.h"
 
 namespace {
+
+	std::string string_to_hex(const std::string& in) {
+		std::stringstream ss;
+		ss << std::hex << std::setfill('0');
+		for (size_t i = 0; in.length() > i; ++i) {
+			ss << std::setw(2) << static_cast<unsigned int>(static_cast<unsigned char>(in[i]));
+		}
+		return ss.str();
+	}
+
+	std::string bech32_encode(const std::string& hrp, const std::string& value) {
+		std::vector<uint8_t> v = utilstrencodings::ParseHex(string_to_hex(value));
+		std::vector<unsigned char> tmp = {};
+		tmp.reserve(1 + 32 * 8 / 5);
+		utilstrencodings::ConvertBits<8, 5, true>([&](unsigned char c) { tmp.push_back(c); }, v.begin(), v.end());
+		std::string s(v.begin(), v.end());
+		return bech32::encode(hrp, tmp);
+	}
+
 	std::string create_signature(const std::string &payload, const std::string &key) {
 		std::string signature = "";
 		// Convert std::string variables to char[]
@@ -80,16 +116,17 @@ namespace lnurl {
 		const std::string &fiatCurrency,
 		const std::string &apiKeyId,
 		const std::string &apiKeySecret,
-		const std::string &baseUrl
+		const std::string &callbackUrl
 	) {
 		std::string payload = construct_payload(amount, fiatCurrency, apiKeyId);
 		std::string signature = create_signature(payload, apiKeySecret);
 		std::string hrp = "lnurl";
 		std::string url = "";
-		url.append(baseUrl);
+		url.append(callbackUrl);
+		url.append("?");
 		url.append(payload);
 		url.append("&s=");
 		url.append(signature);
-		return util::bech32_encode(hrp, url);
+		return bech32_encode(hrp, url);
 	}
 }

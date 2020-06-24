@@ -16,5 +16,6 @@
 			"hostname": null
 		},
 		"mock": true
-	}
+	},
+	"fiatCurrency": "CZK"
 }
