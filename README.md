@@ -10,9 +10,10 @@ The offline Lightning Network ATM - just plug it in and it works!
 	* [Software Requirements](#software-requirements)
 * [Setup](#setup)
 	* [Building the Hardware Device](#building-the-hardware-device)
-		* [Wiring Diagram (w/ Coin Acceptor)](#wiring-diagram-w-coin-acceptor)
+		* [Wiring Diagram](#wiring-diagram)
 		* [Wiring the Power Supply](#wiring-the-power-supply)
 		* [Wiring the TFT Display](#wiring-the-tft-display)
+		* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
 	* [Training the Coin Acceptor](#training-the-coin-acceptor)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
 * [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
@@ -48,7 +49,8 @@ To build the physical device, you will need the following hardware components:
 * TFT Display - The 1.8 inch (128x160 pixel) model is assumed by default
 * Coin Acceptor - "Model HX-616"
 * 12V DC power adaptor with \~1A
-* USB car charger (12V -> 5V DC)
+* Step-down converter with USB (F) adapter - alternatively you could use a USB car charger
+* Standard USB to micro USB cable
 
 It is strongly recommended to use a multimeter while wiring the device.
 
@@ -65,15 +67,18 @@ It is strongly recommended to use a multimeter while wiring the device.
 
 Step-by-step setup process including both hardware and software.
 
+
 ### Building the Hardware Device
 
 Before proceeding, be sure that you have all the project's [hardware requirements](#hardware-requirements).
 
-#### Wiring Diagram (w/ Coin Acceptor)
 
-Here is a wiring diagram for the Bleskomat ATM with coin acceptor:
+#### Wiring Diagram
 
-![](images/bleskomat-w-coin-acceptor-wiring-schematic.png)
+Here is a wiring diagram for the Bleskomat ATM:
+
+![](images/wiring-diagram.png)
+
 
 #### Wiring the Power Supply
 
@@ -91,13 +96,18 @@ It is important to test the wires to know for certain which is the ground. Use a
 * The wire touched by the __red__ lead is the hot wire ("pwr")
 * Unplug the power supply again
 
-The next step is to wire in the USB car charger. The end of the car charger - the round metal part that can be pushed in - is the 12V DC in ("pwr"). The two pieces of metal on the sides are the ground ("gnd"). Connect a new red wire to the car charger's 12V DC in connector. Connect a new black wire to one of the car charger's ground connectors. Connect these new wires to the corresponding wires of the power supply. Plug-in a USB cable to the car charger (USB2/3 to micro USB). This micro USB connector will power the ESP32 device.
+Now use the [wiring diagram](#wiring-diagram) above as a guide to wire the ESP32 to the power supply.
 
-Now connect the "pwr" and "gnd" wires of your coin acceptor to the corresponding wires of the power supply.
+Note that powering the ESP32 via its micro USB port requires a regulated voltage of approximately 5V. The suggested step-down converter is the [XL4005](https://duckduckgo.com/?q=xl4005&t=canonical&iax=images&ia=images). It does a good job of keeping a steady voltage and doesn't generate much heat.
+
+Once you've connected the step-down converter to the power supply, use your multimeter to measure the voltage at the out pins. Use a small screwdriver to turn the screw on the little blue box. Turning the screw counter clockwise should lower the voltage, turning it the opposite direction should increase the voltage. Once you have the voltage set to 5V, you can connect the USB (F) adapter to the out pins.
+
+Use a standard USB to micro USB cable to connect the ESP32.
+
 
 #### Wiring the TFT Display
 
-Have a look at the [wiring diagram](#wiring-diagram-w-coin-acceptor) above or the following is a table of cable mappings for connecting the ESP32 to TFT Display:
+Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
 
 |  ESP32       | TFT        |
 |--------------|------------|
@@ -109,6 +119,17 @@ Have a look at the [wiring diagram](#wiring-diagram-w-coin-acceptor) above or th
 | GPIO23 (D23) | SDA        |
 | GPIO18 (D18) | SCK        |
 | 3.3V (3V3)   | LED (NC)   |
+
+
+#### Wiring the Coin Acceptor
+
+Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
+
+|  ESP32      | HX 616   | Power Supply  |
+|-------------|----------|---------------|
+|             | DC12V    | + 12V DC      |
+| GPIO4 (D4)  | COIN     |               |
+|             | GND      | - Ground      |
 
 
 ### Training the Coin Acceptor
