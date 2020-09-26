@@ -104,6 +104,11 @@ Once you've connected the step-down converter to the power supply, use your mult
 
 Use a standard USB to micro USB cable to connect the ESP32.
 
+Do not forget to connect the ESP32 to the common ground. Without this connection, the ESP32 will not be able to receive pulses from the coin acceptor when the ESP32 is connected to your computer via USB.
+
+There are other options when powering the ESP32 - e.g via the 3.3V pin or the 5V/VIN pin. You should __never__ power the ESP32 via more than one of these options at the same time. For example, do not power the ESP32 via its 3.3V pin while also connecting the ESP32 via USB to your computer. This can damage the ESP32 and possibly also your computer.
+
+
 
 #### Wiring the TFT Display
 
@@ -114,10 +119,10 @@ Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable
 | VIN          | VCC        |
 | GND          | GND        |
 | GPIO5  (D5)  | CS         |
-| GPIO16 (RX2) | RESET (RS) |
-| GPIO17 (TX2) | AO (DC)    |
+| GPIO16 (RX2) | RST        |
+| GPIO17 (TX2) | RS         |
 | GPIO23 (D23) | SDA        |
-| GPIO18 (D18) | SCK        |
+| GPIO18 (D18) | CLK (SCK)  |
 | 3.3V (3V3)   | LED (NC)   |
 
 
