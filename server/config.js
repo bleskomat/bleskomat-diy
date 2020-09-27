@@ -60,13 +60,8 @@ if (!configFileExists()) {
 let config = readConfigFile();
 let resave = false;
 
-if (!config.auth.apiKeys || !(config.auth.apiKeys.length > 0)) {
-	config.auth.apiKeys = [ lnurl.generateApiKey({ encoding: 'base64' }) ];
-	resave = true;
-}
-
-if (typeof config.supportedFiatCurrencies === 'undefined') {
-	config.supportedFiatCurrencies = getExampleConfig().supportedFiatCurrencies;
+if (!config.lnurl.auth.apiKeys || !(config.lnurl.auth.apiKeys.length > 0)) {
+	config.lnurl.auth.apiKeys = [ lnurl.generateApiKey({ encoding: 'base64' }) ];
 	resave = true;
 }
 

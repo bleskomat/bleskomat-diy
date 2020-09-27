@@ -16,6 +16,7 @@
 */
 
 const lnurl = require('lnurl');
+const { HttpError } = lnurl.Server;
 const { getRates, toSatoshis, toMilliSatoshis } = require('./utils');
 
 /*
@@ -23,7 +24,7 @@ const { getRates, toSatoshis, toMilliSatoshis } = require('./utils');
 	https://github.com/chill117/lnurl-node#options-for-createserver-method
 */
 const config = require('./config');
-const server = lnurl.createServer(config);
+const server = lnurl.createServer(config.lnurl);
 
 server.bindToHook('middleware:signedLnurl:afterCheckSignature', function(req, res, next) {
 	if (req.query.f) {
@@ -36,16 +37,13 @@ server.bindToHook('middleware:signedLnurl:afterCheckSignature', function(req, re
 			}).then(rate => {
 				const { tag } = req.query;
 				switch (tag) {
-					case 'channelRequest':
-						const { localAmt, pushAmt } = req.query;
-						req.query.localAmt = toSatoshis(localAmt, rate);
-						req.query.pushAmt = toSatoshis(pushAmt, rate);
-						break;
 					case 'withdrawRequest':
 						const { minWithdrawable, maxWithdrawable } = req.query;
 						req.query.minWithdrawable = toMilliSatoshis(minWithdrawable, rate);
 						req.query.maxWithdrawable = toMilliSatoshis(maxWithdrawable, rate);
 						break;
+					default:
+						throw new HttpError(`Unsupported tag: "${tag}"`);
 				}
 				next();
 			}).catch(next);

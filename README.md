@@ -21,6 +21,7 @@ The offline Lightning Network ATM - just plug it in and it works!
 * [Remote Tunneling](#remote-tunneling)
 	* [Using SSH and a VPS](#using-ssh-and-a-vps)
 	* [Using ngrok](#using-ngrok)
+* [Generate and Test Signed LNURLs](#generate-and-test-signed-lnurls)
 * [License](#license)
 
 
@@ -207,6 +208,19 @@ To start the server:
 ```bash
 make server
 ```
+
+To run the server while printing debug messages:
+```bash
+DEBUG=lnurl* make server
+```
+Example output as follows:
+```
+lnurl:info Creating web server... +0ms
+lnurl:mock:c-lightning:info JSON-RPC API listening at /path/to/this/project/server/c-lightning.sock +0ms
+lnurl:mock:c-lightning:info Listening for TCP connections at 127.0.0.1:9735 +0ms
+lnurl:info Web server listening at http://127.0.0.1:3000/ +5ms
+```
+
 A configuration file is automatically generated for you to help get you started. The auto-generated config file is located at `./server/config.json`.
 
 By default the server uses a mock c-lightning node. Once you're ready to connect your own Lightning Network node, have a look at the [lnurl-node](https://github.com/chill117/lnurl-node#lightning-backend-configuration-options) documentation for how to configure the server's lightning backend.
@@ -243,12 +257,14 @@ ssh -v -N -T -R 3000:localhost:3000 VPS_HOST_OR_IP_ADDRESS
 ```
 This will forward all traffic to port 3000 to the VPS thru the SSH tunnel to port 3000 on your local machine.
 
-Set the value of `url` in `./server/config.json` as follows:
+Set the value of `lnurl.url` in `./server/config.json` as follows:
 ```js
 {
-	// ..
-	"url": "http://VPS_IP_ADDRESS:3000"
-	// ..
+	"lnurl": {
+		// ..
+		"url": "http://VPS_IP_ADDRESS:3000"
+		// ..
+	}
 }
 ```
 Be sure to replace `VPS_IP_ADDRESS` with the IP address of your server.
@@ -260,6 +276,8 @@ Start the server again:
 make server
 ```
 
+Now let's move on to [Generate and Test Signed LNURLs](#generate-and-test-signed-lnurls).
+
 
 ### Using ngrok
 
@@ -269,12 +287,14 @@ To create an HTTP tunnel to the local server:
 ```bash
 ngrok http -region eu 3000
 ```
-Copy and paste the HTTPS tunnel URL to `url` in `./server/config.json` as follows:
+Copy and paste the HTTPS tunnel URL to `lnurl.url` in `./server/config.json` as follows:
 ```js
 {
-	// ..
-	"url": "https://0fe4d56b.eu.ngrok.io"
-	// ..
+	"lnurl": {
+		// ..
+		"url": "https://0fe4d56b.eu.ngrok.io"
+		// ..
+	}
 }
 ```
 Note that each time you open a tunnel with ngrok, your tunnel URL changes.
@@ -285,6 +305,43 @@ Start the server again:
 ```bash
 make server
 ```
+
+Now let's move on to [Generate and Test Signed LNURLs](#generate-and-test-signed-lnurls).
+
+
+## Generate and Test Signed LNURLs
+
+There is a helper script included in this project that can generate signed LNURLs that are valid for your server. Run the script as follows:
+```bash
+make signedLnurl AMOUNT=1.00
+```
+The output is an unencoded URL - for example:
+```
+https://94fb07c3f0620eu.ngrok.io/u?id=ngNmBZs%3D&n=ead7b208dc1f6901&t=withdrawRequest&f=CZK&pn=1.00&px=1.00&pd=&s=2faf6595e2df24837ac1b655accd7a172901be216fac33d6643f3135bb4067cb
+```
+Query the URL with cURL:
+```bash
+curl "https://94fb07c3f0620eu.ngrok.io/u?id=ngNmBZs%3D&n=ead7b208dc1f6901&t=withdrawRequest&f=CZK&pn=1.00&px=1.00&pd=&s=2faf6595e2df24837ac1b655accd7a172901be216fac33d6643f3135bb4067cb"
+```
+The response will look something like this:
+```
+{"minWithdrawable":401000,"maxWithdrawable":401000,"defaultDescription":"","callback":"https://94fb07c3f0620eu.eu.ngrok.io/u","k1":"826fc889dd20128d11fbf9d07447254cc3b9f4db9f347aa05f2ca2e88ea046e7","tag":"withdrawRequest"}
+```
+Generate a signed LNURL and encode it as a QR code:
+```bash
+make signedLnurl AMOUNT=1.00 | ./server/node_modules/.bin/lnurl encode | qr
+```
+Note that this requires the [qr](https://github.com/lincolnloop/python-qrcode/) CLI utility.
+
+If you prefer not to use the `qr` utility, then print the encoded LNURL:
+```bash
+make signedLnurl AMOUNT=1.00 | ./server/node_modules/.bin/lnurl encode
+```
+And copy the result into the QR encoder of your choice.
+
+Once you've got a sample QR code, scan it with your mobile wallet app. The whole flow should work even if your server is still running the mock c-lightning, but obviously the LN payment will never be completed.
+
+If you don't already have a mobile wallet app that supports LNURL, you can check out the [Introduction to Bleskomat](https://www.bleskomat.com/intro) page which has a list of mobile wallet apps that work with this project.
 
 
 ## License

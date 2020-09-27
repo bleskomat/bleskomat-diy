@@ -46,7 +46,10 @@ SERVER=./server
 compile\
 upload\
 monitor\
-server
+server\
+signedLnurl
+
+.SILENT: signedLnurl
 
 install:
 	cd $(DEVICE) && platformio lib install
@@ -63,3 +66,6 @@ monitor:
 
 server:
 	cd $(SERVER) && npm start
+
+signedLnurl:
+	cd $(SERVER) && npm run --silent generate:signedLnurl -- "${AMOUNT}"

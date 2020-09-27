@@ -25,8 +25,8 @@ const printBuildFlags = function(buildFlags) {
 };
 
 const config = require('../../server/config');
-const apiKey = config.auth.apiKeys[0] || null;
-const { endpoint } = config;
+const apiKey = config.lnurl.auth.apiKeys[0] || null;
+const { endpoint } = config.lnurl;
 
 if (!apiKey) {
 	console.error('Must configure at least one API key; see "auth.apiKeys" in server/config.json');
@@ -34,10 +34,10 @@ if (!apiKey) {
 }
 
 let baseUrl;
-if (config.url) {
-	baseUrl = config.url;
+if (config.lnurl.url) {
+	baseUrl = config.lnurl.url;
 } else {
-	const { host, port, protocol } = config;
+	const { host, port, protocol } = config.lnurl;
 	baseUrl = `${protocol}://${host}:${port}`;
 }
 

@@ -5,6 +5,7 @@
   "main": "server.js",
   "private": true,
   "scripts": {
+    "generate:signedLnurl": "node ./scripts/generateSignedLnurl.js",
     "start": "node server.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
@@ -34,6 +35,6 @@
   "homepage": "https://github.com/samotari/bleskomat",
   "dependencies": {
     "bignumber.js": "9.0.0",
-    "lnurl": "0.7.1"
+    "lnurl": "0.8.0"
   }
 }
