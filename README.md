@@ -13,6 +13,7 @@ The world's simplest Lightning Network ATM.
 		* [Wiring Diagram](#wiring-diagram)
 		* [Wiring the Power Supply](#wiring-the-power-supply)
 		* [Wiring the TFT Display](#wiring-the-tft-display)
+		* [Wiring the SD card](#wiring-the-sd-card)
 		* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
 	* [Training the Coin Acceptor](#training-the-coin-acceptor)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
@@ -134,6 +135,18 @@ Notes on pin naming:
 * There are boards where `GPIXXX` are marked as `GXX` instead of `DXX`.
 * The `G23` may be there **twice** - the correct one is next to `GND`.
 * Some boards have typos so a bit of guess-and-check is necessary sometimes.
+
+
+#### Wiring the SD card
+
+The TTF display we are using contain a SD card module. The pins are located above the screen and not soldered to the module by default but the pins can be added. The table of mappings is the following:
+
+|  ESP32       | TFT        |
+|--------------|------------|
+|  GPIO2  (D2) |  SD_MISO   |
+|  GPIO15 (D15)|  SD_MOSI   |
+|  GPIO14 (D14)|  SD_SCK    |
+|  GPIO13 (D13)|  SD_CS     |
 
 
 #### Wiring the Coin Acceptor
