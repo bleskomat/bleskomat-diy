@@ -31,6 +31,21 @@ namespace config {
 	std::string callbackUrl;
 	std::string fiatCurrency;
 
+
+	void init() {
+		if ( sdcard::mount() < 0 ) {
+			printf("SD card failed to mount, setting default config.\n");
+			setDefault();
+		} else {
+			printf("Card mounted, set config from SD card.\n");
+			if ( setFromFile("/sdcard/bleskomat.conf") < 0 ) {
+				printf("Setting from file failed, falling back to default config.\n");
+				setDefault();
+			}
+			sdcard::umount();
+		}
+	}
+
 	void printConfig() {
 		logger::write("apiKeyId: " + apiKeyId);
 		logger::write("apiKeySecret: " + apiKeySecret);
@@ -62,27 +77,27 @@ namespace config {
 
 		if ( !fp ) {
 			printf("Failed opening config file %s.\n", fileName);
-			return -2;
+			return ERR_FILE;
 		}
 
 		if ( !fscanf(fp, "%s", config.id) ){
 			printf("Failed reading ID.\n");
-			return -1;
+			return ERR_VARS;
 		}
 
 		if ( !fscanf(fp, "%s", config.secret) ) {
 			printf("Failed reading secret.\n");
-			return -1;
+			return ERR_VARS;
 		}
 
 		if ( !fscanf(fp, "%s", config.url) ) {
 			printf("Failed reading URL.\n");
-			return -1;
+			return ERR_VARS;
 		}
 
 		if ( !fscanf(fp, "%s", config.currency) ) {
 			printf("Failed reading currency.\n");
-			return -1;
+			return ERR_VARS;
 		}
 
 		setConfig(config);

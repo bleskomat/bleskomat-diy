@@ -27,19 +27,8 @@
 void setup() {
 	Serial.begin(115200);
 	logger::enable();
-
-	if ( sdcard::mount() < 0 ) {
-	    printf("SD card failed to mount, setting default config.\n");
-	    config::setDefault();
-	} else {
-	    printf("Card mounted, set config from SD card.\n");
-		if ( config::setFromFile("/sdcard/bleskomat.conf") < 0 ) {
-			printf("Setting from file failed, falling back to default config.\n");
-			config::setDefault();
-		}
-		sdcard::umount();
-	}
-	logger::write("Config OK");
+	config::init();
+	config::printConfig();
 
 	display::init();
 	display::updateAmount(0.00, config::getFiatCurrency());
@@ -56,8 +45,6 @@ const unsigned long minWaitTimeSinceInsertedFiat = 15000;// milliseconds
 const unsigned long maxTimeDisplayQrCode = 120000;// milliseconds
 
 void loop() {
-  // sdcard::debug();
-
 	if (millis() - bootTime >= minWaitAfterBootTime) {
 		// Minimum time has passed since boot.
 		// Start performing checks.

@@ -36,9 +36,13 @@
 
 #include "logger.h"
 
+#define ERR_FILE -1
+#define ERR_VARS -2
+
 struct LNconf;
 
 namespace config {
+	void init();
 	void printConfig();
 	void setConfig(const LNconf config);
 	void setDefault();

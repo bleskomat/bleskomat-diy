@@ -42,7 +42,7 @@ namespace sdcard {
 			if (ret == ESP_FAIL) {
 				printf("Failed to mount filesystem, try to format the card.");
 			} else {
-				printf("Failed to initialize the card (%s). ", esp_err_to_name(ret));
+				printf("Failed to initialize the card (%s).\n", esp_err_to_name(ret));
 			}
 			return -1;
 		}
@@ -56,7 +56,7 @@ namespace sdcard {
     void umount() {
 		// All done, unmount partition and disable SDMMC or SPI peripheral
 		esp_vfs_fat_sdmmc_unmount();
-        printf("Card unmounted");
+        printf("Card unmounted.\n");
     }
 
 }
