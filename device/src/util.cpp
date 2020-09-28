@@ -21,11 +21,11 @@ namespace {
 
 	LnurlSignerConfig prepareLnurlSignerConfig() {
 		LnurlSignerConfig signerConfig;
-		signerConfig.apiKey.id = config::apiKeyId;
-		signerConfig.apiKey.key = config::apiKeySecret;
+		signerConfig.apiKey.id = config::getApiKeyId();
+		signerConfig.apiKey.key = config::getApiKeySecret();
 		signerConfig.apiKey.encoding = "";// unspecified encoding
-		signerConfig.callbackUrl = config::callbackUrl;
-		signerConfig.fiatCurrency = config::fiatCurrency;
+		signerConfig.callbackUrl = config::getCallbackUrl();
+		signerConfig.fiatCurrency = config::getFiatCurrency();
 		signerConfig.shorten = true;
 		return signerConfig;
 	}

@@ -38,20 +38,23 @@
 #endif
 
 #include <string>
+#include <iostream>
+#include <fstream>
+
 #include "logger.h"
 
 namespace {
-	std::string trimQuotes(const std::string &str) {
-		return str.substr(1, str.length() - 2);
-	}
+  std::string trimQuotes(const std::string &str);
 }
 
 namespace config {
-	const std::string apiKeyId(trimQuotes(STRINGIFY(API_KEY_ID)));
-	const std::string apiKeySecret(trimQuotes(STRINGIFY(API_KEY_SECRET)));
-	const std::string callbackUrl(trimQuotes(STRINGIFY(CALLBACK_URL)));
-	const std::string fiatCurrency(trimQuotes(STRINGIFY(FIAT_CURRENCY)));
 	void init();
+        int setConfig(std::ifstream fpd);
+	std::string getApiKeyId();
+	std::string getApiKeySecret();
+	std::string getCallbackUrl();
+	std::string getFiatCurrency();
+
 }
 
 #endif

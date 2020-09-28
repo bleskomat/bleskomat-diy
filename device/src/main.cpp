@@ -19,6 +19,7 @@
 #include "display.h"
 #include "logger.h"
 #include "modules.h"
+#include "sdcard.h"
 #include "util.h"
 
 #include <string>
@@ -26,13 +27,22 @@
 void setup() {
 	Serial.begin(115200);
 	logger::enable();
-	config::init();
+	if ( sdcard::open() < 0 ) {
+	    printf("SD card failed to open, setting default config.\n");
+	    // config::setDefault();
+	} else {
+	    printf("Setting config from the SD card.\n");
+	    config::setConfig(sdcard::getIFStream());
+	}
+	sdcard::close();
 	logger::write("Config OK");
+	config::init();
+
 	display::init();
-	display::updateAmount(0.00, config::fiatCurrency);
+	display::updateAmount(0.00, config::getFiatCurrency());
 	logger::write("Display OK");
 	coinAcceptor::init();
-	coinAcceptor::setFiatCurrency(config::fiatCurrency);
+	coinAcceptor::setFiatCurrency(config::getFiatCurrency());
 	logger::write("Coin Reader OK");
 	logger::write("Setup OK");
 }
@@ -43,6 +53,8 @@ const unsigned long minWaitTimeSinceInsertedFiat = 15000;// milliseconds
 const unsigned long maxTimeDisplayQrCode = 120000;// milliseconds
 
 void loop() {
+  // sdcard::debug();
+
 	if (millis() - bootTime >= minWaitAfterBootTime) {
 		// Minimum time has passed since boot.
 		// Start performing checks.
@@ -67,7 +79,7 @@ void loop() {
 			coinAcceptor::reset();
 		}
 		if (!display::hasRenderedQRCode() && display::getRenderedAmount() != accumulatedValue) {
-			display::updateAmount(accumulatedValue, config::fiatCurrency);
+		    display::updateAmount(accumulatedValue, config::getFiatCurrency());
 		}
 	}
 }

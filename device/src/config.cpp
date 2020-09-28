@@ -17,12 +17,66 @@
 
 #include "config.h"
 
-namespace config {
-
-	void init() {
-		logger::write("apiKeyId: " + apiKeyId);
-		logger::write("apiKeySecret: " + apiKeySecret);
-		logger::write("callbackUrl: " + callbackUrl);
-		logger::write("fiatCurrency: " + fiatCurrency);
+namespace {
+	std::string trimQuotes(const std::string &str) {
+		return str.substr(1, str.length() - 2);
 	}
+}
+
+namespace config {
+  std::string apiKeyId;
+  std::string apiKeySecret;
+  std::string callbackUrl;
+  std::string fiatCurrency;
+
+  void init() {
+    // std::string apiKeyId(trimQuotes(STRINGIFY(API_KEY_ID)));
+    // std::string apiKeySecret(trimQuotes(STRINGIFY(API_KEY_SECRET)));
+    // std::string callbackUrl(trimQuotes(STRINGIFY(CALLBACK_URL)));
+    // std::string fiatCurrency(trimQuotes(STRINGIFY(FIAT_CURRENCY)));
+
+    logger::write("apiKeyId: " + apiKeyId);
+    logger::write("apiKeySecret: " + apiKeySecret);
+    logger::write("callbackUrl: " + callbackUrl);
+    logger::write("fiatCurrency: " + fiatCurrency);
+  }
+
+  void setDefault(){
+    // apiKeyId(trimQuotes(STRINGIFY(API_KEY_ID)));
+    // apiKeySecret(trimQuotes(STRINGIFY(API_KEY_SECRET)));
+    // callbackUrl(trimQuotes(STRINGIFY(CALLBACK_URL)));
+    // fiatCurrency(trimQuotes(STRINGIFY(FIAT_CURRENCY)));
+
+  }
+
+  int setConfig(std::ifstream fpd){
+
+    if(!fpd)
+      {
+	printf("Error: config file could not be open,\n"
+	       "please create 'bleskomat.conf' in the root directory of the SD card.");
+	return -1;
+      }
+	
+
+    std::getline(fpd, config::apiKeyId);
+    std::getline(fpd, config::apiKeySecret);
+    std::getline(fpd, config::callbackUrl);
+    std::getline(fpd, config::fiatCurrency);
+
+    return 0;
+  }
+  std::string getApiKeyId(){
+    return apiKeyId;
+  }
+  std::string getApiKeySecret(){
+    return apiKeySecret;
+  }
+  std::string getCallbackUrl(){
+    return callbackUrl;
+  }
+  std::string getFiatCurrency(){
+    return fiatCurrency;
+  }
+
 }
