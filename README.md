@@ -150,11 +150,11 @@ An instruction sheet is included with the coin acceptor that will guide you thro
 
 | PANEL  | Meaning                                     |
 |--------|---------------------------------------------|
-| E      | number of coin values					   |
-| Hn     | sampling quantity of coin n				   |
-| Pn     | signal output value of coin n			   |
+| E      | number of coin values                       |
+| Hn     | sampling quantity of coin n                 |
+| Pn     | signal output value of coin n               |
 | Fn     | recognition accuracy of coin n (8 advised)  |
-| A      | training the acceptor					   |
+| A      | training the acceptor                       |
 | An     | start inserting coins for coin n            |
 
 Press ADD + MINUS to get to the setting menu for Hn, Pn, Fn. Then press SET to swap between possibilities. To change the option press ADD or MINUS to select the desired value and confirm with SET.
