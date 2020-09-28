@@ -22,6 +22,7 @@ The offline Lightning Network ATM - just plug it in and it works!
 	* [Using SSH and a VPS](#using-ssh-and-a-vps)
 	* [Using ngrok](#using-ngrok)
 * [Generate and Test Signed LNURLs](#generate-and-test-signed-lnurls)
+* [Notes](#notes)
 * [License](#license)
 
 
@@ -342,6 +343,11 @@ And copy the result into the QR encoder of your choice.
 Once you've got a sample QR code, scan it with your mobile wallet app. The whole flow should work even if your server is still running the mock c-lightning, but obviously the LN payment will never be completed.
 
 If you don't already have a mobile wallet app that supports LNURL, you can check out the [Introduction to Bleskomat](https://www.bleskomat.com/intro) page which has a list of mobile wallet apps that work with this project.
+
+
+## Notes
+
+* Exchange rates are queried using Coinbase's `/v2/exchange-rates` API end-point. The function that does this is defined in `./server/utils.js`. If you prefer to use a different provider, that is the place to make your changes.
 
 
 ## License
