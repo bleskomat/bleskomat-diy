@@ -18,9 +18,6 @@
 #ifndef BLESKOMAT_CONFIG_H
 #define BLESKOMAT_CONFIG_H
 
-#define STRINGIFY(s) STRINGIFY1(s)
-#define STRINGIFY1(s) #s
-
 #ifndef API_KEY_ID
 	#error "Missing required build flag: API_KEY_ID"
 #endif
@@ -37,24 +34,19 @@
 	#error "Missing required build flag: FIAT_CURRENCY"
 #endif
 
-#include <string>
-#include <iostream>
-#include <fstream>
-
 #include "logger.h"
 
-namespace {
-  std::string trimQuotes(const std::string &str);
-}
+struct LNconf;
 
 namespace config {
-	void init();
-        int setConfig(std::ifstream fpd);
+	void printConfig();
+	void setConfig(const LNconf config);
+	void setDefault();
+	int  setFromFile(const char* fileName);
 	std::string getApiKeyId();
 	std::string getApiKeySecret();
 	std::string getCallbackUrl();
 	std::string getFiatCurrency();
-
 }
 
 #endif

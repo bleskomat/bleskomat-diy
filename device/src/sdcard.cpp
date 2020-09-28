@@ -12,7 +12,7 @@ namespace {
 
 namespace sdcard {
 
-    int open() {
+    int mount() {
 		sdmmc_host_t host = SDSPI_HOST_DEFAULT();
 		sdspi_slot_config_t slot_config = SDSPI_SLOT_CONFIG_DEFAULT();
 
@@ -53,14 +53,7 @@ namespace sdcard {
 		return 1;
     }
 
-    std::ifstream getIFStream () {
-		std::ifstream fpd;
-		fpd.open("/sdcard/bleskomat.conf",std::ios::in);
-
-		return fpd;
-    }
-
-    void close() {
+    void umount() {
 		// All done, unmount partition and disable SDMMC or SPI peripheral
 		esp_vfs_fat_sdmmc_unmount();
         printf("Card unmounted");

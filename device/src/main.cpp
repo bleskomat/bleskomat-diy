@@ -27,16 +27,19 @@
 void setup() {
 	Serial.begin(115200);
 	logger::enable();
-	if ( sdcard::open() < 0 ) {
-	    printf("SD card failed to open, setting default config.\n");
-	    // config::setDefault();
+
+	if ( sdcard::mount() < 0 ) {
+	    printf("SD card failed to mount, setting default config.\n");
+	    config::setDefault();
 	} else {
-	    printf("Setting config from the SD card.\n");
-	    config::setConfig(sdcard::getIFStream());
+	    printf("Card mounted, set config from SD card.\n");
+		if ( config::setFromFile("/sdcard/bleskomat.conf") < 0 ) {
+			printf("Setting from file failed, falling back to default config.\n");
+			config::setDefault();
+		}
+		sdcard::umount();
 	}
-	sdcard::close();
 	logger::write("Config OK");
-	config::init();
 
 	display::init();
 	display::updateAmount(0.00, config::getFiatCurrency());
