@@ -21,6 +21,7 @@ The offline Lightning Network ATM - just plug it in and it works!
 * [Remote Tunneling](#remote-tunneling)
 	* [Using SSH and a VPS](#using-ssh-and-a-vps)
 	* [Using ngrok](#using-ngrok)
+	* [Using TOR](#using-tor)
 * [Generate and Test Signed LNURLs](#generate-and-test-signed-lnurls)
 * [Notes](#notes)
 * [License](#license)
@@ -321,6 +322,11 @@ make server
 ```
 
 Now let's move on to [Generate and Test Signed LNURLs](#generate-and-test-signed-lnurls).
+
+
+### Using TOR
+
+It should also be possible to use TOR for remote tunneling to your local server. Anyone who has done this and would like to write how-to instructions, please add them here.
 
 
 ## Generate and Test Signed LNURLs
