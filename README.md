@@ -1,6 +1,6 @@
 # Bleskomat
 
-The offline Lightning Network ATM - just plug it in and it works!
+The world's simplest Lightning Network ATM.
 
 ![](images/logo.png)
 
@@ -34,6 +34,8 @@ Key features of the Bleskomat ATM include:
 * Inexpensive, easily-sourced components
 * Easily hackable and extendible
 * Plug it in and it's ready to accept fiat in seconds
+
+![](images/ux-flow.png)
 
 The project consists of two parts:
 * __HTTP Server__ - supports [lnurl-withdraw](https://github.com/btcontract/lnurl-rfc/blob/master/lnurl-withdraw.md) with additional request handlers for fiat-currency -> satoshi conversion and request signing.
