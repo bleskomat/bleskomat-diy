@@ -241,6 +241,45 @@ By default the server uses a mock c-lightning node. Once you're ready to connect
 
 The server is only accessible on your local machine. But in order for the whole UX flow to work, you will need to expose it to the internet - see [Remote Tunneling](#remote-tunneling).
 
+## Connect to your node
+
+### Using a TOR hidden service
+
+You have a node running in a computer and you access to it using a TOR hidden service. You can connect to your TOR hidder service by using [socat](https://linux.die.net/man/1/socat).
+
+You need to intall `TOR` and `socat`:
+
+```bash
+apt install tor socat
+```
+
+And then run and keep running the command below:
+
+```bash
+socat TCP4-LISTEN:<port-in-your-computer>,bind=0.0.0.0,fork SOCKS4A:localhost:<tor-hidden-service-address>.onion:<tor-hidden-service-port>,socksport=9050
+```
+
+And update your lighting configuration in file `config.json`:
+
+```javascript
+  "hostname": "127.0.0.1:<port-in-your-computer>",
+  "macaroon": "/path/to/admin.macaroon",
+  "cert": "/path/to/tls.cert"
+```
+
+### Using Zap Desktop
+
+If you do not have a node running, you can easily run an LND node in your computer by running [zap-desktop](https://github.com/LN-Zap/zap-desktop) and you can use it as lightning backend for your bleskomat.
+
+I you do not have zap-desktop yet installed you can download it from [here](https://github.com/LN-Zap/zap-desktop/releases) and install it.
+
+And update your lighting configuration in file `config.json`:
+
+```javascript
+  "hostname": "127.0.0.1:8180",
+  "macaroon": "/home/<user>/.config/Zap/lnd/bitcoin/mainnet/wallet-1/data/chain/bitcoin/mainnet/admin.macaroon",
+  "cert": "/home/<user>/.config/Zap/lnd/bitcoin/mainnet/wallet-1/tls.cert"
+```
 
 ## Remote Tunneling
 
