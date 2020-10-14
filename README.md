@@ -119,21 +119,21 @@ There are other options when powering the ESP32 - e.g via the 3.3V pin or the 5V
 
 Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
 
-|  ESP32        | TFT        |
-|---------------|------------|
-| VIN           | VCC        |
-| GND           | GND        |
-| GPIO5  (D5)   | CS         |
-| GPIO16 (RX2)  | RST        |
-| GPIO17 (TX2)  | RS         |
-| GPIO23 (D23)* | SDA        |
-| GPIO18 (D18)  | CLK (SCK)  |
-| 3.3V (3V3)    | LED (NC)   |
+|  ESP32       | TFT        |
+|--------------|------------|
+| VIN          | VCC        |
+| GND          | GND        |
+| GPIO5  (D5)  | CS         |
+| GPIO16 (RX2) | RST        |
+| GPIO17 (TX2) | RS         |
+| GPIO23 (D23) | SDA        |
+| GPIO18 (D18) | CLK (SCK)  |
+| 3.3V (3V3)   | LED (NC)   |
 
-\* There are versions of a chip, where `GPIXXX` are marked as `GXX`. 
-The `G23` may be there **twice**. 
-The correct one is **next to the (`GND`)**. 
-(On the scheme next to the black cable.)
+Notes on pin naming:
+* There are boards where `GPIXXX` are marked as `GXX` instead of `DXX`.
+* The `G23` may be there **twice** - the correct one is next to `GND`.
+* Some boards have typos so a bit of guess-and-check is necessary sometimes.
 
 
 #### Wiring the Coin Acceptor
