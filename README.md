@@ -130,6 +130,11 @@ Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable
 | GPIO18 (D18) | CLK (SCK)  |
 | 3.3V (3V3)   | LED (NC)   |
 
+Notes on pin naming:
+* There are boards where `GPIXXX` are marked as `GXX` instead of `DXX`.
+* The `G23` may be there **twice** - the correct one is next to `GND`.
+* Some boards have typos so a bit of guess-and-check is necessary sometimes.
+
 
 #### Wiring the Coin Acceptor
 
