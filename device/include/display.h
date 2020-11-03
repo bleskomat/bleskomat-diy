@@ -15,18 +15,19 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef BLESKOMAT_MODULES_H
-#define BLESKOMAT_MODULES_H
-#endif
+#include "logger.h"
+#include "qrcode.h"
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <Arduino.h>
 
-#ifdef COIN_ACCEPTOR
-	#include "modules/coin-acceptor.h"
-#endif
 
-#ifdef EINK_128x296
-	#include "modules/eink128x296.h"
-#endif
-
-#ifdef OLED
-	#include "modules/oled.h"
-#endif
+namespace display {
+	uint8_t calculateAmountTextHeight(const uint8_t &fontHeight, const uint8_t &textMultiplier);
+	std::string toUpperCase(std::string s);
+	int calculateQRCodeSize(const std::string &dataStr);
+	float calculateQRCodeScale(const uint8_t &size, const uint8_t &width, const uint8_t &height,  const uint8_t &fontHeight, const uint8_t &marginX, const uint8_t &marginY, const uint8_t &textMultiplier);
+	uint16_t hexToRGB565(const std::string& hexColor);
+	int getPrecision(const std::string &fiatCurrency);
+}

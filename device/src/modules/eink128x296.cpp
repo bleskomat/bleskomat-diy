@@ -1,55 +1,22 @@
-#include "eink.h"
+/*
+	Copyright (C) 2020 Samotari (Charles Hill, Carlos Garcia Ortiz)
+	Copyright (C) 2020 Tomas Stary
 
-namespace {
+	This program is free software: you can redistribute it and/or modify
+	it under the terms of the GNU General Public License as published by
+	the Free Software Foundation, either version 3 of the License, or
+	(at your option) any later version.
 
-	// GxEPD2_BW<GxEPD2_154, GxEPD2_154::HEIGHT> display(GxEPD2_154(/*CS=*/ 15, /*DC=*/ 27, /*RST=*/ 26, /*BUSY=*/ 25)); // GDEP015OC1 no longer available
+	This program is distributed in the hope that it will be useful,
+	but WITHOUT ANY WARRANTY; without even the implied warranty of
+	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+	GNU General Public License for more details.
 
-	GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display(GxEPD2_290(/*CS=*/ 15, /*DC=*/ 27, /*RST=*/ 26, /*BUSY=*/ 25));
+	You should have received a copy of the GNU General Public License
+	along with this program.  If not, see <https://www.gnu.org/licenses/>.
+*/
 
-	const uint8_t MARGIN_X = 4;
-	const uint8_t MARGIN_Y = 12;
-
-	unsigned long LAST_RENDERED_QRCODE_TIME = 0;
-	float RENDERED_AMOUNT = 0.00;
-
-	const int BG_COLOR = GxEPD_WHITE;
-	const int TEXT_COLOR = GxEPD_BLACK;
-
-	std::string toUpperCase(std::string s) {
-		std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return std::toupper(c); });
-		return s;
-	}
-
-	int calculateQRCodeSize(const std::string &dataStr) {
-		int size = 12;
-		int sizes[17] = { 25, 47, 77, 114, 154, 195, 224, 279, 335, 395, 468, 535, 619, 667, 758, 854, 938 };
-		int len = dataStr.length();
-		for (int i = 0; i < 17; i++) {
-			if (sizes[i] > len) {
-				return i + 1;
-			}
-		}
-		return size;
-	}
-
-	float calculateQRCodeScale(const uint8_t &size) {
-		const uint8_t maxWidth = display.width() - (MARGIN_X * 2);
-		// const uint8_t maxHeight = tft.height() - (calculateAmountTextHeight() + MARGIN_Y);
-		const uint8_t maxHeight = display.height() - (MARGIN_Y);
-
-		return std::fmin(
-			std::floor(maxWidth / size),
-			std::floor(maxHeight / size)
-		);
-	}
-
-	int getPrecision(const std::string &fiatCurrency) {
-		if (fiatCurrency == "EUR") {
-			return 2;
-		}
-		return 0;
-	}
-}
+#include "modules/eink128x296.h"
 
 namespace eink {
 
@@ -65,6 +32,13 @@ namespace eink {
 /* - for the 1.54 inch display use */
 	// GxEPD2_BW<GxEPD2_154, GxEPD2_154::HEIGHT> display(GxEPD2_154(/*CS=*/ 15, /*DC=*/ 27, /*RST=*/ 26, /*BUSY=*/ 25)); // GDEP015OC1 no longer available
 #endif
+
+	unsigned long LAST_RENDERED_QRCODE_TIME = 0;
+	float RENDERED_AMOUNT = 0.00;
+
+	const int BG_COLOR = GxEPD_WHITE;
+	const int TEXT_COLOR = GxEPD_BLACK;
+
 
 	void init()
 	{
@@ -229,7 +203,7 @@ void drawBitmaps128x296()
 
 		uint16_t box_x = 10;
 		uint16_t box_y = 15;
-		uint16_t box_w = 70;
+		uint16_t box_w = 120;
 		uint16_t box_h = 20;
 		uint16_t cursor_y = box_y + box_h - 6;
 
@@ -243,7 +217,7 @@ void drawBitmaps128x296()
 		display.setTextColor(GxEPD_BLACK);
 		int16_t tbx, tby; uint16_t tbw, tbh;
 
-		int precision = getPrecision(fiatCurrency);
+		int precision = display::getPrecision(fiatCurrency);
 		std::ostringstream stream;
 		stream << std::fixed << std::setprecision(precision) << amount << " " << fiatCurrency;
 		const std::string str = stream.str();
@@ -276,8 +250,8 @@ void drawBitmaps128x296()
 		clearQRCode();
 
 		logger::write("Render QR code: " + dataStr);
-		const char* data = toUpperCase(dataStr).c_str();
-		const int size = calculateQRCodeSize(dataStr);
+		const char* data = display::toUpperCase(dataStr).c_str();
+		const int size = display::calculateQRCodeSize(dataStr);
 		QRCode qrcode;
 		uint8_t qrcodeData[qrcode_getBufferSize(size)];
 		qrcode_initText(&qrcode, qrcodeData, size, ECC_LOW, data);

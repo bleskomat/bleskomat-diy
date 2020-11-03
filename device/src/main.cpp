@@ -18,8 +18,7 @@
 #include <Arduino.h>
 
 #include "config.h"
-// #include "display.h"
-#include "eink.h"
+#include "display.h"
 #include "logger.h"
 #include "modules.h"
 #include "sdcard.h"
@@ -33,10 +32,10 @@ void setup() {
 	sdcard::init();
 	config::init();
 	logger::write("Config OK");
-	eink::init();
-	eink::splashScreen();
-	eink::resetScreen();
-	logger::write("Eink OK");
+	screen::init();
+	screen::splashScreen();
+	screen::resetScreen();
+	logger::write("Screen OK");
 	coinAcceptor::init();
 	coinAcceptor::setFiatCurrency(config::getConfig().fiatCurrency);
 	logger::write("Coin Reader OK");
@@ -46,21 +45,21 @@ void setup() {
 const unsigned long bootTime = millis();// milliseconds
 const unsigned long minWaitAfterBootTime = 2000;// milliseconds
 const unsigned long minWaitTimeSinceInsertedFiat = 15000;// milliseconds
-const unsigned long maxTimeDisplayQrCode = 120000;// milliseconds
+const unsigned long maxTimeDisplayQrCode = 12000;// milliseconds
 
 void loop() {
 	if (millis() - bootTime >= minWaitAfterBootTime) {
 		// Minimum time has passed since boot.
 		// Start performing checks.
 		coinAcceptor::loop();
-		if (eink::getTimeSinceRenderedQRCode() >= maxTimeDisplayQrCode) {
+		if (screen::getTimeSinceRenderedQRCode() >= maxTimeDisplayQrCode) {
 			// Automatically clear the QR code from the screen after some time has passed.
-			eink::resetScreen();
-			eink::clearQRCode();
-		} else if (coinAcceptor::coinInserted() && eink::hasRenderedQRCode()) {
+			screen::resetScreen();
+			screen::clearQRCode();
+		} else if (coinAcceptor::coinInserted() && screen::hasRenderedQRCode()) {
 			// Clear the QR code when new coins are inserted.
-			eink::resetScreen();
-			eink::clearQRCode();
+			screen::resetScreen();
+			screen::clearQRCode();
 		}
 		float accumulatedValue = coinAcceptor::getAccumulatedValue();
 
@@ -75,11 +74,11 @@ void loop() {
 			// Create a withdraw request and render it as a QR code.
 			const std::string req = util::createSignedWithdrawRequest(accumulatedValue);
 			// Convert to uppercase because it reduces the complexity of the QR code.
-			eink::renderQRCode("LIGHTNING:" + util::toUpperCase(req));
+			screen::renderQRCode("LIGHTNING:" + util::toUpperCase(req));
 			coinAcceptor::reset();
 		}
-		if (!eink::hasRenderedQRCode() && eink::getRenderedAmount() != accumulatedValue) {
-		    eink::updateAmount(accumulatedValue, config::getConfig().fiatCurrency);
+		if (!screen::hasRenderedQRCode() && screen::getRenderedAmount() != accumulatedValue) {
+			screen::updateAmount(accumulatedValue, config::getConfig().fiatCurrency);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 /*
 	Copyright (C) 2020 Samotari (Charles Hill, Carlos Garcia Ortiz)
+	Copyright (C) 2020 Tomas Stary
 
 	This program is free software: you can redistribute it and/or modify
 	it under the terms of the GNU General Public License as published by
@@ -15,18 +16,29 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef BLESKOMAT_MODULES_H
-#define BLESKOMAT_MODULES_H
+
+#include "SPI.h"
+#include "TFT_eSPI.h"
+
+#ifndef BG_COLOR_HEX
+	#define BG_COLOR_HEX "FFFFFF"
 #endif
 
-#ifdef COIN_ACCEPTOR
-	#include "modules/coin-acceptor.h"
+#ifndef TEXT_COLOR_HEX
+	#define TEXT_COLOR_HEX "000000"
 #endif
 
-#ifdef EINK_128x296
-	#include "modules/eink128x296.h"
-#endif
+namespace oled {
+	void init();
+	void splashScreen();
+	void resetScreen();
+	void updateAmount(const float &amount, const std::string &fiatCurrency);
+	void clearAmount();
+	float getRenderedAmount();
+	void renderQRCode(const std::string &dataStr);
+	void clearQRCode();
+	bool hasRenderedQRCode();
+	unsigned long getTimeSinceRenderedQRCode();
+}
 
-#ifdef OLED
-	#include "modules/oled.h"
-#endif
+namespace screen = oled;
