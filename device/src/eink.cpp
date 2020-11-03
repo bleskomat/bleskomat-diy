@@ -251,9 +251,17 @@ void drawBitmaps128x296()
 
 	void updateAmount(const float &amount, const std::string &fiatCurrency)
 	{
+
+		uint16_t box_x = 10;
+		uint16_t box_y = 15;
+		uint16_t box_w = 70;
+		uint16_t box_h = 20;
+		uint16_t cursor_y = box_y + box_h - 6;
+
+		display.setPartialWindow(box_x, box_y, box_w, box_h);
+
 		// clearAmount();
 		RENDERED_AMOUNT = amount;
-		//Serial.println("helloWorld");
 		display.setFont(&FreeMonoBold9pt7b);
 		int16_t fontHeight = 9;
 
@@ -273,18 +281,15 @@ void drawBitmaps128x296()
 		uint16_t x = ((display.width() - tbw) / 2) - tbx;
 		// uint16_t y = ((display.height() - tbh) / 2) - tby
 		uint16_t y = fontHeight + 2;
-		display.setFullWindow();
-		display.firstPage();
+
+		// display.firstPage();
 		do
 		{
-			display.fillScreen(GxEPD_WHITE);
-			display.setCursor(x, y);
+			display.fillRect(box_x, box_y, box_w, box_h, GxEPD_WHITE);
+			display.setCursor(box_x, cursor_y);
 			display.print((String) text);
 		}
 		while (display.nextPage());
-		//Serial.println("helloWorld done");
-
-		// free(text); // deallocate the string
 	}
 
 	void clearAmount(){}
