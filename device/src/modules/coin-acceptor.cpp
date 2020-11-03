@@ -58,25 +58,29 @@ namespace {
 
 namespace coinAcceptor {
 
+	uint8_t timeBetweenCoins = 200;
+
 	void init() {
 		pinMode(COIN_ACCEPTOR_PIN, INPUT_PULLUP);
 		LAST_PIN_READ = readPin();
 	}
 
 	void loop() {
-		COIN_INSERTED = false;
-		if (pinStateHasChanged()) {
-			if (coinWasInserted()) {
-				// A coin was inserted.
-				// This code executes once for each value unit the coin represents.
-				// For example: A coin worth 5 CZK will execute this code 5 times.
-				logger::write("Coin inserted");
-				incrementAccumulatedValue();
-				LAST_INSERTED_TIME = millis();
-				COIN_INSERTED = true;
+		do{
+			COIN_INSERTED = false;
+			if (pinStateHasChanged()) {
+				if (coinWasInserted()) {
+					// A coin was inserted.
+					// This code executes once for each value unit the coin represents.
+					// For example: A coin worth 5 CZK will execute this code 5 times.
+					logger::write("Coin inserted");
+					incrementAccumulatedValue();
+					LAST_INSERTED_TIME = millis();
+					COIN_INSERTED = true;
+				}
+				flipPinState();
 			}
-			flipPinState();
-		}
+		} while( (millis() - LAST_INSERTED_TIME ) < timeBetweenCoins);
 	}
 
 	bool coinInserted() {
