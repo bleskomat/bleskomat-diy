@@ -80,14 +80,7 @@ namespace eink {
 		// *** end of special handling for Waveshare ESP32 Driver board *** //
 		// **************************************************************** //
 
-		// display.setRotation(0);
-		display.setFont(&FreeMonoBold12pt7b);
-		display.setTextColor(GxEPD_BLACK);
-		display.setRotation(0);
-		display.setFullWindow();
-		display.firstPage();
-
-		display.powerOff();
+		// display.powerOff();
 		// deepSleepTest();
 		Serial.println("setup done");
 
@@ -100,7 +93,7 @@ namespace eink {
 
 	void splashScreen()
 	{
-
+		display.setRotation(0);
 
 #ifdef _GxBitmaps200x200_H_
 		Serial.println("_GxBitmaps200x200_H_");
@@ -115,24 +108,6 @@ namespace eink {
 		display.setFont(&FreeMonoBold12pt7b);
 		display.setRotation(1);
 
-		// int16_t tbx, tby; uint16_t tbw, tbh;
-		
-		// String text = "BLESKOMAT\n" "  insert coin";
-
-		// display.getTextBounds(text, 0, 0, &tbx, &tby, &tbw, &tbh);
-		// // center bounding box by transposition of origin:
-		// uint16_t x = ((display.width() - tbw) / 2) - tbx;
-		// uint16_t y = ((display.height() - tbh) / 2) - tby;
-		// display.setFullWindow();
-		// display.firstPage();
-		// do
-		// {
-		// 	display.fillScreen(GxEPD_WHITE);
-		// 	display.setCursor(x, y);
-		// 	display.print(text);
-		// }
-		// while (display.nextPage());
-		Serial.println("helloWorld done");
 	}
 
 
@@ -282,7 +257,6 @@ void drawBitmaps128x296()
 		// uint16_t y = ((display.height() - tbh) / 2) - tby
 		uint16_t y = fontHeight + 2;
 
-		// display.firstPage();
 		do
 		{
 			display.fillRect(box_x, box_y, box_w, box_h, GxEPD_WHITE);
@@ -336,6 +310,35 @@ void drawBitmaps128x296()
 		display.firstPage();
 
 		LAST_RENDERED_QRCODE_TIME = 0;
+	}
+
+	void resetScreen() {
+		logger::write("Reseting screen");
+
+		display.setFont(&FreeMonoBold12pt7b);
+		display.setTextColor(GxEPD_BLACK);
+		display.setRotation(1);
+		display.setFullWindow();
+		display.firstPage();
+
+		int16_t tbx, tby; uint16_t tbw, tbh;
+		
+		String text = "BLESKOMAT\n" "  insert coin";
+
+		display.getTextBounds(text, 0, 0, &tbx, &tby, &tbw, &tbh);
+		// center bounding box by transposition of origin:
+		uint16_t x = ((display.width() - tbw) / 2) - tbx;
+		uint16_t y = ((display.height() - tbh) / 2) - tby;
+		display.setFullWindow();
+		display.firstPage();
+		do
+		{
+			display.fillScreen(GxEPD_WHITE);
+			display.setCursor(x, y);
+			display.print(text);
+		}
+		while (display.nextPage());
+		Serial.println("helloWorld done");
 	}
 
 	bool hasRenderedQRCode() {

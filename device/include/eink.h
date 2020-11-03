@@ -70,6 +70,7 @@
 namespace eink {
 	void init();
 	void splashScreen();
+	void resetScreen();
 
 #ifdef _GxBitmaps200x200_H_
 	void drawBitmaps200x200();

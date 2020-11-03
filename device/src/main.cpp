@@ -35,6 +35,7 @@ void setup() {
 	logger::write("Config OK");
 	eink::init();
 	eink::splashScreen();
+	eink::resetScreen();
 	logger::write("Eink OK");
 	coinAcceptor::init();
 	coinAcceptor::setFiatCurrency(config::getConfig().fiatCurrency);
@@ -54,9 +55,11 @@ void loop() {
 		coinAcceptor::loop();
 		if (eink::getTimeSinceRenderedQRCode() >= maxTimeDisplayQrCode) {
 			// Automatically clear the QR code from the screen after some time has passed.
+			eink::resetScreen();
 			eink::clearQRCode();
 		} else if (coinAcceptor::coinInserted() && eink::hasRenderedQRCode()) {
 			// Clear the QR code when new coins are inserted.
+			eink::resetScreen();
 			eink::clearQRCode();
 		}
 		float accumulatedValue = coinAcceptor::getAccumulatedValue();
