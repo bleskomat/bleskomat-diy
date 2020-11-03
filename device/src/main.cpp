@@ -34,7 +34,7 @@ void setup() {
 	config::init();
 	logger::write("Config OK");
 	eink::init();
-	eink::updateAmount(0.00, config::getConfig().fiatCurrency);
+	eink::splashScreen();
 	logger::write("Eink OK");
 	coinAcceptor::init();
 	coinAcceptor::setFiatCurrency(config::getConfig().fiatCurrency);
@@ -60,6 +60,10 @@ void loop() {
 			eink::clearQRCode();
 		}
 		float accumulatedValue = coinAcceptor::getAccumulatedValue();
+
+		// Serial.printf("Time since insert: %.2f\n", coinAcceptor::getTimeSinceLastInserted());
+		// Serial.printf("Accumulated value: %.2f\n", accumulatedValue);
+		
 		if (
 			accumulatedValue > 0 &&
 			coinAcceptor::getTimeSinceLastInserted() >= minWaitTimeSinceInsertedFiat

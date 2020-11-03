@@ -1,3 +1,11 @@
+
+#include "logger.h"
+#include "qrcode.h"
+#include <iomanip>
+#include <sstream>
+#include <string>
+#include <Arduino.h>
+
 // Display Library example for SPI e-paper panels from Dalian Good Display and boards from Waveshare.
 // Requires HW SPI and Adafruit_GFX. Caution: the e-paper panels require 3.3V supply AND data lines!
 //
@@ -35,11 +43,42 @@
 
 #include <GxEPD2_BW.h>
 #include <GxEPD2_3C.h>
+#include <Fonts/FreeMonoBold9pt7b.h>
+#include <Fonts/FreeMonoBold12pt7b.h>
 #include <Fonts/FreeMonoBold24pt7b.h>
+
+// #include "bitmaps/Bitmaps200x200.h" // 1.54" b/w
+#include "bitmaps/Bitmaps128x296.h" // 2.9"  b/w
+#include "bleskomat_128x296.h" // 2.9"  b/w
+
+// comment out unused bitmaps to reduce code space used
+// #include "bitmaps/Bitmaps200x200.h" // 1.54" b/w
+// #include "bitmaps/Bitmaps104x212.h" // 2.13" b/w flexible GDEW0213I5F
+// #include "bitmaps/Bitmaps128x250.h" // 2.13" b/w
+// #include "bitmaps/Bitmaps128x296.h" // 2.9"  b/w
+// #include "bitmaps/Bitmaps176x264.h" // 2.7"  b/w
+// #include "bitmaps/Bitmaps400x300.h" // 4.2"  b/w
+// #include "bitmaps/Bitmaps640x384.h" // 7.5"  b/w
+// // 3-color
+// #include "bitmaps/Bitmaps3c200x200.h" // 1.54" b/w/r
+// #include "bitmaps/Bitmaps3c104x212.h" // 2.13" b/w/r
+// #include "bitmaps/Bitmaps3c128x296.h" // 2.9"  b/w/r
+// #include "bitmaps/Bitmaps3c176x264.h" // 2.7"  b/w/r
+// #include "bitmaps/Bitmaps3c400x300.h" // 4.2"  b/w/r
+
 
 namespace eink {
 	void init();
-	void helloWorld();
+	void splashScreen();
+
+#ifdef _GxBitmaps200x200_H_
+	void drawBitmaps200x200();
+#endif
+
+#ifdef _GxBitmaps128x296_H_
+	void drawBitmaps128x296();
+#endif
+
 	void updateAmount(const float &amount, const std::string &fiatCurrency);
 	void clearAmount();
 	float getRenderedAmount();
