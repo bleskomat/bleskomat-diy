@@ -185,10 +185,8 @@ make install
 If while developing you need to install a new library for the device firmware, use the following as a guide:
 ```bash
 cd ./device
-platformio lib install --save LIBRARY_NAME[@VERSION]
+platformio lib install LIBRARY_NAME[@VERSION]
 ```
-The `--save` flag tells platformio to add the library to the project's `platformio.ini` file.
-
 You can find PlatformIO's libraries repository [here](https://platformio.org/lib).
 
 If you need to add dependencies to the server:
