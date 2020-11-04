@@ -15,6 +15,9 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifndef BLESKOMAT_LOGGER_H
+#define BLESKOMAT_LOGGER_H
+
 #include <iostream>
 #include <string>
 
@@ -22,3 +25,5 @@ namespace logger {
 	void enable();
 	void write(const std::string &msg);
 }
+
+#endif

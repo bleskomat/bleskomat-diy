@@ -15,6 +15,9 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifndef BLESKOMAT_MODULES_COIN_ACCEPTOR_H
+#define BLESKOMAT_MODULES_COIN_ACCEPTOR_H
+
 #include "logger.h"
 #include <Arduino.h>
 
@@ -31,3 +34,5 @@ namespace coinAcceptor {
 	void setFiatCurrency(const std::string &fiatCurrency);
 	void reset();
 }
+
+#endif

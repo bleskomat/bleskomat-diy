@@ -33,11 +33,6 @@ namespace {
 		return tft.fontHeight() * TEXT_MULTIPLIER;
 	}
 
-	std::string toUpperCase(std::string s) {
-		std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return std::toupper(c); });
-		return s;
-	}
-
 	int calculateQRCodeSize(const std::string &dataStr) {
 		int size = 12;
 		int sizes[17] = { 25, 47, 77, 114, 154, 195, 224, 279, 335, 395, 468, 535, 619, 667, 758, 854, 938 };
@@ -119,7 +114,7 @@ namespace display {
 	void renderQRCode(const std::string &dataStr) {
 		clearQRCode();
 		logger::write("Render QR code: " + dataStr);
-		const char* data = toUpperCase(dataStr).c_str();
+		const char* data = dataStr.c_str();
 		const int size = calculateQRCodeSize(dataStr);
 		QRCode qrcode;
 		uint8_t qrcodeData[qrcode_getBufferSize(size)];

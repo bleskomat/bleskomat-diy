@@ -15,6 +15,11 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifndef BLESKOMAT_MODULES_H
+#define BLESKOMAT_MODULES_H
+
 #ifdef COIN_ACCEPTOR
 	#include "modules/coin-acceptor.h"
+#endif
+
 #endif
