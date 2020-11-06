@@ -138,6 +138,24 @@ Notes on pin naming:
 * The `G23` may be there **twice** - the correct one is next to `GND`.
 * Some boards have typos so a bit of guess-and-check is necessary sometimes.
 
+#### Wiring the waveshare e-paper module
+
+Currently the eink display is wired to the following pins.
+
+| ESP32 | e-paper |
+|-------|---------|
+| BUSY  | D25     |
+| RST   | D26     |
+| DC    | D27     |
+| CS    | D15     |
+| CLK   | D13     |
+| DIN   | D14     |
+| VCC   | 3.3V    |
+
+To enable the module uncomment the `-D EINK_128x296` macro in
+`device/platformio.ini` and comment `-D OLED` macro to disable the TFT
+screen.
+
 
 #### Wiring the SD card
 
