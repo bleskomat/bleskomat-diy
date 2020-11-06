@@ -27,14 +27,13 @@
 void setup() {
 	Serial.begin(115200);
 	logger::enable();
+	sdcard::init();
 	config::init();
-	config::printConfig();
-
 	display::init();
-	display::updateAmount(0.00, config::getFiatCurrency());
+	display::updateAmount(0.00, config::getConfig().fiatCurrency);
 	logger::write("Display OK");
 	coinAcceptor::init();
-	coinAcceptor::setFiatCurrency(config::getFiatCurrency());
+	coinAcceptor::setFiatCurrency(config::getConfig().fiatCurrency);
 	logger::write("Coin Reader OK");
 	logger::write("Setup OK");
 }
@@ -69,7 +68,7 @@ void loop() {
 			coinAcceptor::reset();
 		}
 		if (!display::hasRenderedQRCode() && display::getRenderedAmount() != accumulatedValue) {
-		    display::updateAmount(accumulatedValue, config::getFiatCurrency());
+		    display::updateAmount(accumulatedValue, config::getConfig().fiatCurrency);
 		}
 	}
 }

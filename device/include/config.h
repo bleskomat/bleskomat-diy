@@ -18,39 +18,16 @@
 #ifndef BLESKOMAT_CONFIG_H
 #define BLESKOMAT_CONFIG_H
 
-#ifndef API_KEY_ID
-	#error "Missing required build flag: API_KEY_ID"
-#endif
-
-#ifndef API_KEY_SECRET
-	#error "Missing required build flag: API_KEY_SECRET"
-#endif
-
-#ifndef CALLBACK_URL
-	#error "Missing required build flag: CALLBACK_URL"
-#endif
-
-#ifndef FIAT_CURRENCY
-	#error "Missing required build flag: FIAT_CURRENCY"
-#endif
-
 #include "logger.h"
+#include "sdcard.h"
 
-#define ERR_FILE -1
-#define ERR_VARS -2
+#include <lnurl.h>
 
-struct LNconf;
+#include <sstream>
 
 namespace config {
 	void init();
-	void printConfig();
-	void setConfig(const LNconf config);
-	void setDefault();
-	int  setFromFile(const char* fileName);
-	std::string getApiKeyId();
-	std::string getApiKeySecret();
-	std::string getCallbackUrl();
-	std::string getFiatCurrency();
+	LnurlSignerConfig getConfig();
 }
 
 #endif

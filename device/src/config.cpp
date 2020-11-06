@@ -16,107 +16,50 @@
 */
 
 #include "config.h"
-#include "sdcard.h"
 
-struct LNconf {
-	char id[63];
-	char secret[63];
-	char url[255];
-	char currency[7];
-};
+namespace {
 
-namespace config {
-	std::string apiKeyId;
-	std::string apiKeySecret;
-	std::string callbackUrl;
-	std::string fiatCurrency;
-
-
-	void init() {
-		if ( sdcard::mount() < 0 ) {
-			printf("SD card failed to mount, setting default config.\n");
-			setDefault();
-		} else {
-			printf("Card mounted, set config from SD card.\n");
-			if ( setFromFile("/sdcard/bleskomat.conf") < 0 ) {
-				printf("Setting from file failed, falling back to default config.\n");
-				setDefault();
-			}
-			sdcard::umount();
-		}
-	}
+	LnurlSignerConfig values;
 
 	void printConfig() {
-		logger::write("apiKeyId: " + apiKeyId);
-		logger::write("apiKeySecret: " + apiKeySecret);
-		logger::write("callbackUrl: " + callbackUrl);
-		logger::write("fiatCurrency: " + fiatCurrency);
+		logger::write("config.apiKey.id: " + values.apiKey.id);
+		logger::write("config.apiKey.key: " + values.apiKey.key);
+		logger::write("config.apiKey.encoding: " + values.apiKey.encoding);
+		logger::write("config.callbackUrl: " + values.callbackUrl);
+		logger::write("config.fiatCurrency: " + values.fiatCurrency);
 	}
 
-	void setConfig(const LNconf config) {
-		apiKeyId.assign(config.id);
-		apiKeySecret.assign(config.secret);
-		callbackUrl.assign(config.url);
-		fiatCurrency.assign(config.currency);
-	}
-
-	void setDefault() {
-		LNconf config;
-
-		strcpy(config.id, API_KEY_ID);
-		strcpy(config.secret, API_KEY_SECRET);
-		strcpy(config.url, CALLBACK_URL);
-		strcpy(config.currency, FIAT_CURRENCY);
-
-		setConfig(config);
-	}
-
-	int setFromFile(const char* fileName) {
-		LNconf config;
-		FILE* fp = fopen(fileName, "r");
-
-		if ( !fp ) {
-			printf("Failed opening config file %s.\n", fileName);
-			return ERR_FILE;
+	int readFromFile(const char* fileName) {
+		File dataFile = SD_MMC.open(fileName, FILE_READ);
+		if (!dataFile) {
+			logger::write("Failed to open file " + std::string(fileName));
+			return -1;
 		}
-
-		if ( !fscanf(fp, "%s", config.id) ){
-			printf("Failed reading ID.\n");
-			return ERR_VARS;
+		std::string buffer = "";
+		while (dataFile.available()) {
+			buffer += dataFile.read();
 		}
-
-		if ( !fscanf(fp, "%s", config.secret) ) {
-			printf("Failed reading secret.\n");
-			return ERR_VARS;
-		}
-
-		if ( !fscanf(fp, "%s", config.url) ) {
-			printf("Failed reading URL.\n");
-			return ERR_VARS;
-		}
-
-		if ( !fscanf(fp, "%s", config.currency) ) {
-			printf("Failed reading currency.\n");
-			return ERR_VARS;
-		}
-
-		setConfig(config);
-		fclose(fp);
-
+		std::cout << buffer;
+		dataFile.close();
 		return 0;
 	}
+}
 
-	std::string getApiKeyId(){
-		return apiKeyId;
-	}
-	std::string getApiKeySecret(){
-		return apiKeySecret;
-	}
-	std::string getCallbackUrl(){
-		return callbackUrl;
-	}
-	std::string getFiatCurrency(){
-		return fiatCurrency;
+namespace config {
+
+	void init() {
+		if (!sdcard::isReady()) {
+			logger::write("SD card failed to mount. Using default configuration.");
+		} else {
+			logger::write("SD card mounted. Reading configuration file from SD card.");
+			if (readFromFile("/sdcard/bleskomat.conf") != 0) {
+				logger::write("Failed to read configuration file. Falling back to defaults.");
+			}
+		}
+		printConfig();
 	}
 
+	LnurlSignerConfig getConfig() {
+		return values;
+	}
 }
