@@ -23,6 +23,9 @@
 
 #include <lnurl.h>
 
+#include <algorithm>
+#include <string>
+#include <fstream>
 #include <sstream>
 
 namespace config {

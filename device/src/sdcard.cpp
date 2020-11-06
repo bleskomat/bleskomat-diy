@@ -19,6 +19,52 @@
 
 namespace {
 	bool initialized = false;
+
+	int mount() {
+		sdmmc_host_t host = SDSPI_HOST_DEFAULT();
+		sdspi_slot_config_t slot_config = SDSPI_SLOT_CONFIG_DEFAULT();
+
+		slot_config.gpio_miso = (gpio_num_t) PIN_NUM_MISO;
+		slot_config.gpio_mosi = (gpio_num_t) PIN_NUM_MOSI;
+		slot_config.gpio_sck  = (gpio_num_t) PIN_NUM_CLK;
+		slot_config.gpio_cs   = (gpio_num_t) PIN_NUM_CS;
+
+		// Options for mounting the filesystem.
+		// If format_if_mount_failed is set to true, SD card will be partitioned and
+		// formatted in case when mounting fails.
+		esp_vfs_fat_sdmmc_mount_config_t mount_config =
+			{
+				.format_if_mount_failed = false,
+				.max_files = 5,
+				.allocation_unit_size = 16 * 1024
+			};
+
+		// Use settings defined above to initialize SD card and mount FAT filesystem.
+		// Note: esp_vfs_fat_sdmmc_mount is an all-in-one convenience function.
+		// Please check its source code and implement error recovery when developing
+		// production applications.
+		sdmmc_card_t* card;
+		esp_err_t ret = esp_vfs_fat_sdmmc_mount("/sdcard", &host, &slot_config, &mount_config, &card);
+
+		if (ret != ESP_OK) {
+			if (ret == ESP_FAIL) {
+				printf("Failed to mount filesystem, try to format the card.");
+			} else {
+				printf("Failed to initialize the card (%s).\n", esp_err_to_name(ret));
+			}
+			return -1;
+		}
+
+		// Card has been initialized, print its properties
+		// sdmmc_card_print_info(stdout, card);
+
+		return 1;
+	}
+
+	void umount() {
+		// All done, unmount partition and disable SDMMC or SPI peripheral
+		esp_vfs_fat_sdmmc_unmount();
+	}
 }
 
 namespace sdcard {
@@ -28,7 +74,7 @@ namespace sdcard {
 	}
 
 	void init() {
-		if (SD_MMC.begin()) {
+		if (mount() == 1) {
 			logger::write("SD card initialized");
 			initialized = true;
 		} else {

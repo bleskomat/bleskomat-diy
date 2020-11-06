@@ -29,18 +29,47 @@ namespace {
 		logger::write("config.fiatCurrency: " + values.fiatCurrency);
 	}
 
+	void readFromLine(const std::string &line) {
+		// The character used to separate key/value pair - e.g "key=value".
+		const std::string delimiter = "=";
+		const auto pos = line.find(delimiter);
+		if (pos != std::string::npos) {
+			// Found delimiter.
+			const std::string key = line.substr(0, pos);
+			const std::string value = line.substr(pos + 1);
+			if (key == "apiKey.id") {
+				values.apiKey.id = value;
+			} else if (key == "apiKey.key") {
+				values.apiKey.key = value;
+			} else if (key == "apiKey.encoding") {
+				values.apiKey.encoding = value;
+			} else if (key == "callbackUrl") {
+				values.callbackUrl = value;
+			} else if (key == "fiatCurrency") {
+				values.fiatCurrency = value;
+			} else if (key == "shorten") {
+				values.shorten = (value == "true" || value == "1");
+			} else {
+				logger::write("Unknown key found in configuration file: \"" + key + "\"");
+			}
+		}
+	}
+
 	int readFromFile(const char* fileName) {
-		File dataFile = SD_MMC.open(fileName, FILE_READ);
-		if (!dataFile) {
-			logger::write("Failed to open file " + std::string(fileName));
-			return -1;
+		try {
+			std::ifstream file(fileName);
+			if (!file) {
+				logger::write("Failed to open file " + std::string(fileName));
+				return -1;
+			}
+			std::string line = "";
+			while (std::getline(file, line)) {
+				readFromLine(line);
+			}
+			file.close();
+		} catch (const std::exception &e) {
+			std::cerr << e.what() << std::endl;
 		}
-		std::string buffer = "";
-		while (dataFile.available()) {
-			buffer += dataFile.read();
-		}
-		std::cout << buffer;
-		dataFile.close();
 		return 0;
 	}
 }
