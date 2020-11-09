@@ -34,6 +34,7 @@
 
 namespace sdcard {
 	bool isReady();
+	std::string getMountPoint();
 	void init();
 }
 

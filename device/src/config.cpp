@@ -55,8 +55,9 @@ namespace {
 		}
 	}
 
-	int readFromFile(const char* fileName) {
+	int readFromFile(const std::string &t_fileName) {
 		try {
+			const char* fileName = t_fileName.c_str();
 			std::ifstream file(fileName);
 			if (!file) {
 				logger::write("Failed to open file " + std::string(fileName));
@@ -72,6 +73,12 @@ namespace {
 		}
 		return 0;
 	}
+
+	std::string getConfigFilePath() {
+		std::string configFilePath = sdcard::getMountPoint();
+		configFilePath += "/bleskomat.conf";
+		return configFilePath;
+	}
 }
 
 namespace config {
@@ -81,7 +88,7 @@ namespace config {
 			logger::write("SD card failed to mount. Using default configuration.");
 		} else {
 			logger::write("SD card mounted. Reading configuration file from SD card.");
-			if (readFromFile("/sdcard/bleskomat.conf") != 0) {
+			if (readFromFile(getConfigFilePath()) != 0) {
 				logger::write("Failed to read configuration file. Falling back to defaults.");
 			}
 		}
