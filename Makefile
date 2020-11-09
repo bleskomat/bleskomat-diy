@@ -51,7 +51,8 @@ monitor\
 server\
 signedLnurl
 
-.SILENT: signedLnurl
+.SILENT: signedLnurl\
+config
 
 install:
 	cd $(DEVICE_DIR) && platformio lib install
@@ -69,11 +70,8 @@ monitor:
 server:
 	cd $(SERVER_DIR) && npm start
 
-bleskomat.conf: $(CONFIG)
-	jq -r '.lnurl.auth.apiKeys[0].id' $< > $@
-	jq -r '.lnurl.auth.apiKeys[0].key' $< >> $@
-	echo `jq -r '.lnurl.url' $<``jq -r '.lnurl.endpoint' $<` >> $@
-	jq -r '.fiatCurrency' $< >> $@
+config:
+	cd $(DEVICE) && npm run --silent print:config
 
 signedLnurl:
 	cd $(SERVER_DIR) && npm run --silent generate:signedLnurl -- "${AMOUNT}"

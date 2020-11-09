@@ -23,6 +23,7 @@ The world's simplest Lightning Network ATM.
 	* [Using SSH and a VPS](#using-ssh-and-a-vps)
 	* [Using ngrok](#using-ngrok)
 	* [Using TOR](#using-tor)
+* [Prepare SD Card](#prepare-sd-card)
 * [Generate and Test Signed LNURLs](#generate-and-test-signed-lnurls)
 * [Notes](#notes)
 * [License](#license)
@@ -52,7 +53,8 @@ This section includes information about the requirements (software + hardware) t
 
 To build the physical device, you will need the following hardware components:
 * [ESP-WROOM-32](https://www.espressif.com/en/products/modules/esp-wroom-32/overview) by espressif
-* TFT Display - The 1.8 inch (128x160 pixel) model is assumed by default
+* TFT Display with SD card slot - The 1.8 inch (128x160 pixel) model is assumed by default
+* SD Card
 * Coin Acceptor - "Model HX-616"
 * 12V DC power adaptor with \~1A
 * Step-down converter with USB (F) adapter - alternatively you could use a USB car charger
@@ -351,6 +353,26 @@ Now let's move on to [Generate and Test Signed LNURLs](#generate-and-test-signed
 ### Using TOR
 
 It should also be possible to use TOR for remote tunneling to your local server. Anyone who has done this and would like to write how-to instructions, please add them here.
+
+
+## Prepare SD Card
+
+Before continuing here, see [Wiring the SD card](#wiring-the-sd-card).
+
+Format the SD card with FAT32. Create a configuration file with the following command:
+```bash
+make config > ./bleskomat.conf
+```
+This will generate a new configuration file named `bleskomat.conf`. The contents of the config file will be something like this:
+```
+apiKey.id=6d830ddeb0
+apiKey.key=b11cd6b002916691ccf3097eee3b49e51759225704dde88ecfced76ad95324c9
+apiKey.encoding=hex
+callbackUrl=https://0fe4d56b.eu.ngrok.io/lnurl
+fiatCurrency=CZK
+shorten=true
+```
+Copy this file to the SD card.
 
 
 ## Generate and Test Signed LNURLs

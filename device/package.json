@@ -8,6 +8,7 @@
     "compile:only": "platformio run",
     "compile:upload": "platformio run --upload-port ${DEVICE:-/dev/ttyUSB0} --target upload",
     "monitor": "platformio device monitor --port ${DEVICE:-/dev/ttyUSB0}",
+    "print:config": "node ./scripts/printConfig.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "author": {
