@@ -16,7 +16,7 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "modules/eink128x296.h"
+#include "modules/eink.h"
 
 namespace eink {
 
@@ -27,10 +27,14 @@ namespace eink {
 
 /* ******************** */
 /* Bleskomat displays */
+#ifdef EINK_200x200
+/* - for the 1.54 inch display use */
+	GxEPD2_BW<GxEPD2_154, GxEPD2_154::HEIGHT> display(GxEPD2_154(/*CS=*/ 15, /*DC=*/ 27, /*RST=*/ 26, /*BUSY=*/ 25)); // GDEP015OC1 no longer available
+#else // if EINK_128x296
 /* - for the 2.9 inch display use */
 	GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display(GxEPD2_290(/*CS=*/ 15, /*DC=*/ 27, /*RST=*/ 26, /*BUSY=*/ 25));
-/* - for the 1.54 inch display use */
-	// GxEPD2_BW<GxEPD2_154, GxEPD2_154::HEIGHT> display(GxEPD2_154(/*CS=*/ 15, /*DC=*/ 27, /*RST=*/ 26, /*BUSY=*/ 25)); // GDEP015OC1 no longer available
+#endif
+
 #endif
 
 	unsigned long LAST_RENDERED_QRCODE_TIME = 0;
@@ -53,150 +57,61 @@ namespace eink {
 		SPI.begin(13, 12, 14, 15); // map and init SPI pins SCK(13), MISO(12), MOSI(14), SS(15)
 		// *** end of special handling for Waveshare ESP32 Driver board *** //
 		// **************************************************************** //
-
-		// display.powerOff();
-		// deepSleepTest();
-		Serial.println("setup done");
-
 	}
-
-    // note for partial update window and setPartialWindow() method:
-    // partial update window size and position is on byte boundary in physical x direction
-    // the size is increased in setPartialWindow() if x or w are not multiple of 8 for even rotation, y or h for odd rotation
-    // see also comment in GxEPD2_BW.h, GxEPD2_3C.h or GxEPD2_GFX.h for method setPartialWindow()
 
 	void splashScreen()
 	{
 		display.setRotation(0);
-
-#ifdef _GxBitmaps200x200_H_
-		Serial.println("_GxBitmaps200x200_H_");
-		drawBitmaps200x200();
-#endif
-
-#ifdef _GxBitmaps128x296_H_
-		Serial.println("_GxBitmaps128x296_H_");
-		drawBitmaps128x296();
-#endif
-
+		drawLogo();
 		display.setFont(&FreeMonoBold12pt7b);
 		display.setRotation(1);
-
 	}
 
 
-#ifdef _GxBitmaps200x200_H_
-void drawBitmaps200x200()
-{
-#if defined(__AVR)
-  const unsigned char* bitmaps[] =
-  {
-    logo200x200, first200x200 //, second200x200, third200x200, fourth200x200, fifth200x200, sixth200x200, senventh200x200, eighth200x200
-  };
-#elif defined(_BOARD_GENERIC_STM32F103C_H_)
-  const unsigned char* bitmaps[] =
-  {
-    logo200x200, first200x200, second200x200, third200x200, fourth200x200, fifth200x200 //, sixth200x200, senventh200x200, eighth200x200
-  };
-#else
-  const unsigned char* bitmaps[] =
-  {
-    logo200x200, first200x200, second200x200, third200x200, fourth200x200, fifth200x200, sixth200x200, senventh200x200, eighth200x200
-  };
-#endif
-  if ((display.epd2.panel == GxEPD2::GDEP015OC1) || (display.epd2.panel == GxEPD2::GDEH0154D67))
-  {
-    bool m = display.mirror(true);
-    for (uint16_t i = 0; i < sizeof(bitmaps) / sizeof(char*); i++)
-    {
-      display.firstPage();
-      do
-      {
-        display.fillScreen(GxEPD_WHITE);
-        display.drawInvertedBitmap(0, 0, bitmaps[i], display.epd2.WIDTH, display.epd2.HEIGHT, GxEPD_BLACK);
-      }
-      while (display.nextPage());
-      delay(2000);
-    }
-    display.mirror(m);
-  }
-  //else
-  {
-    bool mirror_y = (display.epd2.panel != GxEPD2::GDE0213B1);
-    display.clearScreen(); // use default for white
-    int16_t x = (int16_t(display.epd2.WIDTH) - 200) / 2;
-    int16_t y = (int16_t(display.epd2.HEIGHT) - 200) / 2;
-    for (uint16_t i = 0; i < sizeof(bitmaps) / sizeof(char*); i++)
-    {
-      display.drawImage(bitmaps[i], x, y, 200, 200, false, mirror_y, true);
-      delay(2000);
-    }
-  }
-  bool mirror_y = (display.epd2.panel != GxEPD2::GDE0213B1);
-  for (uint16_t i = 0; i < sizeof(bitmaps) / sizeof(char*); i++)
-  {
-    int16_t x = -60;
-    int16_t y = -60;
-    for (uint16_t j = 0; j < 10; j++)
-    {
-      display.writeScreenBuffer(); // use default for white
-      display.writeImage(bitmaps[i], x, y, 200, 200, false, mirror_y, true);
-      display.refresh(true);
-      if (display.epd2.hasFastPartialUpdate)
-      {
-        // for differential update: set previous buffer equal to current buffer in controller
-        display.epd2.writeScreenBufferAgain(); // use default for white
-        display.epd2.writeImageAgain(bitmaps[i], x, y, 200, 200, false, mirror_y, true);
-      }
-      delay(2000);
-      x += 40;
-      y += 40;
-      if ((x >= int16_t(display.epd2.WIDTH)) || (y >= int16_t(display.epd2.HEIGHT))) break;
-    }
-    if (!display.epd2.hasFastPartialUpdate) break; // comment out for full show
-    break; // comment out for full show
-  }
-  display.writeScreenBuffer(); // use default for white
-  display.writeImage(bitmaps[0], int16_t(0), 0, 200, 200, false, mirror_y, true);
-  display.writeImage(bitmaps[0], int16_t(int16_t(display.epd2.WIDTH) - 200), int16_t(display.epd2.HEIGHT) - 200, 200, 200, false, mirror_y, true);
-  display.refresh(true);
-  delay(2000);
-}
+	void drawLogo()
+	{
+		Serial.println("Drawing Bleskomat logo of the required size.");
+#ifdef EINK_200x200
+#define bleskomat_logo bleskomat_200x200
+#else// if EINK_128x296
+#define bleskomat_logo bleskomat_128x296
 #endif
 
-#ifdef _GxBitmaps128x296_H_
-void drawBitmaps128x296()
-{
-	Serial.println("Drawing Bleskomat logo");
 #if !defined(__AVR)
-  const unsigned char* bitmaps[] =
-  {
-	  bleskomat_128x296 // , pplogo_128x296, Bitmap128x296_1, logo128x296, first128x296, second128x296, third128x296// 
-  };
+		const unsigned char* bitmaps[] =
+			{
+				bleskomat_logo
+			};
 #else
-  const unsigned char* bitmaps[] =
-  {
-	  bleskomat_128x296// ,    pplogo_128x296,	  Bitmap128x296_1, logo128x296 //, first128x296, second128x296, third128x296// 
-  };
+		const unsigned char* bitmaps[] =
+			{
+				bleskomat_logo
+			};
 #endif
-  if (display.epd2.panel == GxEPD2::GDEH029A1)
-  {
-    bool m = display.mirror(true);
-    for (uint16_t i = 0; i < sizeof(bitmaps) / sizeof(char*); i++)
-    {
-      display.firstPage();
-      do
-      {
-        display.fillScreen(GxEPD_WHITE);
-        display.drawInvertedBitmap(0, 0, bitmaps[i], display.epd2.WIDTH, display.epd2.HEIGHT, GxEPD_BLACK);
-      }
-      while (display.nextPage());
-      delay(2000);
-    }
-    display.mirror(m);
-  }
+#undef bleskomat_logo
+
+
+#ifdef EINK_200x200
+		if ((display.epd2.panel == GxEPD2::GDEP015OC1) || (display.epd2.panel == GxEPD2::GDEH0154D67))
+#else// if EINK_128x296
+			if (display.epd2.panel == GxEPD2::GDEH029A1)
+#endif
+			{
+				bool m = display.mirror(true);
+				for (uint16_t i = 0; i < sizeof(bitmaps) / sizeof(char*); i++)
+				{
+					display.firstPage();
+					do
+					{
+						display.fillScreen(GxEPD_WHITE);
+						display.drawInvertedBitmap(0, 0, bitmaps[i], display.epd2.WIDTH, display.epd2.HEIGHT, GxEPD_BLACK);
+					}
+					while (display.nextPage());
+					delay(2000);
+				}
+				display.mirror(m);
+			}
 }
-#endif
 
 	void updateAmount(const float &amount, const std::string &fiatCurrency)
 	{

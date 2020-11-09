@@ -23,8 +23,8 @@
 	#include "modules/coin-acceptor.h"
 #endif
 
-#ifdef EINK_128x296
-	#include "modules/eink128x296.h"
+#ifdef EINK
+	#include "modules/eink.h"
 #endif
 
 #ifdef OLED
