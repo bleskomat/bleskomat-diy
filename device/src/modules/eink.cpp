@@ -25,14 +25,53 @@ namespace eink {
 // mapping of Waveshare ESP32 Driver Board
 // BUSY -> 25, RST -> 26, DC -> 27, CS-> 15, CLK -> 13, DIN -> 14
 
+#ifndef EINK_CLK
+#define EINK_CLK 13 // CLK -> 13  // -D TFT_SCLK=18
+#endif
+
+#ifndef SPI_MISO
+#define SPI_MISO 12 // 12         // -D TFT_MISO=19
+#endif
+
+#ifndef EINK_DIN
+#define EINK_DIN 14 // DIN -> 14  // -D TFT_MOSI=23
+#endif
+
+#ifndef EINK_CS
+#define EINK_CS  15   // CS -> 15   // -D TFT_CS=5
+#endif
+
+
+#ifndef EINK_DC
+#define EINK_DC 27  // DC -> 27   // -D TFT_DC=17
+#endif
+
+#ifndef EINK_RST
+#define EINK_RST 26 // RST -> 26  // -D TFT_RST=16
+#endif
+
+#ifndef EINK_BUSY
+#define EINK_BUSY 25 // BUSY -> 25
+#endif
+
 /* ******************** */
 /* Bleskomat displays */
 #ifdef EINK_200x200
 /* - for the 1.54 inch display use */
-	GxEPD2_BW<GxEPD2_154, GxEPD2_154::HEIGHT> display(GxEPD2_154(/*CS=*/ 15, /*DC=*/ 27, /*RST=*/ 26, /*BUSY=*/ 25)); // GDEP015OC1 no longer available
+	GxEPD2_BW<GxEPD2_154, GxEPD2_154::HEIGHT> display(
+		GxEPD2_154(/*CS=*/  EINK_CS, 
+				   /*DC=*/ 	EINK_DC, 
+				   /*RST=*/	EINK_RST,
+				   /*BUSY=*/EINK_BUSY)); // GDEP015OC1 no longer available
 #else // if EINK_128x296
 /* - for the 2.9 inch display use */
-	GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display(GxEPD2_290(/*CS=*/ 15, /*DC=*/ 27, /*RST=*/ 26, /*BUSY=*/ 25));
+	// GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display(GxEPD2_290(/*CS=*/ 15, /*DC=*/ 27, /*RST=*/ 26, /*BUSY=*/ 25));
+	GxEPD2_BW<GxEPD2_290, GxEPD2_290::HEIGHT> display(
+		GxEPD2_290(/*CS=*/   EINK_CS, 
+				   /*DC=*/   EINK_DC, 
+				   /*RST=*/  EINK_RST, 
+				   /*BUSY=*/ EINK_BUSY));
+
 #endif
 
 #endif
@@ -54,7 +93,11 @@ namespace eink {
 		// ********************************************************* //
 		SPI.end(); // release standard SPI pins, e.g. SCK(18), MISO(19), MOSI(23), SS(5)
 		//SPI: void begin(int8_t sck=-1, int8_t miso=-1, int8_t mosi=-1, int8_t ss=-1);
-		SPI.begin(13, 12, 14, 15); // map and init SPI pins SCK(13), MISO(12), MOSI(14), SS(15)
+		SPI.begin(EINK_CLK, 
+				  SPI_MISO, 
+				  EINK_DIN, 
+				  EINK_CS); // map and init SPI pins SCK(13), MISO(12), MOSI(14), SS(15)
+		// SPI.begin(13, 12, 14, 15); // map and init SPI pins SCK(13), MISO(12), MOSI(14), SS(15)
 		// *** end of special handling for Waveshare ESP32 Driver board *** //
 		// **************************************************************** //
 	}
