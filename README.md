@@ -146,6 +146,11 @@ Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable
 | GPIO4 (D4)  | COIN     |               |
 |             | GND      | - Ground      |
 
+__Important notes__:
+* There are two switches on the back of the HX-616 coin acceptor:
+	* "NO" (normally open) / "NC" (normally closed) - This should be set to "NO"
+	* "Fast" / "Medium" / "Slow" - This should be set to "Fast"
+
 
 ### Training the Coin Acceptor
 
@@ -207,17 +212,18 @@ make compile
 
 To compile and upload to your device:
 ```bash
-make upload
+make upload DEVICE=/dev/ttyUSB0
 ```
-If you receive a "Permission denied" error about `/dev/ttyUSB0` then you will need to set permissions for that file on your system:
+The device path for your operating system might be different. If you receive a "Permission denied" error about `/dev/ttyUSB0` then you will need to set permissions for that file on your system:
 ```bash
 sudo chown $USER:$USER /dev/ttyUSB0
 ```
 
 To open the serial monitor:
 ```bash
-make monitor
+make monitor DEVICE=/dev/ttyUSB0
 ```
+Again the device path here could be different for your operating system.
 
 
 ## Running the HTTP Server

@@ -25,8 +25,8 @@
 #
 
 ## Variables
-DEVICE=./device
-SERVER=./server
+DEVICE_DIR=./device
+SERVER_DIR=./server
 
 ## Targets
 #
@@ -52,20 +52,20 @@ signedLnurl
 .SILENT: signedLnurl
 
 install:
-	cd $(DEVICE) && platformio lib install
-	cd $(SERVER) && npm install
+	cd $(DEVICE_DIR) && platformio lib install
+	cd $(SERVER_DIR) && npm install
 
 compile:
-	cd $(DEVICE) && npm run compile:only
+	cd $(DEVICE_DIR) && npm run compile:only
 
 upload:
-	cd $(DEVICE) && npm run compile:upload
+	cd $(DEVICE_DIR) && DEVICE=${DEVICE} npm run compile:upload
 
 monitor:
-	cd $(DEVICE) && npm run monitor
+	cd $(DEVICE_DIR) && DEVICE=${DEVICE} npm run monitor
 
 server:
-	cd $(SERVER) && npm start
+	cd $(SERVER_DIR) && npm start
 
 signedLnurl:
-	cd $(SERVER) && npm run --silent generate:signedLnurl -- "${AMOUNT}"
+	cd $(SERVER_DIR) && npm run --silent generate:signedLnurl -- "${AMOUNT}"

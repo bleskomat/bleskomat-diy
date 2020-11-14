@@ -6,8 +6,8 @@
   "main": null,
   "scripts": {
     "compile:only": "platformio run",
-    "compile:upload": "platformio run --upload-port /dev/ttyUSB0 --target upload",
-    "monitor": "platformio device monitor --port /dev/ttyUSB0",
+    "compile:upload": "platformio run --upload-port ${DEVICE:-/dev/ttyUSB0} --target upload",
+    "monitor": "platformio device monitor --port ${DEVICE:-/dev/ttyUSB0}",
     "print:buildFlags": "node ./scripts/printBuildFlags.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
