@@ -28,6 +28,8 @@
 DEVICE_DIR=./device
 SERVER_DIR=./server
 
+CONFIG=$(SERVER)/config.json
+
 ## Targets
 #
 # The format goes:
@@ -49,7 +51,8 @@ monitor\
 server\
 signedLnurl
 
-.SILENT: signedLnurl
+.SILENT: signedLnurl\
+config
 
 install:
 	cd $(DEVICE_DIR) && platformio lib install
@@ -66,6 +69,9 @@ monitor:
 
 server:
 	cd $(SERVER_DIR) && npm start
+
+config:
+	cd $(DEVICE_DIR) && npm run --silent print:config
 
 signedLnurl:
 	cd $(SERVER_DIR) && npm run --silent generate:signedLnurl -- "${AMOUNT}"

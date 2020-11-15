@@ -15,22 +15,27 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef BLESKOMAT_CONFIG_H
-#define BLESKOMAT_CONFIG_H
+#ifndef BLESKOMAT_SDCARD_H
+#define BLESKOMAT_SDCARD_H
 
 #include "logger.h"
-#include "sdcard.h"
 
-#include <lnurl.h>
+#include <stdio.h>
+#include <string.h>
+#include <sys/unistd.h>
+#include <sys/stat.h>
 
-#include <algorithm>
-#include <string>
-#include <fstream>
-#include <sstream>
+#include "esp_err.h"
+#include "esp_log.h"
+#include "esp_vfs_fat.h"
+#include "driver/sdmmc_host.h"
+#include "driver/sdspi_host.h"
+#include "sdmmc_cmd.h"
 
-namespace config {
+namespace sdcard {
+	bool isReady();
+	std::string getMountPoint();
 	void init();
-	LnurlSignerConfig getConfig();
 }
 
 #endif

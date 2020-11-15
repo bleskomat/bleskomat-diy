@@ -19,17 +19,6 @@
 
 namespace {
 
-	LnurlSignerConfig prepareLnurlSignerConfig() {
-		LnurlSignerConfig signerConfig;
-		signerConfig.apiKey.id = config::apiKeyId;
-		signerConfig.apiKey.key = config::apiKeySecret;
-		signerConfig.apiKey.encoding = "";// unspecified encoding
-		signerConfig.callbackUrl = config::callbackUrl;
-		signerConfig.fiatCurrency = config::fiatCurrency;
-		signerConfig.shorten = true;
-		return signerConfig;
-	}
-
 	std::string to_string(const double &number) {
 		std::ostringstream ss;
 		ss << number;
@@ -49,13 +38,12 @@ namespace {
 namespace util {
 
 	std::string createSignedWithdrawRequest(const double &accumulatedValue) {
-		LnurlSignerConfig signerConfig = prepareLnurlSignerConfig();
-		LnurlSigner signer(signerConfig);
+		LnurlSigner signer(config::getConfig());
 		const std::string nonce = generate_nonce();
 		LnurlWithdrawParamsFiat params;
 		params.minWithdrawable = accumulatedValue;
 		params.maxWithdrawable = accumulatedValue;
-		params.defaultDescription = "Bleskomat ATM purchase (" + to_string(accumulatedValue) + " " + signerConfig.fiatCurrency + ")";
+		params.defaultDescription = "Bleskomat ATM purchase (" + to_string(accumulatedValue) + " " + config::getConfig().fiatCurrency + ")";
 		const std::string signedUrl = signer.create_url(params, nonce);
 		const std::string encoded = Lnurl::encode(signedUrl);
 		return encoded;

@@ -15,18 +15,8 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-const printBuildFlags = function(buildFlags) {
-	const output = Object.keys(buildFlags).map(function(name) {
-		const value = buildFlags[name];
-		// Use single quotes around whole build flag definition + double-quotes around value:
-		return `'-D ${name}="${value}"'`;
-	}).join('\n');
-	process.stdout.write(output);
-};
-
 const config = require('../../server/config');
 const apiKey = config.lnurl.auth.apiKeys[0] || null;
-const { endpoint } = config.lnurl;
 
 if (!apiKey) {
 	console.error('Must configure at least one API key; see "auth.apiKeys" in server/config.json');
@@ -40,12 +30,37 @@ if (config.lnurl.url) {
 	const { host, port, protocol } = config.lnurl;
 	baseUrl = `${protocol}://${host}:${port}`;
 }
+const { endpoint } = config.lnurl;
+const callbackUrl = `${baseUrl}${endpoint}`;
 
-let buildFlags = {
-	API_KEY_ID: apiKey.id,
-	API_KEY_SECRET: apiKey.key,
-	CALLBACK_URL: `${baseUrl}${endpoint}`,
-	FIAT_CURRENCY: config.fiatCurrency,
-};
+let items = [
+	{
+		key: 'apiKey.id',
+		value: apiKey.id,
+	},
+	{
+		key: 'apiKey.key',
+		value: apiKey.key,
+	},
+	{
+		key: 'apiKey.encoding',
+		value: apiKey.encoding || '',
+	},
+	{
+		key: 'callbackUrl',
+		value: callbackUrl,
+	},
+	{
+		key: 'fiatCurrency',
+		value: config.fiatCurrency,
+	},
+	{
+		key: 'shorten',
+		value: true,
+	},
+];
 
-printBuildFlags(buildFlags);
+items.forEach(function(item) {
+	const { value, key } = item;
+	process.stdout.write(`${key}=${value}\n`);
+});

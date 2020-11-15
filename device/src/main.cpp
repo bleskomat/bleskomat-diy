@@ -19,6 +19,7 @@
 #include "display.h"
 #include "logger.h"
 #include "modules.h"
+#include "sdcard.h"
 #include "util.h"
 
 #include <string>
@@ -26,13 +27,13 @@
 void setup() {
 	Serial.begin(115200);
 	logger::enable();
+	sdcard::init();
 	config::init();
-	logger::write("Config OK");
 	display::init();
-	display::updateAmount(0.00, config::fiatCurrency);
+	display::updateAmount(0.00, config::getConfig().fiatCurrency);
 	logger::write("Display OK");
 	coinAcceptor::init();
-	coinAcceptor::setFiatCurrency(config::fiatCurrency);
+	coinAcceptor::setFiatCurrency(config::getConfig().fiatCurrency);
 	logger::write("Coin Reader OK");
 	logger::write("Setup OK");
 }
@@ -67,7 +68,7 @@ void loop() {
 			coinAcceptor::reset();
 		}
 		if (!display::hasRenderedQRCode() && display::getRenderedAmount() != accumulatedValue) {
-			display::updateAmount(accumulatedValue, config::fiatCurrency);
+		    display::updateAmount(accumulatedValue, config::getConfig().fiatCurrency);
 		}
 	}
 }

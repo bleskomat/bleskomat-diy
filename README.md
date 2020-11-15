@@ -13,6 +13,7 @@ The world's simplest Lightning Network ATM.
 		* [Wiring Diagram](#wiring-diagram)
 		* [Wiring the Power Supply](#wiring-the-power-supply)
 		* [Wiring the TFT Display](#wiring-the-tft-display)
+		* [Wiring the SD card](#wiring-the-sd-card)
 		* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
 	* [Training the Coin Acceptor](#training-the-coin-acceptor)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
@@ -22,6 +23,7 @@ The world's simplest Lightning Network ATM.
 	* [Using SSH and a VPS](#using-ssh-and-a-vps)
 	* [Using ngrok](#using-ngrok)
 	* [Using TOR](#using-tor)
+* [Prepare SD Card](#prepare-sd-card)
 * [Generate and Test Signed LNURLs](#generate-and-test-signed-lnurls)
 * [Notes](#notes)
 * [License](#license)
@@ -51,7 +53,8 @@ This section includes information about the requirements (software + hardware) t
 
 To build the physical device, you will need the following hardware components:
 * [ESP-WROOM-32](https://www.espressif.com/en/products/modules/esp-wroom-32/overview) by espressif
-* TFT Display - The 1.8 inch (128x160 pixel) model is assumed by default
+* TFT Display with SD card slot - The 1.8 inch (128x160 pixel) model is assumed by default
+* SD Card
 * Coin Acceptor - "Model HX-616"
 * 12V DC power adaptor with \~1A
 * Step-down converter with USB (F) adapter - alternatively you could use a USB car charger
@@ -134,6 +137,18 @@ Notes on pin naming:
 * There are boards where `GPIXXX` are marked as `GXX` instead of `DXX`.
 * The `G23` may be there **twice** - the correct one is next to `GND`.
 * Some boards have typos so a bit of guess-and-check is necessary sometimes.
+
+
+#### Wiring the SD card
+
+The TTF display we are using contain a SD card module. The pins are located above the screen and not soldered to the module by default but the pins can be added. The table of mappings is the following:
+
+|  ESP32       | TFT        |
+|--------------|------------|
+|  GPIO2  (D2) |  SD_MISO   |
+|  GPIO15 (D15)|  SD_MOSI   |
+|  GPIO14 (D14)|  SD_SCK    |
+|  GPIO13 (D13)|  SD_CS     |
 
 
 #### Wiring the Coin Acceptor
@@ -338,6 +353,26 @@ Now let's move on to [Generate and Test Signed LNURLs](#generate-and-test-signed
 ### Using TOR
 
 It should also be possible to use TOR for remote tunneling to your local server. Anyone who has done this and would like to write how-to instructions, please add them here.
+
+
+## Prepare SD Card
+
+Before continuing here, see [Wiring the SD card](#wiring-the-sd-card).
+
+Format the SD card with FAT32. Create a configuration file with the following command:
+```bash
+make config > ./bleskomat.conf
+```
+This will generate a new configuration file named `bleskomat.conf`. The contents of the config file will be something like this:
+```
+apiKey.id=6d830ddeb0
+apiKey.key=b11cd6b002916691ccf3097eee3b49e51759225704dde88ecfced76ad95324c9
+apiKey.encoding=hex
+callbackUrl=https://0fe4d56b.eu.ngrok.io/lnurl
+fiatCurrency=CZK
+shorten=true
+```
+Copy this file to the SD card.
 
 
 ## Generate and Test Signed LNURLs
