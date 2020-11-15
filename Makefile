@@ -71,7 +71,7 @@ server:
 	cd $(SERVER_DIR) && npm start
 
 config:
-	cd $(DEVICE) && npm run --silent print:config
+	cd $(DEVICE_DIR) && npm run --silent print:config
 
 signedLnurl:
 	cd $(SERVER_DIR) && npm run --silent generate:signedLnurl -- "${AMOUNT}"
