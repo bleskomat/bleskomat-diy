@@ -18,6 +18,22 @@
 #ifndef BLESKOMAT_SDCARD_H
 #define BLESKOMAT_SDCARD_H
 
+#ifndef SD_CS
+#define SD_CS 5
+#endif
+
+#ifndef SD_MOSI
+#define SD_MOSI 23
+#endif
+
+#ifndef SD_MISO
+#define SD_MISO 18
+#endif
+
+#ifndef SD_SCK
+#define SD_SCK 19
+#endif
+
 #include "logger.h"
 
 #include <stdio.h>

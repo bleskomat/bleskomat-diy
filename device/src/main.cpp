@@ -18,7 +18,6 @@
 #include <Arduino.h>
 
 #include "config.h"
-#include "display.h"
 #include "logger.h"
 #include "modules.h"
 #include "sdcard.h"
@@ -33,8 +32,7 @@ void setup() {
 	config::init();
 	logger::write("Config OK");
 	screen::init();
-	screen::splashScreen();
-	screen::resetScreen();
+	screen::showSplashPage();
 	logger::write("Screen OK");
 	coinAcceptor::init();
 	coinAcceptor::setFiatCurrency(config::getConfig().fiatCurrency);

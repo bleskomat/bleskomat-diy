@@ -16,21 +16,57 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
+#ifndef BLESKOMAT_MODULES_EPAPER_H
+#define BLESKOMAT_MODULES_EPAPER_H
 
-#include "SPI.h"
-#include "TFT_eSPI.h"
+#include "images/bleskomat_splash_400x300.h"
+#include "images/bleskomat_instructions_400x300.h"
 
-#ifndef BG_COLOR_HEX
-	#define BG_COLOR_HEX "FFFFFF"
+#include "logger.h"
+#include "util.h"
+
+#ifndef EPAPER_CLK
+#define EPAPER_CLK 13
 #endif
 
-#ifndef TEXT_COLOR_HEX
-	#define TEXT_COLOR_HEX "000000"
+#ifndef EPAPER_MISO
+#define EPAPER_MISO 12
 #endif
 
-namespace oled {
+#ifndef EPAPER_DIN
+#define EPAPER_DIN 14
+#endif
+
+#ifndef EPAPER_CS
+#define EPAPER_CS 15
+#endif
+
+#ifndef EPAPER_DC
+#define EPAPER_DC 27
+#endif
+
+#ifndef EPAPER_RST
+#define EPAPER_RST 26
+#endif
+
+#ifndef EPAPER_BUSY
+#define EPAPER_BUSY 25
+#endif
+
+#define ENABLE_GxEPD2_GFX 0
+
+#include <Arduino.h>
+#include <qrcode.h>
+#include <Wire.h>
+#include <GxEPD2_BW.h>
+#include <GxEPD2_3C.h>
+#include <Fonts/FreeMonoBold9pt7b.h>
+#include <Fonts/FreeMonoBold12pt7b.h>
+#include <Fonts/FreeMonoBold24pt7b.h>
+
+namespace epaper {
 	void init();
-	void splashScreen();
+	void showSplashPage();
 	void resetScreen();
 	void updateAmount(const float &amount, const std::string &fiatCurrency);
 	void clearAmount();
@@ -41,4 +77,6 @@ namespace oled {
 	unsigned long getTimeSinceRenderedQRCode();
 }
 
-namespace screen = oled;
+namespace screen = epaper;
+
+#endif

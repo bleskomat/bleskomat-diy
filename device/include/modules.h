@@ -17,16 +17,13 @@
 
 #ifndef BLESKOMAT_MODULES_H
 #define BLESKOMAT_MODULES_H
-#endif
 
 #ifdef COIN_ACCEPTOR
 	#include "modules/coin-acceptor.h"
 #endif
 
-#ifdef EINK
-	#include "modules/eink.h"
+#ifdef EPAPER
+	#include "modules/epaper.h"
 #endif
 
-#ifdef OLED
-	#include "modules/oled.h"
 #endif

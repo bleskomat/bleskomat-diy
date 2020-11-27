@@ -12,8 +12,8 @@ The world's simplest Lightning Network ATM.
 	* [Building the Hardware Device](#building-the-hardware-device)
 		* [Wiring Diagram](#wiring-diagram)
 		* [Wiring the Power Supply](#wiring-the-power-supply)
-		* [Wiring the TFT Display](#wiring-the-tft-display)
-		* [Wiring the SD card](#wiring-the-sd-card)
+		* [Wiring the E-Paper Module](#wiring-the-e-paper-module)
+		* [Wiring the SD Card SPI Module](#wiring-the-sd-card-spi-module)
 		* [Wiring the Coin Acceptor](#wiring-the-coin-acceptor)
 	* [Training the Coin Acceptor](#training-the-coin-acceptor)
 	* [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
@@ -52,9 +52,9 @@ This section includes information about the requirements (software + hardware) t
 ### Hardware Requirements
 
 To build the physical device, you will need the following hardware components:
-* [ESP-WROOM-32](https://www.espressif.com/en/products/modules/esp-wroom-32/overview) by espressif
-* TFT Display with SD card slot - The 1.8 inch (128x160 pixel) model is assumed by default
-* SD Card
+* [ESP-WROOM-32](https://www.espressif.com/en/products/modules/esp-wroom-32/overview) devkit by espressif
+* E-Paper Display Module - WaveShare 4.2 inch (400x300) (b/w)
+* SD Card SPI Module
 * Coin Acceptor - "Model HX-616"
 * 12V DC power adaptor with \~1A
 * Step-down converter with USB (F) adapter - alternatively you could use a USB car charger
@@ -79,6 +79,11 @@ Step-by-step setup process including both hardware and software.
 ### Building the Hardware Device
 
 Before proceeding, be sure that you have all the project's [hardware requirements](#hardware-requirements).
+
+Notes on pin naming:
+* There are dev boards where `GPIXXX` are marked as `GXX` instead of `DXX`.
+* The `G23` may be there **twice** - the correct one is next to `GND`.
+* Some boards have typos so a bit of guess-and-check is necessary sometimes.
 
 
 #### Wiring Diagram
@@ -117,56 +122,36 @@ Do not forget to connect the ESP32 to the common ground. Without this connection
 There are other options when powering the ESP32 - e.g via the 3.3V pin or the 5V/VIN pin. You should __never__ power the ESP32 via more than one of these options at the same time. For example, do not power the ESP32 via its 3.3V pin while also connecting the ESP32 via USB to your computer. This can damage the ESP32 and possibly also your computer.
 
 
+#### Wiring the E-Paper Module
 
-#### Wiring the TFT Display
+Connect the E-Paper display module to the ESP32 using the following table as a guide:
 
-Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
-
-|  ESP32       | TFT        |
-|--------------|------------|
-| VIN          | VCC        |
-| GND          | GND        |
-| GPIO5  (D5)  | CS         |
-| GPIO16 (RX2) | RST        |
-| GPIO17 (TX2) | RS         |
-| GPIO23 (D23) | SDA        |
-| GPIO18 (D18) | CLK (SCK)  |
-| 3.3V (3V3)   | LED (NC)   |
-
-Notes on pin naming:
-* There are boards where `GPIXXX` are marked as `GXX` instead of `DXX`.
-* The `G23` may be there **twice** - the correct one is next to `GND`.
-* Some boards have typos so a bit of guess-and-check is necessary sometimes.
-
-#### Wiring the waveshare e-paper module
-
-Currently the eink display is wired to the following pins.
-
-| ESP32 | e-paper |
-|-------|---------|
-| BUSY  | D25     |
-| RST   | D26     |
-| DC    | D27     |
-| CS    | D15     |
-| CLK   | D13     |
-| DIN   | D14     |
-| VCC   | 3.3V    |
-
-To enable the module uncomment the `-D EINK_128x296` macro in
-`device/platformio.ini` and comment `-D OLED` macro to disable the TFT
-screen.
+| ESP32 | E-Paper Display Module |
+|-------|------------------------|
+| D25   | BUSY                   |
+| D26   | RST                    |
+| D27   | DC                     |
+| D15   | CS                     |
+| D13   | CLK                    |
+| D14   | DIN                    |
+| GND   | GND                    |
+| 3.3V  | VCC                    |
 
 
-#### Wiring the SD card
+#### Wiring the SD Card SPI Module
 
-The TTF display we are using contain a SD card module. The pins are located above the screen and not soldered to the module by default but the pins can be added. The table of mappings is the following:
+Connect the SD card SPI module to the ESP32 using the following table as a guide:
 
-|  ESP32       | TFT        |
-|--------------|------------|
-|  GPIO2  (D2) |  SD_MISO   |
-|  GPIO15 (D15)|  SD_MOSI   |
-|  GPIO14 (D14)|  SD_SCK    |
-|  GPIO13 (D13)|  SD_CS     |
+| ESP32 | SD Card SPI Module |
+|-------|--------------------|
+| GND   | GND                |
+| 3.3V  | 3.3                |
+|       | 5                  |
+| D5    | CS                 |
+| D23   | MOSI               |
+| D18   | SCK                |
+| D19   | MISO               |
+| GND   | GND                |
 
 
 #### Wiring the Coin Acceptor
