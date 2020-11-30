@@ -32,7 +32,9 @@ void setup() {
 	config::init();
 	logger::write("Config OK");
 	screen::init();
-	screen::showSplashPage();
+	// screen::showSplashScreen();
+	screen::showInsertFiatScreen(config::getConfig().fiatCurrency);
+	// screen::showTransactionCompleteScreen(0, config::getConfig().fiatCurrency, "HELLO WORLD");
 	logger::write("Screen OK");
 	coinAcceptor::init();
 	coinAcceptor::setFiatCurrency(config::getConfig().fiatCurrency);
@@ -46,24 +48,19 @@ const unsigned long minWaitTimeSinceInsertedFiat = 15000;// milliseconds
 const unsigned long maxTimeDisplayQrCode = 12000;// milliseconds
 
 void loop() {
+	return;
 	if (millis() - bootTime >= minWaitAfterBootTime) {
 		// Minimum time has passed since boot.
 		// Start performing checks.
 		coinAcceptor::loop();
 		if (screen::getTimeSinceRenderedQRCode() >= maxTimeDisplayQrCode) {
-			// Automatically clear the QR code from the screen after some time has passed.
-			screen::resetScreen();
-			screen::clearQRCode();
+			// Some time has passed.
+			screen::showInstructionsScreen();
 		} else if (coinAcceptor::coinInserted() && screen::hasRenderedQRCode()) {
-			// Clear the QR code when new coins are inserted.
-			screen::resetScreen();
-			screen::clearQRCode();
+			// Coin was inserted.
+			screen::showInsertFiatScreen(config::getConfig().fiatCurrency);
 		}
 		float accumulatedValue = coinAcceptor::getAccumulatedValue();
-
-		// Serial.printf("Time since insert: %.2f\n", coinAcceptor::getTimeSinceLastInserted());
-		// Serial.printf("Accumulated value: %.2f\n", accumulatedValue);
-		
 		if (
 			accumulatedValue > 0 &&
 			coinAcceptor::getTimeSinceLastInserted() >= minWaitTimeSinceInsertedFiat
@@ -72,11 +69,11 @@ void loop() {
 			// Create a withdraw request and render it as a QR code.
 			const std::string req = util::createSignedWithdrawRequest(accumulatedValue);
 			// Convert to uppercase because it reduces the complexity of the QR code.
-			screen::renderQRCode("LIGHTNING:" + util::toUpperCase(req));
+			screen::showTransactionCompleteScreen(accumulatedValue, config::getConfig().fiatCurrency, "LIGHTNING:" + util::toUpperCase(req));
 			coinAcceptor::reset();
 		}
 		if (!screen::hasRenderedQRCode() && screen::getRenderedAmount() != accumulatedValue) {
-			screen::updateAmount(accumulatedValue, config::getConfig().fiatCurrency);
+			screen::updateInsertFiatScreenAmount(accumulatedValue, config::getConfig().fiatCurrency);
 		}
 	}
 }

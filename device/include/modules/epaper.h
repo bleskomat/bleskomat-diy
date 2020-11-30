@@ -19,8 +19,10 @@
 #ifndef BLESKOMAT_MODULES_EPAPER_H
 #define BLESKOMAT_MODULES_EPAPER_H
 
-#include "images/bleskomat_splash_400x300.h"
-#include "images/bleskomat_instructions_400x300.h"
+#include "images/bleskomat_insert_fiat_screen_400x300.h"
+#include "images/bleskomat_instructions_screen_400x300.h"
+#include "images/bleskomat_splash_screen_400x300.h"
+#include "images/bleskomat_transaction_complete_screen_400x300.h"
 
 #include "logger.h"
 #include "util.h"
@@ -58,21 +60,20 @@
 #include <Arduino.h>
 #include <qrcode.h>
 #include <Wire.h>
+#include <GxEPD2_GFX.h>
 #include <GxEPD2_BW.h>
-#include <GxEPD2_3C.h>
-#include <Fonts/FreeMonoBold9pt7b.h>
 #include <Fonts/FreeMonoBold12pt7b.h>
+#include <Fonts/FreeMonoBold18pt7b.h>
 #include <Fonts/FreeMonoBold24pt7b.h>
 
 namespace epaper {
 	void init();
-	void showSplashPage();
-	void resetScreen();
-	void updateAmount(const float &amount, const std::string &fiatCurrency);
-	void clearAmount();
+	void showSplashScreen();
+	void showInstructionsScreen();
+	void showInsertFiatScreen(const std::string &fiatCurrency);
+	void updateInsertFiatScreenAmount(const float &amount, const std::string &fiatCurrency);
+	void showTransactionCompleteScreen(const float &amount, const std::string &fiatCurrency, const std::string &qrcodeData);
 	float getRenderedAmount();
-	void renderQRCode(const std::string &dataStr);
-	void clearQRCode();
 	bool hasRenderedQRCode();
 	unsigned long getTimeSinceRenderedQRCode();
 }
