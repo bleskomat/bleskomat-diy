@@ -32,9 +32,6 @@ void setup() {
 	config::init();
 	logger::write("Config OK");
 	screen::init();
-	// screen::showSplashScreen();
-	screen::showInsertFiatScreen(config::getConfig().fiatCurrency);
-	// screen::showTransactionCompleteScreen(0, config::getConfig().fiatCurrency, "HELLO WORLD");
 	logger::write("Screen OK");
 	coinAcceptor::init();
 	coinAcceptor::setFiatCurrency(config::getConfig().fiatCurrency);
@@ -46,6 +43,8 @@ const unsigned long bootTime = millis();// milliseconds
 const unsigned long minWaitAfterBootTime = 2000;// milliseconds
 const unsigned long minWaitTimeSinceInsertedFiat = 15000;// milliseconds
 const unsigned long maxTimeDisplayQrCode = 12000;// milliseconds
+float valueShown = 0;
+unsigned long lastRenderedQRCodeTime = 0;
 
 void loop() {
 	return;
@@ -53,12 +52,15 @@ void loop() {
 		// Minimum time has passed since boot.
 		// Start performing checks.
 		coinAcceptor::loop();
-		if (screen::getTimeSinceRenderedQRCode() >= maxTimeDisplayQrCode) {
+		if (lastRenderedQRCodeTime >= maxTimeDisplayQrCode) {
 			// Some time has passed.
-			screen::showInstructionsScreen();
-		} else if (coinAcceptor::coinInserted() && screen::hasRenderedQRCode()) {
+			// Show the starting screen again.
+			screen::showSplashScreen();
+			lastRenderedQRCodeTime = 0;
+		} else if (coinAcceptor::coinInserted() && lastRenderedQRCodeTime > 0) {
 			// Coin was inserted.
 			screen::showInsertFiatScreen(config::getConfig().fiatCurrency);
+			lastRenderedQRCodeTime = 0;
 		}
 		float accumulatedValue = coinAcceptor::getAccumulatedValue();
 		if (
@@ -70,10 +72,12 @@ void loop() {
 			const std::string req = util::createSignedWithdrawRequest(accumulatedValue);
 			// Convert to uppercase because it reduces the complexity of the QR code.
 			screen::showTransactionCompleteScreen(accumulatedValue, config::getConfig().fiatCurrency, "LIGHTNING:" + util::toUpperCase(req));
+			lastRenderedQRCodeTime = millis();
 			coinAcceptor::reset();
 		}
-		if (!screen::hasRenderedQRCode() && screen::getRenderedAmount() != accumulatedValue) {
+		if (lastRenderedQRCodeTime == 0 && valueShown != accumulatedValue) {
 			screen::updateInsertFiatScreenAmount(accumulatedValue, config::getConfig().fiatCurrency);
+			valueShown = accumulatedValue;
 		}
 	}
 }

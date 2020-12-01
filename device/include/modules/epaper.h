@@ -19,10 +19,13 @@
 #ifndef BLESKOMAT_MODULES_EPAPER_H
 #define BLESKOMAT_MODULES_EPAPER_H
 
-#include "images/bleskomat_insert_fiat_screen_400x300.h"
+#include "fonts/OpenSans_Light9pt7b.h"
+#include "fonts/OpenSans_Light12pt7b.h"
+#include "fonts/Courier_Prime_Code12pt7b.h"
+#include "fonts/Courier_Prime_Code32pt7b.h"
+
 #include "images/bleskomat_instructions_screen_400x300.h"
 #include "images/bleskomat_splash_screen_400x300.h"
-#include "images/bleskomat_transaction_complete_screen_400x300.h"
 
 #include "logger.h"
 #include "util.h"
@@ -62,9 +65,6 @@
 #include <Wire.h>
 #include <GxEPD2_GFX.h>
 #include <GxEPD2_BW.h>
-#include <Fonts/FreeMonoBold12pt7b.h>
-#include <Fonts/FreeMonoBold18pt7b.h>
-#include <Fonts/FreeMonoBold24pt7b.h>
 
 namespace epaper {
 	void init();
@@ -73,9 +73,6 @@ namespace epaper {
 	void showInsertFiatScreen(const std::string &fiatCurrency);
 	void updateInsertFiatScreenAmount(const float &amount, const std::string &fiatCurrency);
 	void showTransactionCompleteScreen(const float &amount, const std::string &fiatCurrency, const std::string &qrcodeData);
-	float getRenderedAmount();
-	bool hasRenderedQRCode();
-	unsigned long getTimeSinceRenderedQRCode();
 }
 
 namespace screen = epaper;
