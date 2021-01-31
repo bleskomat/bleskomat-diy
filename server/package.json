@@ -35,6 +35,6 @@
   "homepage": "https://github.com/samotari/bleskomat",
   "dependencies": {
     "bignumber.js": "9.0.0",
-    "lnurl": "0.8.0"
+    "lnurl": "0.12.0"
   }
 }
