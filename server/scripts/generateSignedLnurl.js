@@ -32,15 +32,15 @@ const options = {
 	encode: false,
 	shorten: false,
 };
-if (config.fiatCurrency) {
-	params.f = config.fiatCurrency;
-}
 const tag = 'withdrawRequest';
 let params = {
 	minWithdrawable: amount,
 	maxWithdrawable: amount,
 	defaultDescription: '',
 };
+if (config.fiatCurrency) {
+	params.f = config.fiatCurrency;
+}
 const signedUrl = lnurl.createSignedUrl(apiKey, tag, params, options);
 // Print to standard output, but without a newline.
 process.stdout.write(signedUrl);
