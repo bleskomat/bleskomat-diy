@@ -1,8 +1,10 @@
-# Bleskomat
+# Bleskomat DIY
 
-The world's simplest Lightning Network ATM.
+This is the hackable, open-source version of the Bleskomat Lightning Network ATM. If you're looking for the Bleskomat ATM product, you can find more information on [www.bleskomat.com](https://www.bleskomat.com).
 
 ![](images/logo.png)
+
+Bleskomat is a registered trademark. You are welcome to hack, fork, build, and use the source code and instructions found in this repository. However, the right to use the name "Bleskomat" with any commercial products or services is withheld and reserved for the trademark owner.
 
 * [Overview](#overview)
 * [Requirements](#requirements)
