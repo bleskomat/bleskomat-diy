@@ -21,57 +21,33 @@
 #   $ make compile     # compile the device firmware
 #   $ make upload      # compile then upload the device firmware
 #   $ make monitor     # start the serial monitor
-#   $ make server      # start an instance of the HTTP server
 #
 
 ## Variables
-DEVICE_DIR=./device
-SERVER_DIR=./server
-
-CONFIG=$(SERVER)/config.json
-
-## Targets
-#
-# The format goes:
-#
-#   target: list of dependencies
-#     commands to build target
-#
-# If something isn't re-compiling double-check the changed file is in the
-# target's dependencies list.
+DEVICE ?= /dev/ttyUSB0
+BAUDRATE ?= 115200
+PLATFORM=espressif32
 
 ## Phony targets - these are for when the target-side of a definition
-# (such as "install" below) isn't a file but instead a just label. Declaring
+# (such as "install" below) isn't a file but instead just a label. Declaring
 # it as phony ensures that it always run, even if a file by the same name
 # exists.
 .PHONY: install\
 compile\
 upload\
-monitor\
-server\
-signedLnurl
-
-.SILENT: signedLnurl\
-config
+monitor
 
 install:
-	cd $(DEVICE_DIR) && platformio lib install
-	cd $(SERVER_DIR) && npm install
+	platformio lib install
+	platformio platform install ${PLATFORM}
 
 compile:
-	cd $(DEVICE_DIR) && npm run compile:only
+	platformio run
 
 upload:
-	cd $(DEVICE_DIR) && DEVICE=${DEVICE} npm run compile:upload
+	sudo chown ${USER}:${USER} ${DEVICE}
+	platformio run --upload-port ${DEVICE} --target upload
 
 monitor:
-	cd $(DEVICE_DIR) && DEVICE=${DEVICE} npm run monitor
-
-server:
-	cd $(SERVER_DIR) && npm start
-
-config:
-	cd $(DEVICE_DIR) && npm run --silent print:config
-
-signedLnurl:
-	cd $(SERVER_DIR) && npm run --silent generate:signedLnurl -- "${AMOUNT}"
+	sudo chown ${USER}:${USER} ${DEVICE}
+	platformio device monitor --baud ${BAUDRATE} --port ${DEVICE}
