@@ -27,9 +27,8 @@
 #include <TFT_eSPI.h>
 
 #include <cmath>
-#include <sstream>
+#include <stdexcept>
 #include <string>
-#include <vector>
 
 namespace tft {
 	void init();

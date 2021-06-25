@@ -37,12 +37,8 @@ namespace {
 
 	BoundingBox amount_text_bbox;
 
-	std::string getAmountFiatCurrencyString(const float &amount) {
-		std::ostringstream stream;
-		const std::string fiat_currency = config::get("fiatCurrency");
-		const unsigned short precision = config::getFiatPrecision();
-		stream << std::fixed << std::setprecision((int) precision) << amount << " " << fiat_currency;
-		return stream.str();
+	std::string getAmountFiatCurrencyString(const double &amount) {
+		return util::doubleToStringWithPrecision(amount, config::getFiatPrecision()) + " " + config::get("fiatCurrency");
 	}
 
 	BoundingBox renderText(
@@ -75,18 +71,6 @@ namespace {
 		return bbox;
 	}
 
-	int qrcode_sizes[17] = { 25, 47, 77, 114, 154, 195, 224, 279, 335, 395, 468, 535, 619, 667, 758, 854, 938 };
-	int getBestFitQRCodeVersion(const std::string &data) {
-		int size = 12;
-		int len = data.length();
-		for (int i = 0; i < 17; i++) {
-			if (qrcode_sizes[i] > len) {
-				return i + 1;
-			}
-		}
-		return size;
-	}
-
 	BoundingBox renderQRCode(
 		const std::string &t_data,
 		const int16_t &x,
@@ -95,34 +79,50 @@ namespace {
 		const uint16_t &max_h,
 		const bool &center = true
 	) {
-		logger::write("tft.renderQRCode \"" + t_data + "\"");
-		const char* data = t_data.c_str();
-		const int version = getBestFitQRCodeVersion(t_data);
-		QRCode qrcode;
-		uint8_t qrcodeData[qrcode_getBufferSize(version)];
-		qrcode_initText(&qrcode, qrcodeData, version, ECC_LOW, data);
-		int16_t w = 0;
-		int16_t h = 0;
-		int scale = std::min(std::floor(max_w / qrcode.size), std::floor(max_h / qrcode.size));
-		w = qrcode.size * scale;
-		h = qrcode.size * scale;
-		int16_t box_x = x;
-		int16_t box_y = y;
-		if (center) {
-			box_x -= (w / 2);
-		}
-		display.fillRect(box_x, box_y, w, h, bg_color);
-		for (uint8_t y = 0; y < qrcode.size; y++) {
-			for (uint8_t x = 0; x < qrcode.size; x++) {
-				int color = qrcode_getModule(&qrcode, x, y) ? text_color: bg_color;
-				display.fillRect(box_x + scale*x, box_y + scale*y, scale, scale, color);
-			}
-		}
 		BoundingBox bbox;
-		bbox.x = box_x;
-		bbox.y = box_y;
-		bbox.w = w;
-		bbox.h = h;
+		logger::write("tft.renderQRCode \"" + t_data + "\"");
+		try {
+			const char* data = t_data.c_str();
+			uint8_t version = 1;
+			while (version <= 40) {
+				const uint16_t bufferSize = qrcode_getBufferSize(version);
+				QRCode qrcode;
+				uint8_t qrcodeData[bufferSize];
+				const int8_t result = qrcode_initText(&qrcode, qrcodeData, version, ECC_LOW, data);
+				if (result == 0) {
+					// QR encoding successful.
+					uint8_t scale = std::min(std::floor(max_w / qrcode.size), std::floor(max_h / qrcode.size));
+					uint16_t w = qrcode.size * scale;
+					uint16_t h = w;
+					int16_t box_x = x;
+					int16_t box_y = y;
+					if (center) {
+						box_x -= (w / 2);
+					}
+					display.fillRect(box_x, box_y, w, h, bg_color);
+					for (uint8_t y = 0; y < qrcode.size; y++) {
+						for (uint8_t x = 0; x < qrcode.size; x++) {
+							auto color = qrcode_getModule(&qrcode, x, y) ? text_color: bg_color;
+							display.fillRect(box_x + scale*x, box_y + scale*y, scale, scale, color);
+						}
+					}
+					bbox.x = box_x;
+					bbox.y = box_y;
+					bbox.w = w;
+					bbox.h = h;
+					break;
+				} else if (result == -2) {
+					// Data was too long for the QR code version.
+					version++;
+				} else if (result == -1) {
+					throw std::runtime_error("Render QR code failure: Unable to detect mode");
+				} else {
+					throw std::runtime_error("Render QR code failure: Unknown failure case");
+				}
+			}
+		} catch (const std::exception &e) {
+			std::cerr << e.what() << std::endl;
+		}
 		return bbox;
 	}
 
