@@ -40,7 +40,7 @@ void loop() {
 	if (
 		accumulatedValue > 0 &&
 		currentScreen != "insertFiat" &&
-		currentScreen != "transactionComplete"
+		currentScreen != "tradeComplete"
 	) {
 		screen::showInsertFiatScreen(accumulatedValue);
 		amountShown = accumulatedValue;
@@ -67,7 +67,7 @@ void loop() {
 				}
 				// QR codes with only uppercase letters are less complex (easier to scan).
 				qrcodeData += util::toUpperCase(encoded);
-				screen::showTransactionCompleteScreen(accumulatedValue, qrcodeData);
+				screen::showTradeCompleteScreen(accumulatedValue, qrcodeData);
 				#ifdef COIN_ACCEPTOR
 					coinAcceptor::off();
 				#endif
@@ -80,15 +80,15 @@ void loop() {
 				amountShown = accumulatedValue;
 			}
 		}
-	} else if (currentScreen == "transactionComplete") {
+	} else if (currentScreen == "tradeComplete") {
 		#ifdef COIN_ACCEPTOR
 			if (coinAcceptor::isOn()) {
-				// Don't allow inserting more coins while transaction complete screen shown.
+				// Don't allow inserting more coins while trade complete screen shown.
 				coinAcceptor::off();
 			}
 		#endif
 		if (button::isPressed()) {
-			// Button pushed while showing the transaction complete screen.
+			// Button pushed while showing the trade complete screen.
 			// Reset accumulated values.
 			#ifdef COIN_ACCEPTOR
 				coinAcceptor::reset();

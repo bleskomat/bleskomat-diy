@@ -35,7 +35,7 @@ namespace tft {
 	void init();
 	std::string getCurrentScreen();
 	void showInsertFiatScreen(const float &amount);
-	void showTransactionCompleteScreen(const float &amount, const std::string &qrcodeData);
+	void showTradeCompleteScreen(const float &amount, const std::string &qrcodeData);
 }
 
 #endif

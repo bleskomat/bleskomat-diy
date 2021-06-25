@@ -155,7 +155,7 @@ namespace tft {
 				amount_text_bbox.h,
 				bg_color
 			);
-		} else if (current_screen == "transactionComplete") {
+		} else if (current_screen == "tradeComplete") {
 			// Clear the whole screen.
 			clearScreen();
 		}
@@ -167,8 +167,8 @@ namespace tft {
 		current_screen = "insertFiat";
 	}
 
-	void showTransactionCompleteScreen(const float &amount, const std::string &qrcodeData) {
-		logger::write("tft.showTransactionCompleteScreen");
+	void showTradeCompleteScreen(const float &amount, const std::string &qrcodeData) {
+		logger::write("tft.showTradeCompleteScreen");
 		clearScreen();
 		const std::string text = getAmountFiatCurrencyString(amount);
 		const int16_t center_x = display.width() / 2;
@@ -180,6 +180,6 @@ namespace tft {
 		const int16_t qr_max_w = display.width();
 		const int16_t qr_max_h = display.height() - (qr_y + margin_y);
 		renderQRCode(qrcodeData, qr_x, qr_y, qr_max_w, qr_max_h, true/* center */);
-		current_screen = "transactionComplete";
+		current_screen = "tradeComplete";
 	}
 }
