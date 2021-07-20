@@ -15,8 +15,10 @@ The rest of this document details how you can build your own version of the Bles
 	* [Hardware Requirements](#hardware-requirements)
 	* [Software Requirements](#software-requirements)
 * [Building the Hardware Device](#building-the-hardware-device)
+	* [Prepare the breadboards](#prepare-the-breadboards)
+		* [ESP32 devkit pinout](#esp32-devkit-pinout)
 	* [Wiring the Power Supply](#wiring-the-power-supply)
-	* [ESP32 devkit pinout](#esp32-devkit-pinout)
+		* [Optionally power the ESP32 devkit via 5V pin](#optionally-power-the-esp32-devkit-via-5v-pin)
 	* [Wiring the TFT Display](#wiring-the-tft-display)
 		* [Wiring the SD card slot](#wiring-the-sd-card-slot)
 	* [Wiring the button](#wiring-the-button)
@@ -36,28 +38,45 @@ This section includes information about the software and hardware requirements n
 
 ### Hardware Requirements
 
-To build the physical device, you will need the following hardware components:
+Basic components/equipment needed to build your own Bleskomat (DIY) ATM:
+* Two (400-pin) breadboards
+	* [laskarduino.cz](https://www.laskarduino.cz/nepajive-kontaktni-pole-400-pinu--bile/)
+* Connecting cables (M-M)
+	* [laskarduino.cz](https://www.laskarduino.cz/dupont-propojovaci-kabely-40ks-m-m-samec-samec--10cm-/)
+* Connecting cables (M-F)
+	* [laskarduino.cz](https://www.laskarduino.cz/dupont-propojovaci-kabely-40ks-m-f-samec-samice--10cm-/)
 * ESP32 Devkit
-	* [ESP-WROOM-32](https://www.espressif.com/en/products/modules/esp-wroom-32/overview) by espressif
 	* [laskarduino.cz](https://www.laskarduino.cz/iot-esp-32s-2-4ghz-dual-mode-wifi-bluetooth-rev-1--cp2102/)
 * DG600F Coin Acceptor:
 	* [Alibaba.com](https://www.alibaba.com/trade/search?fsb=y&IndexArea=product_en&CatId=&SearchText=DG600F)
 	* [Sparkfun.com](https://www.sparkfun.com/products/11636)
-* 1.8" TFT display with SD card slot:
+* 1.8" TFT display:
 	* [laskarduino.cz](https://www.laskarduino.cz/128x160-barevny-lcd-tft-displej-1-8--spi/)
-* XL4005 step-down converter:
-	* [laskarduino.cz](https://www.laskarduino.cz/step-down-menic-s-xl4005/)
-	* [Alibaba.com](https://www.alibaba.com//trade/search?fsb=y&IndexArea=product_en&CatId=&SearchText=xl4005)
-* USB (F) adapter
-	* [laskarduino.cz](https://www.laskarduino.cz/usb-f-na-dip-adapter/)
-* Push button (4-pin)
-	* [laskarduino.cz](https://www.laskarduino.cz/tlacitko-6x6x5mm/)
+* Button
+	* [laskarduino.cz](https://www.laskarduino.cz/mikrospinac-tc-1212t-12x12x7-3mm/)
 * 10k ohm resistor
-* Micro SD card with macro adapter
+	* [laskarduino.cz](https://www.laskarduino.cz/futaba-1-4w-odpor-10k-5/)
+* DC 5.5/2.1 mm DIP adapter
+	* [laskarduino.cz](https://www.laskarduino.cz/dc-5-5-2-1mm-na-dip-adapter-led/)
 * 12V DC power adaptor with \~1A
+	* [laskarduino.cz](https://www.laskarduino.cz/napajeci-adapter-sitovy-1000ma-5-5-2-1-mm-12v/)
 * Standard USB to micro USB cable
+	* [laskarduino.cz](https://www.laskarduino.cz/50cm-microusb-kabel/)
+* Multimeter
 
-It is strongly recommended to use a multimeter while wiring the device to avoid burning any of the components due to wrong voltage being supplied.
+Optional components/equipment:
+* Soldering iron
+* 2.54 mm pins
+	* [laskarduino.cz](https://www.laskarduino.cz/dupont-40pin-2-54-mm-pinovy-pas--pravy-uhel/)
+* To power the ESP32 devkit from the 12V DC power supply:
+	* XL4005 step-down converter:
+		* [laskarduino.cz](https://www.laskarduino.cz/step-down-menic-s-xl4005/)
+		* [Alibaba.com](https://www.alibaba.com//trade/search?fsb=y&IndexArea=product_en&CatId=&SearchText=xl4005)
+	* USB (F) adapter
+		* [laskarduino.cz](https://www.laskarduino.cz/usb-f-na-dip-adapter/)
+	* Alternatively, you could use a USB car charger which includes both a step-down converter and USB (F) output
+* If you wish to configure your Bleskomat via SD card:
+	* Micro SD card with macro adapter
 
 
 ### Software Requirements
@@ -74,50 +93,55 @@ Before proceeding, be sure that you have all the project's [hardware requirement
 
 Step-by-step build process for the hardware device.
 
+### Prepare the breadboards
 
-### Wiring the Power Supply
+One breadboard is not large enough to accommodate all the pins of the ESP32 devkit due to the width of the devkit. This is why we recommend to connect two breadboards together.
 
-The first step to building the device is wiring the power supply. If already plugged in, __unplug__ the 12V DC power supply now. Use scissors to cut the end off the power supply so that you can freely access the two wires within.
+Remove one of the power rails from one of the breadboards. Use the notches on the sides of the breadboards to connect them together length-wise.
 
-It is important to test the wires to know for certain which is the ground. Use a [multimeter](https://duckduckgo.com/?q=multimeter&t=canonical&iar=images&iax=images&ia=images) to measure the voltage of the power supply:
-* Plug-in the power supply to electricity
-* Turn on your multimeter and set it to measure voltage in the appropriate range
-* Touch the __red__ lead of your multimeter to one of the wires
-* Touch the __black__ lead of your multimeter to the other wire
-* If you see a negative voltage reading, swap the leads between the two wires
-* The wire touched by the __black__ lead is the ground ("GND")
-* The wire touched by the __red__ lead is the hot wire ("DC12V")
-* Unplug the power supply again
+Insert the ESP32 devkit into the pin holes of the new, combined breadboard.
 
-Note that powering the ESP32 via its micro USB port requires a regulated voltage of approximately 5V. The suggested step-down converter is the [XL4005](https://duckduckgo.com/?q=xl4005&t=canonical&iax=images&ia=images). It does a good job of keeping a steady voltage and doesn't generate much heat. It's possible to instead use a USB car charger in case you have an extra one lying around.
+Familiarize yourself with the ESP32 devkit's pinout reference below.
 
-Once you've connected the step-down converter to the power supply, use your multimeter to measure the voltage at the out pins. Use a small screwdriver to turn the screw on the little blue box. Turning the screw counter clockwise should lower the voltage, turning it the opposite direction should increase the voltage.
-
-Once you have the voltage set to 5V, connect the out pins to the center power rails of the breadboard.
-
-Connect the the USB (F) adapter to the out pins
-
-Use a standard USB to micro USB cable to connect the ESP32.
-
-
-#### ESP32: Common Ground
-
-Do not forget to connect the ESP32 to the common ground. Without this connection, the ESP32 will not be able to receive a clean signal from the coin acceptor when the ESP32 is connected to your computer via USB.
-
-
-#### ESP32: Power Options Warning
-
-There are other options when powering the ESP32 - e.g via the 3.3V pin or the 5V/VIN pin. You should __never__ power the ESP32 via more than one of these options at the same time. For example, do not power the ESP32 via its 3.3V pin while also connecting the ESP32 via USB to your computer. This can damage the ESP32 and possibly also your computer.
-
-
-### ESP32 devkit pinout
+#### ESP32 devkit pinout
 
 ![](docs/ESP32-devkit-v1-board-pinout-36-gpio-pins.jpg)
 
 
+### Wiring the Power Supply
+
+The first step to building the device is wiring the power supply. If already plugged in, __unplug__ the 12V DC power supply now. Connect the DC 5.5/2.1 end of the power supply to the DIP adapter. The positive (+) pins should be the power pins and the negative (-) pins should be the ground. You can use your multimeter to check in case you want to be extra safe:
+* Plug-in the power supply to electricity
+* Turn on your multimeter and set it to measure voltage in the appropriate range (probably 20V)
+* Touch the __red__ lead of your multimeter to one of the positive pins
+* Touch the __black__ lead of your multimeter to one of the negative pins
+* If you see a negative voltage reading, swap the leads between the two wires
+* The pin touched by the __black__ lead is the ground ("GND")
+* The pin touched by the __red__ lead is the hot wire ("DC12V")
+* Unplug the power supply again
+
+Use a pair of M-F connecting cables to connect the DC 5.5/2.1 DIP adapter to one of the breadboard's power rails. Negative to negative, positive to positive. This rail will be your 12V DC power (positive) and the common ground (negative).
+
+#### Optionally power the ESP32 devkit via 5V pin
+
+If you'd like to make your Bleskomat build a little bit more portable, you can power the ESP32 devkit via its 5V pin. To do this you will need the XL4005 (or equivalent) step-down converter and the USB (F) adapter. Note that powering the ESP32 devkit via its micro USB port requires a regulated voltage of approximately 5V.
+
+It's also possible to use a USB car charger in case you have an extra one lying around.
+
+Connect the step-down converter's input pins to the 12V DC power rail and common ground using (M-F) connecting cables. Use a multimeter to measure the voltage at the out pins. In the case of the XL4005, use a small screwdriver to turn the screw on the little blue box. Turning the screw counter clockwise should lower the voltage, turning it the opposite direction should increase the voltage. Once you have the voltage set to 5V, connect the out pins to the center power rails of the breadboard. This will be your 5V DC power rail.
+
+Use a soldering iron to solder four 2.54 mm pins to the USB (F) DIP adapter. Insert the pins directly into the breadboard wherever you have space available. Using (M-M) connecting cables, connect the negative and positive pins of the USB (F) DIP adapter to the 5V DC power rail.
+
+Connect the negative pin of the 5V DC power rail to the negative of the 12V DC power rail to ensure that they share a common ground. This is important because without a common ground shared between the coin acceptor and ESP32 devkit, the ESP32 will not receive a clean signal from the coin acceptor.
+
+Use a standard USB to micro USB cable to connect the USB (F) DIP adapter to the ESP32 devkit.
+
+There are other options when powering the ESP32 - e.g via the 3.3V pin or the 5V/VIN pin. You should __never__ power the ESP32 via more than one of these options at the same time. For example, do not power the ESP32 via its 3.3V pin while also connecting the ESP32 via USB to your computer. This can damage the ESP32 and possibly also your computer.
+
+
 ### Wiring the TFT Display
 
-Have a look at the [wiring diagram](#wiring-diagram) above or the table of cable mappings below:
+Insert the pins of the TFT display module into the breadboard where you have space available. Use the table below to connect the ESP32 devkit to the TFT display module.
 
 |  ESP32       | TFT        |
 |--------------|------------|
@@ -140,6 +164,8 @@ Refer to the [ESP32 devkit pinout](#esp32-devkit-pinout) for help identifying th
 
 #### Wiring the SD card slot
 
+This step is only needed if you would like to configure your Bleskomat via an SD card.
+
 The TFT display includes an SD card slot. The pins are located above the screen and not soldered to the module by default but the pins can be added. The table of mappings is the following:
 
 | ESP32  | TFT     |
@@ -154,7 +180,9 @@ Refer to the [ESP32 devkit pinout](#esp32-devkit-pinout) for help identifying th
 
 ### Wiring the button
 
-Wire the button using the following table as a guide:
+Insert button pins into the breadboard wherever you have space available. Typically, its best to place the button at the center of a breadboard (over the gap).
+
+Connect the button using the following table as a guide:
 
 | ESP32    | Button    |
 |----------|-----------|
