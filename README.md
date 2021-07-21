@@ -26,7 +26,9 @@ The rest of this document details how you can build your own version of the Bles
 * [Configure and Train Coin Acceptor](#configure-and-train-coin-acceptor)
 * [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
 * [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
-* [Prepare SD Card](#prepare-sd-card)
+* [Configuring The Bleskomat](#configuring-the-bleskomat)
+	* [Hard-coded configuration](#hard-coded-configuration)
+	* [Configuration via SD card](#configuration-via-sd-card)
 * [License](#license)
 * [Trademark](#trademark)
 
@@ -285,27 +287,9 @@ make monitor DEVICE=/dev/ttyUSB0
 Again the device path here could be different for your operating system.
 
 
-## Prepare SD Card
+## Configuring The Bleskomat
 
-Format the SD card with the FAT32 filesystem.
-
-The following is an example `bleskomat.conf` file that you could use to configure a bleskomat device. Create the file and copy it to the root directory of the SD card.
-```
-apiKey.id=6d830ddeb0
-apiKey.key=b11cd6b002916691ccf3097eee3b49e51759225704dde88ecfced76ad95324c9
-apiKey.encoding=hex
-callbackUrl=https://your-bleskomat-server/u
-shorten=true
-uriSchemaPrefix=LIGHTNING:
-fiatCurrency=CZK
-fiatPrecision=0
-coinValues=1,2,5,10,20,50
-```
-
-
-### Configuration Options
-
-The following is a list of all possible configuration options that can be set via the bleskomat.conf configuration file:
+The following is a list of possible configuration options for your Bleskomat (DIY) ATM:
 * `apiKey.id` - The API key ID of the device. This is needed by the server to verify signatures created by the device.
 * `apiKey.key` - The API key secret that is used to generate signatures.
 * `apiKey.encoding` - The explicit encoding of the API key secret. This can be "hex", "base64", or empty-string (e.g "") to mean no encoding. When generating a new API key on the server, it will store the encoding along with the ID and secret.
@@ -318,6 +302,37 @@ The following is a list of all possible configuration options that can be set vi
 * `coinValues` - The value of coins for which the coin acceptor has been configured. Each value separated by a comma. Integers and floating point (decimal) values are accepted. Examples:
 	* CZK: `1,2,5,10,20,50`
 	* EUR: `0.05,0.10,0.20,0.50,1,2`
+
+It is possible to configure your Bleskomat via the following methods:
+* [Hard-coded configuration](#hard-coded-configuration)
+* [Configuration via SD card](#configuration-via-sd-card)
+
+
+### Hard-coded configuration
+
+Hard-coded configurations can be set by modifying the source file [config.cpp](https://github.com/samotari/bleskomat-diy/blob/master/src/config.cpp#L152-L162).
+
+Each time you make changes to the hard-coded configurations, you will need to re-compile and flash the ESP32's firmware.
+
+
+### Configuration via SD card
+
+First you will need to format the SD card with the FAT32 filesystem.
+
+Create a new file named `bleskomat.conf` at the root of the SD card's filesystem.
+
+The following is an example `bleskomat.conf` file:
+```
+apiKey.id=6d830ddeb0
+apiKey.key=b11cd6b002916691ccf3097eee3b49e51759225704dde88ecfced76ad95324c9
+apiKey.encoding=hex
+callbackUrl=https://your-bleskomat-server/u
+shorten=true
+uriSchemaPrefix=
+fiatCurrency=EUR
+fiatPrecision=2
+coinValues=0.05,0.10,0.20,0.50,1,2
+```
 
 
 ## License
