@@ -156,10 +156,10 @@ namespace config {
 		// values.lnurl.apiKey.encoding = "";
 		// values.lnurl.callbackUrl = "https://your-bleskomat-server.com/u";
 		// values.lnurl.shorten = true;
-		// values.uriSchemaPrefix = "LIGHTNING:";
-		// values.fiatCurrency = "CZK";
-		// values.fiatPrecision = 0;
-		// values.coinValues = { 1, 2, 5, 10, 20, 50 };
+		// values.uriSchemaPrefix = "";
+		// values.fiatCurrency = "EUR";
+		// values.fiatPrecision = 2;
+		// values.coinValues = { 0.05, 0.10, 0.20, 0.50, 1.00, 2.00 };
 		printConfig(values);
 	}
 
