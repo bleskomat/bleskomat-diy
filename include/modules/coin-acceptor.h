@@ -20,29 +20,16 @@
 
 #include "config.h"
 #include "logger.h"
-#include "util.h"
-
-#include <HardwareSerial.h>
-
-#include <deque>
+#include <Arduino.h>
 
 #ifndef COIN_ACCEPTOR_SIGNAL
 	#define COIN_ACCEPTOR_SIGNAL 3
-#endif
-
-#ifndef COIN_ACCEPTOR_INHIBIT
-	#define COIN_ACCEPTOR_INHIBIT 1
-#endif
-
-#ifndef COIN_ACCEPTOR_BAUDRATE
-	#define COIN_ACCEPTOR_BAUDRATE 9600
 #endif
 
 namespace coinAcceptor {
 	void init();
 	void loop();
 	float getAccumulatedValue();
-	float getMaxCoinValue();
 	void reset();
 	bool isOff();
 	bool isOn();

@@ -19,83 +19,53 @@
 
 namespace {
 
-	std::vector<float> coinValues;
-	float maxCoinValue = 0.00;
-	float accumulatedValue = 0.00;
-	std::deque<int> buffer;
 	bool inhibited = false;
+	float valueIncrement = 1.00;
+	float accumulatedValue = 0.00;
+	uint8_t lastPinReadState;
+	unsigned long lastPinReadTime = 0;
 
-	float getCoinValue(const int &byteIn) {
-		const int index = byteIn - 1;
-		if (index >= 0 && index < coinValues.size()) {
-			return coinValues[index];
-		}
-		return 0;
+	bool coinWasInserted() {
+		unsigned long diffTime = millis() - lastPinReadTime;
+		return lastPinReadState == LOW && diffTime > 25 && diffTime < 35;
 	}
 
-	void parseBuffer() {
-		while (buffer.size() >= 3) {
-			const int byte1 = buffer.front();
-			buffer.pop_front();
-			if (byte1 == 0xAA) {
-				// "Title" byte found.
-				// The next byte should be the coin value reference.
-				const int byte2 = buffer.front();
-				buffer.pop_front();
-				const float coinValue = getCoinValue(byte2);
-				if (coinValue > 0) {
-					// Coin value found.
-					// The next byte is the XOR of the previous two bytes.
-					const int byte3 = buffer.front();
-					buffer.pop_front();
-					if (byte3 == (byte1 ^ byte2)) {
-						logger::write("Coin inserted with value = " + std::to_string(coinValue));
-						accumulatedValue += coinValue;
-					}
-				}
-			}
-		}
+	void flipPinState() {
+		// Flip the state of the last read.
+		lastPinReadState = lastPinReadState == HIGH ? LOW : HIGH;
+		lastPinReadTime = millis();
 	}
 
-	float findMaxValueInFloatVector(const std::vector<float> &floatVector) {
-		float maxValue = 0;
-		for (int index = 0; index < floatVector.size(); index++) {
-			float value = floatVector.at(index);
-			if (value > maxValue) {
-				maxValue = value;
-			}
-		}
-		return maxValue;
+	uint8_t readPin() {
+		return digitalRead(COIN_ACCEPTOR_SIGNAL);
+	}
+
+	bool pinStateHasChanged() {
+		return readPin() != lastPinReadState;
 	}
 }
 
 namespace coinAcceptor {
 
 	void init() {
-		coinValues = config::getCoinValues();
-		maxCoinValue = findMaxValueInFloatVector(coinValues);
-		Serial2.begin(COIN_ACCEPTOR_BAUDRATE, SERIAL_8N1, COIN_ACCEPTOR_SIGNAL, 0);
-		pinMode(COIN_ACCEPTOR_INHIBIT, OUTPUT);
-		coinAcceptor::on();
+		pinMode(COIN_ACCEPTOR_SIGNAL, INPUT_PULLUP);
+		lastPinReadState = readPin();
+		valueIncrement = config::getCoinValueIncrement();
 	}
 
 	void loop() {
-		while (Serial2.available()) {
-			const int byteReceived = Serial2.read();
-			if (byteReceived > 0 && byteReceived < 254) {
-				logger::write("Coin acceptor byte received: " + std::to_string(byteReceived));
-				buffer.push_back(byteReceived);
+		if (pinStateHasChanged()) {
+			if (coinWasInserted()) {
+				// This code executes once for each pulse from the HX-616.
+				logger::write("Coin inserted");
+				accumulatedValue += valueIncrement;
 			}
+			flipPinState();
 		}
-		parseBuffer();
 	}
 
 	float getAccumulatedValue() {
 		return accumulatedValue;
-	}
-
-	float getMaxCoinValue() {
-		return maxCoinValue;
 	}
 
 	void reset() {
@@ -111,14 +81,10 @@ namespace coinAcceptor {
 	}
 
 	void on() {
-		logger::write("Switching coin acceptor ON");
-		digitalWrite(COIN_ACCEPTOR_INHIBIT, HIGH);
-		inhibited = false;
+		// Not implemented for the HX-616.
 	}
 
 	void off() {
-		logger::write("Switching coin acceptor OFF");
-		digitalWrite(COIN_ACCEPTOR_INHIBIT, LOW);
-		inhibited = true;
+		// Not implemented for the HX-616.
 	}
 }

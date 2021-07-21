@@ -26,7 +26,9 @@ The rest of this document details how you can build your own version of the Bles
 * [Configure and Train Coin Acceptor](#configure-and-train-coin-acceptor)
 * [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
 * [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
-* [Prepare SD Card](#prepare-sd-card)
+* [Configuring The Bleskomat](#configuring-the-bleskomat)
+	* [Hard-coded configuration](#hard-coded-configuration)
+	* [Configuration via SD card](#configuration-via-sd-card)
 * [License](#license)
 * [Trademark](#trademark)
 
@@ -47,9 +49,8 @@ Basic components/equipment needed to build your own Bleskomat (DIY) ATM:
 	* [laskarduino.cz](https://www.laskarduino.cz/dupont-propojovaci-kabely-40ks-m-f-samec-samice--10cm-/)
 * ESP32 Devkit
 	* [laskarduino.cz](https://www.laskarduino.cz/iot-esp-32s-2-4ghz-dual-mode-wifi-bluetooth-rev-1--cp2102/)
-* DG600F Coin Acceptor:
-	* [Alibaba.com](https://www.alibaba.com/trade/search?fsb=y&IndexArea=product_en&CatId=&SearchText=DG600F)
-	* [Sparkfun.com](https://www.sparkfun.com/products/11636)
+* HX-616 Coin Acceptor:
+	* [Alibaba.com](https://www.alibaba.com/trade/search?IndexArea=product_en&SearchText=coin_acceptor_HX-616&f0=y&pricef=&pricet=30)
 * 1.8" TFT display:
 	* [laskarduino.cz](https://www.laskarduino.cz/128x160-barevny-lcd-tft-displej-1-8--spi/)
 * Button
@@ -196,53 +197,37 @@ Refer to the [ESP32 devkit pinout](#esp32-devkit-pinout) for help identifying th
 
 ### Wiring the Coin Acceptor
 
-| ESP32       | DG600F   | Power Supply  |
+| ESP32       | HX-616   | Power Supply  |
 |-------------|----------|---------------|
-| GPIO1 (TX0) | INHIBIT  |               |
-|             | COUNTER  |               |
-|             | GND      | - Ground      |
-| GPIO3 (RX0) | SIGNAL   |               |
 |             | DC12V    | + 12V DC      |
+| GPIO3 (RX0) | COIN     |               |
+|             | GND      | - Ground      |
 
 Refer to the [ESP32 devkit pinout](#esp32-devkit-pinout) for help identifying the pins on your ESP32.
 
 
 ## Configure and Train Coin Acceptor
 
-Physical switches on the DG600F should set as follows:
+There are two switches on the back of the HX-616 coin acceptor:
+* "NO" (normally open) / "NC" (normally closed) - This should be set to "NO"
+* "Fast" / "Medium" / "Slow" - This should be set to "Fast"
 
-| Switch           | State         |
-|------------------|---------------|
-| 1 (Port Level)   | Down (NO)     |
-| 2 (Security)     | Down (Normal) |
-| 3 (Transmitting) | Up (RS232)    |
-| 4 (Inhibiting)   | Down (> +3V)  |
+An instruction sheet is included with the coin acceptor that will guide you through the training process:
 
-![](docs/DG600F-DIP-switch-configuration.png)
+![](docs/coin-acceptor-hx-616-instructions-side-1.jpg)
 
-Open the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf) to "Coin Acceptor Parameters Setting" on page 18. Set the parameters as follows:
+| PANEL  | Meaning                                     |
+|--------|---------------------------------------------|
+| E      | number of coin values                       |
+| Hn     | sampling quantity of coin n                 |
+| Pn     | signal output value of coin n               |
+| Fn     | recognition accuracy of coin n (8 advised)  |
+| A      | training the acceptor                       |
+| An     | start inserting coins for coin n            |
 
-| Parameter | Description                      | Value | Meaning                                          |
-|-----------|----------------------------------|-------|--------------------------------------------------|
-| A1        | machine charge amount            | 01    | min. coin value before data sent                 |
-| A2        | serial output signal pulse-width | 01    | 25ms / 9600 bps (RS232 baud rate)                |
-| A3        | faulty alarm option              | 01    | (rings only one time)                            |
-| A4        | serial port RS232 signal length  | 03    | 3 bytes: 0xAA, coin value, XOR of prev two bytes |
-| A5        | serial port output               | 01    | output to serial pin                             |
+Press ADD + MINUS to get to the setting menu for Hn, Pn, Fn. Then press SET to swap between possibilities. To change the option press ADD or MINUS to select the desired value and confirm with SET.
 
-
-To train the coin acceptor, have a look at "Coin Parameters Setting" on page 16 of the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf). Be sure to set the "coin value" for each coin in series, incremented by 1. For example:
-* 1 CZK = 1 coin value
-* 2 CZK = 2 coin value
-* 5 CZK = 3 coin value
-* 10 CZK = 4 coin value
-* 20 CZK = 5 coin value
-* 50 CZK = 6 coin value
-
-Then in bleskomat.conf, set the `coinValues` setting as follows:
-```
-coinValues=1,2,5,10,20,50
-```
+Press SET to enter the training menu (A appears on the panel). After pressing SET again you can start inserting the coins.
 
 
 ## Installing Libraries and Dependencies
@@ -285,27 +270,9 @@ make monitor DEVICE=/dev/ttyUSB0
 Again the device path here could be different for your operating system.
 
 
-## Prepare SD Card
+## Configuring The Bleskomat
 
-Format the SD card with the FAT32 filesystem.
-
-The following is an example `bleskomat.conf` file that you could use to configure a bleskomat device. Create the file and copy it to the root directory of the SD card.
-```
-apiKey.id=6d830ddeb0
-apiKey.key=b11cd6b002916691ccf3097eee3b49e51759225704dde88ecfced76ad95324c9
-apiKey.encoding=hex
-callbackUrl=https://your-bleskomat-server/u
-shorten=true
-uriSchemaPrefix=LIGHTNING:
-fiatCurrency=CZK
-fiatPrecision=0
-coinValues=1,2,5,10,20,50
-```
-
-
-### Configuration Options
-
-The following is a list of all possible configuration options that can be set via the bleskomat.conf configuration file:
+The following is a list of possible configuration options for your Bleskomat (DIY) ATM:
 * `apiKey.id` - The API key ID of the device. This is needed by the server to verify signatures created by the device.
 * `apiKey.key` - The API key secret that is used to generate signatures.
 * `apiKey.encoding` - The explicit encoding of the API key secret. This can be "hex", "base64", or empty-string (e.g "") to mean no encoding. When generating a new API key on the server, it will store the encoding along with the ID and secret.
@@ -315,9 +282,44 @@ The following is a list of all possible configuration options that can be set vi
 * `uriSchemaPrefix` - The URI schema prefix for LNURLs generated by the device. It has been discovered that some wallet apps mistakenly only support lowercase URI schema prefixes. Uppercase is better because when encoded as a QR code, the generated image is less complex and so easier to scan. Set this config to empty-string (e.g `uriSchemaPrefix=`) to not prepend any URI schema prefix.
 * `fiatCurrency` - The fiat currency symbol for which the device is configured; see [ISO 4217](https://en.wikipedia.org/wiki/ISO_4217).
 * `fiatPrecision` - The number of digits to the right of the decimal point when rendering fiat currency amounts.
-* `coinValues` - The value of coins for which the coin acceptor has been configured. Each value separated by a comma. Integers and floating point (decimal) values are accepted. Examples:
-	* CZK: `1,2,5,10,20,50`
-	* EUR: `0.05,0.10,0.20,0.50,1,2`
+* `coinValueIncrement` - The HX-616 communicates via pulses to the ESP32. The value here will determine how much fiat value each pulse represents. For example, when trained with EUR coins this value could be `0.05` with the following number of pulses set for each coin denomination:
+	* 0.05 EUR = 1 pulse
+	* 0.10 EUR = 2 pulses
+	* 0.20 EUR = 4 pulses
+	* 0.50 EUR = 10 pulses
+	* 1.00 EUR = 20 pulses
+	* 2.00 EUR = 40 pulses
+
+It is possible to configure your Bleskomat via the following methods:
+* [Hard-coded configuration](#hard-coded-configuration)
+* [Configuration via SD card](#configuration-via-sd-card)
+
+
+### Hard-coded configuration
+
+Hard-coded configurations can be set by modifying the source file [config.cpp](https://github.com/samotari/bleskomat-diy/blob/hx616/src/config.cpp#L154-L164).
+
+Each time you make changes to the hard-coded configurations, you will need to re-compile and flash the ESP32's firmware.
+
+
+### Configuration via SD card
+
+First you will need to format the SD card with the FAT32 filesystem.
+
+Create a new file named `bleskomat.conf` at the root of the SD card's filesystem.
+
+The following is an example `bleskomat.conf` file:
+```
+apiKey.id=6d830ddeb0
+apiKey.key=b11cd6b002916691ccf3097eee3b49e51759225704dde88ecfced76ad95324c9
+apiKey.encoding=hex
+callbackUrl=https://your-bleskomat-server/u
+shorten=true
+uriSchemaPrefix=
+fiatCurrency=EUR
+fiatPrecision=2
+coinValueIncrement=0.05
+```
 
 
 ## License

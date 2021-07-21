@@ -14,6 +14,7 @@
 	You should have received a copy of the GNU General Public License
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
+
 #include "config.h"
 
 namespace {
@@ -33,7 +34,7 @@ namespace {
 		"uriSchemaPrefix",
 		"fiatCurrency",
 		"fiatPrecision",
-		"coinValues"
+		"coinValueIncrement"
 	};
 
 	bool setConfigValue(const std::string &key, const std::string &value, BleskomatConfig &t_values) {
@@ -54,8 +55,9 @@ namespace {
 		} else if (key == "fiatPrecision") {
 			// Convert string to short:
 			t_values.fiatPrecision = (char)( *value.c_str() - '0' );
-		} else if (key == "coinValues") {
-			t_values.coinValues = util::stringListToFloatVector(value);
+		} else if (key == "coinValueIncrement") {
+			// Convert string to float:
+			t_values.coinValueIncrement = std::atof(value.c_str());
 		} else {
 			return false;
 		}
@@ -79,8 +81,8 @@ namespace {
 			return t_values.fiatCurrency;
 		} else if (key == "fiatPrecision") {
 			return std::to_string(t_values.fiatPrecision);
-		} else if (key == "coinValues") {
-			return util::floatVectorToStringList(t_values.coinValues);
+		} else if (key == "coinValueIncrement") {
+			return std::to_string(t_values.coinValueIncrement);
 		}
 		return "";
 	}
@@ -156,10 +158,10 @@ namespace config {
 		// values.lnurl.apiKey.encoding = "";
 		// values.lnurl.callbackUrl = "https://your-bleskomat-server.com/u";
 		// values.lnurl.shorten = true;
-		// values.uriSchemaPrefix = "LIGHTNING:";
-		// values.fiatCurrency = "CZK";
-		// values.fiatPrecision = 0;
-		// values.coinValues = { 1, 2, 5, 10, 20, 50 };
+		// values.uriSchemaPrefix = "";
+		// values.fiatCurrency = "EUR";
+		// values.fiatPrecision = 2;
+		// values.coinValueIncrement = 0.05;
 		printConfig(values);
 	}
 
@@ -180,7 +182,7 @@ namespace config {
 		return values.fiatPrecision;
 	}
 
-	std::vector<float> getCoinValues() {
-		return values.coinValues;
+	float getCoinValueIncrement() {
+		return values.coinValueIncrement;
 	}
 }
