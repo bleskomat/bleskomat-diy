@@ -103,6 +103,8 @@ Remove one of the power rails from one of the breadboards. Use the notches on th
 
 Insert the ESP32 devkit into the pin holes of the new, combined breadboard.
 
+![](docs/bleskomat-diy-build-breadboard-and-esp32-devkit.png)
+
 Familiarize yourself with the ESP32 devkit's pinout reference below.
 
 #### ESP32 devkit pinout
@@ -143,7 +145,11 @@ There are other options when powering the ESP32 - e.g via the 3.3V pin or the 5V
 
 ### Wiring the TFT Display
 
-Insert the pins of the TFT display module into the breadboard where you have space available. Use the table below to connect the ESP32 devkit to the TFT display module.
+Insert the pins of the TFT display module into the breadboard where you have space available.
+
+![](docs/bleskomat-diy-build-tft-display.png)
+
+Use the table below to connect the ESP32 devkit to the TFT display module.
 
 |  ESP32       | TFT        |
 |--------------|------------|
@@ -160,6 +166,8 @@ Notes on pin naming:
 * There are boards where `GPIXXX` are marked as `GXX` instead of `DXX`.
 * The `G23` may be there **twice** - the correct one is next to `GND`.
 * Some boards have typos so a bit of guess-and-check is necessary sometimes.
+
+![](docs/bleskomat-diy-build-tft-display-with-wires.png)
 
 Refer to the [ESP32 devkit pinout](#esp32-devkit-pinout) for help identifying the pins on your ESP32.
 
@@ -193,6 +201,8 @@ Connect the button using the following table as a guide:
 
 Connect the right pin of the button to GND with a 10k ohm resistor.
 
+![](docs/bleskomat-diy-build-button-with-wires.png)
+
 Refer to the [ESP32 devkit pinout](#esp32-devkit-pinout) for help identifying the pins on your ESP32.
 
 
@@ -205,6 +215,8 @@ Refer to the [ESP32 devkit pinout](#esp32-devkit-pinout) for help identifying th
 |             | GND      | - Ground      |
 | GPIO3 (RX0) | SIGNAL   |               |
 |             | DC12V    | + 12V DC      |
+
+![](docs/bleskomat-diy-build-coin-acceptor-dg600f.png)
 
 Refer to the [ESP32 devkit pinout](#esp32-devkit-pinout) for help identifying the pins on your ESP32.
 
