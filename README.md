@@ -255,7 +255,7 @@ To train the coin acceptor, have a look at "Coin Parameters Setting" on page 16 
 
 Then in bleskomat.conf, set the `coinValues` setting as follows:
 ```
-coinValues=1,2,5,10,20,50
+coinValues=0.05,0.10,0.20,0.50,1,2
 ```
 
 
