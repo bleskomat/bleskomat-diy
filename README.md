@@ -150,16 +150,16 @@ Insert the pins of the TFT display module into the breadboard where you have spa
 
 Use the table below to connect the ESP32 devkit to the TFT display module.
 
-|  ESP32       | TFT        |
-|--------------|------------|
-| VIN (V5)     | VCC        |
-| GND          | GND        |
-| GPIO22       | CS         |
-| GPIO4        | RESET      |
-| GPIO2        | AO         |
-| GPIO23       | SDA        |
-| GPIO18       | SCK (CLK)  |
-| 3V3          | LED (NC)   |
+|  ESP32       | TFT         |
+|--------------|-------------|
+| VIN (V5)     | VCC         |
+| GND          | GND         |
+| GPIO22       | CS          |
+| GPIO4        | RESET (RST) |
+| GPIO2        | AO (RS)     |
+| GPIO23       | SDA         |
+| GPIO18       | SCK (CLK)   |
+| 3V3          | LED (NC)    |
 
 Notes on pin naming:
 * There are boards where `GPIXXX` are marked as `GXX` instead of `DXX`.
