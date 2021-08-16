@@ -1,9 +1,9 @@
 # Parts List for XXX
 
-List of recommended electronics parts vendors in XXX:
-* [AAA](#)
-* [BBB](#)
-* [CCC](#)
+List of recommended electronics parts suppliers in XXX:
+* [Shop A](#)
+* [Shop B](#)
+* [Shop C](#)
 
 Basic components/equipment needed to build your own Bleskomat (DIY) ATM:
 * 2 x [Breadboard (400-pin)](#)

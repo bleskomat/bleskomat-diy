@@ -1,6 +1,6 @@
 # Parts List for Czech Republic
 
-List of recommended electronics parts vendors in Czech Republic:
+List of recommended electronics parts suppliers in Czech Republic:
 * [laskarduino.cz](https://www.laskarduino.cz)
 * [alza.cz](https://www.alza.cz)
 * [gme.cz](https://www.gme.cz/)
