@@ -13,6 +13,7 @@ The Bleskomat ATM must be paired with a [bleskomat-server](https://github.com/sa
 The rest of this document details how you can build your own version of the Bleskomat ATM project:
 * [Requirements](#requirements)
 	* [Hardware Requirements](#hardware-requirements)
+		* [Parts Suppliers](#parts-suppliers)
 	* [Software Requirements](#software-requirements)
 * [Building the Hardware Device](#building-the-hardware-device)
 	* [Prepare the breadboards](#prepare-the-breadboards)
