@@ -41,44 +41,35 @@ This section includes information about the software and hardware requirements n
 ### Hardware Requirements
 
 Basic components/equipment needed to build your own Bleskomat (DIY) ATM:
-* Two (400-pin) breadboards
-	* [laskarduino.cz](https://www.laskarduino.cz/nepajive-kontaktni-pole-400-pinu--bile/)
+* 2 x breadboard (400-pin)
 * Connecting cables (M-M)
-	* [laskarduino.cz](https://www.laskarduino.cz/dupont-propojovaci-kabely-40ks-m-m-samec-samec--10cm-/)
 * Connecting cables (M-F)
-	* [laskarduino.cz](https://www.laskarduino.cz/dupont-propojovaci-kabely-40ks-m-f-samec-samice--10cm-/)
 * ESP32 Devkit
-	* [laskarduino.cz](https://www.laskarduino.cz/iot-esp-32s-2-4ghz-dual-mode-wifi-bluetooth-rev-1--cp2102/)
-* DG600F Coin Acceptor:
-	* [Alibaba.com](https://www.alibaba.com/trade/search?fsb=y&IndexArea=product_en&CatId=&SearchText=DG600F)
-	* [Sparkfun.com](https://www.sparkfun.com/products/11636)
-* 1.8" TFT display:
-	* [laskarduino.cz](https://www.laskarduino.cz/128x160-barevny-lcd-tft-displej-1-8--spi/)
+* DG600F Coin Acceptor
+* 1.8" TFT display
 * Button
-	* [laskarduino.cz](https://www.laskarduino.cz/mikrospinac-tc-1212t-12x12x7-3mm/)
 * 10k ohm resistor
-	* [laskarduino.cz](https://www.laskarduino.cz/futaba-1-4w-odpor-10k-5/)
 * DC 5.5/2.1 mm DIP adapter
-	* [laskarduino.cz](https://www.laskarduino.cz/dc-5-5-2-1mm-na-dip-adapter-led/)
 * 12V DC power adaptor with \~1A
-	* [laskarduino.cz](https://www.laskarduino.cz/napajeci-adapter-sitovy-1000ma-5-5-2-1-mm-12v/)
 * Standard USB to micro USB cable
-	* [laskarduino.cz](https://www.laskarduino.cz/50cm-microusb-kabel/)
 * Multimeter
 
 Optional components/equipment:
 * Soldering iron
 * 2.54 mm pins
-	* [laskarduino.cz](https://www.laskarduino.cz/dupont-40pin-2-54-mm-pinovy-pas--pravy-uhel/)
 * To power the ESP32 devkit from the 12V DC power supply:
-	* XL4005 step-down converter:
-		* [laskarduino.cz](https://www.laskarduino.cz/step-down-menic-s-xl4005/)
-		* [Alibaba.com](https://www.alibaba.com//trade/search?fsb=y&IndexArea=product_en&CatId=&SearchText=xl4005)
+	* XL4005 step-down converter
 	* USB (F) adapter
-		* [laskarduino.cz](https://www.laskarduino.cz/usb-f-na-dip-adapter/)
 	* Alternatively, you could use a USB car charger which includes both a step-down converter and USB (F) output
 * If you wish to configure your Bleskomat via SD card:
 	* Micro SD card with macro adapter
+
+
+#### Parts Suppliers
+
+Below are parts lists based on geographic location. Local suppliers are recommended for each hardware component or equipment.
+
+* [czech-republic](docs/parts-lists/czech-republic.md)
 
 
 ### Software Requirements
