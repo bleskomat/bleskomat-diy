@@ -73,7 +73,7 @@ Below are parts lists based on geographic location:
 * [Czech Republic](docs/parts-lists/czech-republic.md)
 * [USA](docs/parts-lists/usa.md)
 
-If you'd like you add your own list, please create a pull-request using [this template](docs/parts-lists/TEMPLATE.md) as a guide.
+If you'd like you add your own list, please create a pull-request using [this template](docs/parts-lists/TEMPLATE.md) as a guide. Links with referral codes will not be accepted.
 
 ### Software Requirements
 
