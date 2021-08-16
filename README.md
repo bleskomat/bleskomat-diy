@@ -65,6 +65,8 @@ Optional components/equipment:
 * If you wish to configure your Bleskomat via SD card:
 	* Micro SD card with macro adapter
 
+See the [Parts Suppliers](#parts-suppliers) section below for links to suppliers for each component/equipment.
+
 
 #### Parts Suppliers
 
@@ -73,7 +75,8 @@ Below are parts lists based on geographic location:
 * [Czech Republic](docs/parts-lists/czech-republic.md)
 * [USA](docs/parts-lists/usa.md)
 
-If you'd like you add your own list, please create a pull-request using [this template](docs/parts-lists/TEMPLATE.md) as a guide. Links with referral codes will not be accepted.
+If you'd like to add your own list, please create a pull-request using [this template](docs/parts-lists/TEMPLATE.md) as a guide. Links with referral codes will not be accepted.
+
 
 ### Software Requirements
 
