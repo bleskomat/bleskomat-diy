@@ -67,10 +67,11 @@ Optional components/equipment:
 
 #### Parts Suppliers
 
-Below are parts lists based on geographic location. Local suppliers are recommended for each hardware component or equipment.
+Below are parts lists based on geographic location:
 
 * [czech-republic](docs/parts-lists/czech-republic.md)
 
+If you'd like you add your own list, please create a pull-request using [this template](docs/parts-lists/TEMPLATE.md) as a guide.
 
 ### Software Requirements
 
