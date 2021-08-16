@@ -7,8 +7,8 @@ List of recommended electronics parts suppliers in Czech Republic:
 
 Basic components/equipment needed to build your own Bleskomat (DIY) ATM:
 * 2 x [Breadboard (400-pin)](https://www.laskarduino.cz/nepajive-kontaktni-pole-400-pinu--bile/)
-* [Connecting cables (M-M)](https://www.laskarduino.cz/dupont-propojovaci-kabely-40ks-m-m-samec-samec--10cm-/)
-* [Connecting cables (M-F)](https://www.laskarduino.cz/dupont-propojovaci-kabely-40ks-m-f-samec-samice--10cm-/)
+* [Jumper wires (M-M)](https://www.laskarduino.cz/dupont-propojovaci-kabely-40ks-m-m-samec-samec--10cm-/)
+* [Jumper wires (M-F)](https://www.laskarduino.cz/dupont-propojovaci-kabely-40ks-m-f-samec-samice--10cm-/)
 * [ESP32 Devkit](https://www.laskarduino.cz/iot-esp-32s-2-4ghz-dual-mode-wifi-bluetooth-rev-1--cp2102/)
 * DG600F Coin Acceptor:
 	* _No known local part supplier_

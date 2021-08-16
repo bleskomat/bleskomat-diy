@@ -43,8 +43,8 @@ This section includes information about the software and hardware requirements n
 
 Basic components/equipment needed to build your own Bleskomat (DIY) ATM:
 * 2 x breadboard (400-pin)
-* Connecting cables (M-M)
-* Connecting cables (M-F)
+* Jumper wires (M-M)
+* Jumper wires (M-F)
 * ESP32 Devkit
 * DG600F Coin Acceptor
 * 1.8" TFT display
