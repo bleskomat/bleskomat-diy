@@ -121,7 +121,7 @@ The first step to building the device is wiring the power supply. If already plu
 * The pin touched by the __red__ lead is the hot wire ("DC12V")
 * Unplug the power supply again
 
-Use a pair of M-F connecting cables to connect the DC 5.5/2.1 DIP adapter to one of the breadboard's power rails. Negative to negative, positive to positive. This rail will be your 12V DC power (positive) and the common ground (negative).
+Use a pair of M-F jumper wires to connect the DC 5.5/2.1 DIP adapter to one of the breadboard's power rails. Negative to negative, positive to positive. This rail will be your 12V DC power (positive) and the common ground (negative).
 
 #### Optionally power the ESP32 devkit via 5V pin
 
@@ -129,9 +129,9 @@ If you'd like to make your Bleskomat build a little bit more portable, you can p
 
 It's also possible to use a USB car charger in case you have an extra one lying around.
 
-Connect the step-down converter's input pins to the 12V DC power rail and common ground using (M-F) connecting cables. Use a multimeter to measure the voltage at the out pins. In the case of the XL4005, use a small screwdriver to turn the screw on the little blue box. Turning the screw counter clockwise should lower the voltage, turning it the opposite direction should increase the voltage. Once you have the voltage set to 5V, connect the out pins to the center power rails of the breadboard. This will be your 5V DC power rail.
+Connect the step-down converter's input pins to the 12V DC power rail and common ground using (M-F) jumper wires. Use a multimeter to measure the voltage at the out pins. In the case of the XL4005, use a small screwdriver to turn the screw on the little blue box. Turning the screw counter clockwise should lower the voltage, turning it the opposite direction should increase the voltage. Once you have the voltage set to 5V, connect the out pins to the center power rails of the breadboard. This will be your 5V DC power rail.
 
-Use a soldering iron to solder four 2.54 mm pins to the USB (F) DIP adapter. Insert the pins directly into the breadboard wherever you have space available. Using (M-M) connecting cables, connect the negative and positive pins of the USB (F) DIP adapter to the 5V DC power rail.
+Use a soldering iron to solder four 2.54 mm pins to the USB (F) DIP adapter. Insert the pins directly into the breadboard wherever you have space available. Using (M-M) jumper wires, connect the negative and positive pins of the USB (F) DIP adapter to the 5V DC power rail.
 
 Connect the negative pin of the 5V DC power rail to the negative of the 12V DC power rail to ensure that they share a common ground. This is important because without a common ground shared between the coin acceptor and ESP32 devkit, the ESP32 will not receive a clean signal from the coin acceptor.
 
