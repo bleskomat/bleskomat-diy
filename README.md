@@ -1,8 +1,8 @@
 # Bleskomat DIY
 
-This is the do-it-yourself (DIY) version of the Bleskomat ATM. If you're looking for the Bleskomat ATM product, you can find more information at [www.bleskomat.com](https://www.bleskomat.com).
+This is the do-it-yourself (DIY) version of the Bleskomat ATM. If you're looking for the product which comes ready-to-go, you can find more information and order your own on the official website: [Bleskomat Bitcoin Lightning ATM](https://www.bleskomat.com).
 
-Key features of the Bleskomat ATM include:
+The Bleskomat ATM uses the Lightning Network to send bitcoin payments instantly and with very low fees. The key features include:
 * Works offline - no WiFi required
 * Inexpensive, easily-sourced components
 * Easily hackable and extendible
