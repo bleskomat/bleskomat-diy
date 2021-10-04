@@ -14,7 +14,7 @@ Basic components/equipment needed to build your own Bleskomat (DIY) ATM:
 * [Connecting cables (M-F)](https://www.hobbytronics.co.uk/jumper-wires-mf-6in)
 * [ESP32 Devkit](https://www.amazon.co.uk/AZDelivery-NodeMcu-CP2102-Development-including/dp/B071P98VTG/)
 * [DG600F Coin Acceptor](https://www.robotshop.com/uk/programmable-coin-acceptor.html)
-* [1.8" TFT display](https://www.hobbytronics.co.uk/tft-serial-display-18)
+* [1.8" TFT display](https://www.amazon.co.uk/gp/product/B078J5TS2G/)
 * [Button](https://www.hobbytronics.co.uk/tactile-button-assortment)
 * [10k ohm resistor](https://www.hobbytronics.co.uk/resistor-10k-1-8w)
 * [DC 5.5/2.1 mm DIP adapter](https://www.amazon.co.uk/Uonlytech-Converter-Charger-Adapter-Connectors/dp/B07VLFWWW3)
