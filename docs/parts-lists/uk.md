@@ -24,7 +24,7 @@ Basic components/equipment needed to build your own Bleskomat (DIY) ATM:
 
 Optional components/equipment:
 * [Soldering iron](https://www.amazon.co.uk/dp/B08T5RJFBC/)
-* [2.54 mm pins](https://hobbycomponents.com/connectors/108-single-row-40-pin-254mm-pitch-pin-headers)
+* [2.54 mm pins](https://hobbycomponents.com/connectors/656-ra-40-way-01-breakable-male-pin-headers)
 * To power the ESP32 devkit from the 12V DC power supply:
 	* [XL4005 step-down converter](https://www.amazon.co.uk/DollaTek-XL4005-Adjustable-Module-Converter/dp/B081JNVVNY/)
 	* [USB (F) adapter](https://www.amazon.co.uk/Breakout-Female-Socket-Adapter-Connector/dp/B07R9SMJKF/)
