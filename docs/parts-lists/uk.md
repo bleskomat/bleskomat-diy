@@ -18,8 +18,8 @@ Basic components/equipment needed to build your own Bleskomat (DIY) ATM:
 * [Button](https://www.hobbytronics.co.uk/tactile-button-assortment)
 * [10k ohm resistor](https://www.robotshop.com/uk/resistor-10k-ohm-1-4-watt-pth-20pk.html)
 * [DC 5.5/2.1 mm DIP adapter](https://www.ebay.co.uk/itm/DC-Power-Jack-with-DIP-Adapter-Barrel-Type-Socket-Breakout-Board-DC-Power-Supply-/114944864538)
-* [12V DC power adaptor with \~1A](https://www.acadaptorsrus.co.uk/12v-1a-1-amp-mains-ac-dc-adaptor-power-supply-for-yeskamo-cctv-system-uk-plug/) or (https://uk.rs-online.com/web/p/ac-dc-adapters/1753303/)
-* [Standard USB to micro USB cable](https://www.amazon.co.uk/5Plus-Micro-Adapter-Female-Black/dp/B09BCWN3KT/)
+* [12V DC power adaptor with \~1A](https://www.acadaptorsrus.co.uk/12v-1a-1-amp-mains-ac-dc-adaptor-power-supply-for-yeskamo-cctv-system-uk-plug/) or [this one](https://uk.rs-online.com/web/p/ac-dc-adapters/1753303/)
+* [Standard USB to micro USB cable](https://www.amazon.co.uk/gp/product/B07N77T84B/)
 * [Multimeter](https://www.hobbytronics.co.uk/digital-multimeter-basic)
 
 Optional components/equipment:
