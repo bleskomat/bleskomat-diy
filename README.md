@@ -248,6 +248,7 @@ Open the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf) to "Coi
 
 
 To train the coin acceptor, have a look at "Coin Parameters Setting" on page 16 of the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf). Be sure to set the "coin value" for each coin in series, incremented by 1. For example:
+CZK:
 * 1 CZK = 1 coin value
 * 2 CZK = 2 coin value
 * 5 CZK = 3 coin value
@@ -255,9 +256,24 @@ To train the coin acceptor, have a look at "Coin Parameters Setting" on page 16 
 * 20 CZK = 5 coin value
 * 50 CZK = 6 coin value
 
+EUR:
+* 0.05 EUR = 1 coin value
+* 0.10 EUR = 2 coin value
+* 0.20 EUR = 3 coin value
+* 0.50 EUR = 4 coin value
+* 1.00 EUR = 5 coin value
+* 2.00 EUR = 6 coin value
+
 Then in bleskomat.conf, set the `coinValues` setting as follows:
+
+CZK:
 ```
 coinValues=1,2,5,10,20,50
+```
+
+EUR:
+```
+coinValues=0.05,0.10,0.20,0.50,1,2
 ```
 
 
@@ -343,7 +359,7 @@ shorten=true
 uriSchemaPrefix=
 fiatCurrency=EUR
 fiatPrecision=2
-coinValues=0.05,0.10,0.20,0.50,1,2
+coinValues=1,2,5,10,20,50
 ```
 
 
