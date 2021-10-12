@@ -9,8 +9,8 @@ The Bleskomat ATM uses the Lightning Network to send bitcoin payments instantly 
 * Plug it in and it's ready to accept fiat in seconds
 
 The Bleskomat ATM must be paired with one of these Lightning Network servers
+* [LNbits Bleskomat extension](https://github.com/lnbits/lnbits/tree/master/lnbits/extensions/bleskomat) which is easy to setup with [Umbrel](https://github.com/getumbrel/umbrel) or [MyNode](https://github.com/mynodebtc/mynode) Lightning node solution.
 * [bleskomat-server](https://github.com/samotari/bleskomat-server) which can facilitate Lightning Network payments on behalf of one or more ATMs
-* [LNbits Bleskomat extension](https://github.com/lnbits/lnbits/tree/master/lnbits/extensions/bleskomat)
 
 The rest of this document details how you can build your own version of the Bleskomat ATM project:
 * [Requirements](#requirements)
