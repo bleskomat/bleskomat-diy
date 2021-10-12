@@ -210,10 +210,10 @@ Refer to the [ESP32 devkit pinout](#esp32-devkit-pinout) for help identifying th
 
 | ESP32       | DG600F   | Power Supply  |
 |-------------|----------|---------------|
-| GPIO1 (TXO) | INHIBIT  |               |
+| GPIO1 (TXD) | INHIBIT  |               |
 |             | COUNTER  |               |
 |             | GND      | - Ground      |
-| GPIO3 (RXO) | SIGNAL   |               |
+| GPIO3 (RXD) | SIGNAL   |               |
 |             | DC12V    | + 12V DC      |
 
 ![](docs/bleskomat-diy-build-coin-acceptor-dg600f.png)
