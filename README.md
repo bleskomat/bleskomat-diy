@@ -8,7 +8,9 @@ The Bleskomat ATM uses the Lightning Network to send bitcoin payments instantly 
 * Easily hackable and extendible
 * Plug it in and it's ready to accept fiat in seconds
 
-The Bleskomat ATM must be paired with a [bleskomat-server](https://github.com/samotari/bleskomat-server) which can facilitate Lightning Network payments on behalf of one or more ATMs.
+The Bleskomat ATM must be paired with one of these Lightning Network servers
+* [bleskomat-server](https://github.com/samotari/bleskomat-server) which can facilitate Lightning Network payments on behalf of one or more ATMs
+* [LNbits Bleskomat extension](https://github.com/lnbits/lnbits/tree/master/lnbits/extensions/bleskomat)
 
 The rest of this document details how you can build your own version of the Bleskomat ATM project:
 * [Requirements](#requirements)
@@ -320,7 +322,7 @@ It is possible to configure your Bleskomat via the following methods:
 
 ### Hard-coded configuration
 
-Hard-coded configurations can be set by modifying the source file [config.cpp](https://github.com/samotari/bleskomat-diy/blob/master/src/config.cpp#L152-L162).
+Hard-coded configurations can be set by modifying the source file [config.cpp](https://github.com/gorrdy/bleskomat-diy/blob/master/src/config.cpp#L152-L162).
 
 Each time you make changes to the hard-coded configurations, you will need to re-compile and flash the ESP32's firmware.
 
