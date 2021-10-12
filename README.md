@@ -248,6 +248,7 @@ Open the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf) to "Coi
 
 
 To train the coin acceptor, have a look at "Coin Parameters Setting" on page 16 of the [DG600F manual](docs/DG600F-Coin-Acceptor-Technical-Manual.pdf). Be sure to set the "coin value" for each coin in series, incremented by 1. For example:
+
 CZK:
 * 1 CZK = 1 coin value
 * 2 CZK = 2 coin value
