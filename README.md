@@ -155,7 +155,7 @@ Use the table below to connect the ESP32 devkit to the TFT display module.
 | VIN (V5)     | VCC        |
 | GND          | GND        |
 | GND          | GND        |
-| 3V3          | NC         |
+|              | NC         |
 |              | NC         |
 |              | NC         |
 | GPIO18       | CLK        |
