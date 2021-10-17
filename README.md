@@ -160,7 +160,7 @@ Use the table below to connect the ESP32 devkit to the TFT display module.
 |              | NC         |
 | GPIO18       | CLK        |
 | GPIO23       | SDA        |
-|              | RS         |
+| GPIO2        | RS         |
 | GPIO4        | RST        |
 | GPIO22       | CS         |
 
