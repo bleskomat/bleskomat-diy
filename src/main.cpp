@@ -72,7 +72,7 @@ void loop() {
 					coinAcceptor::off();
 				#endif
 
-				// Wait for 2 seconds to avoid multi button press and losing the QR code by an accident
+				// Wait for 2 seconds to avoid pressing button multiple times and losing the QR code by an accident
 				delay(2000);
 			}
 		} else {
