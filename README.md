@@ -73,6 +73,7 @@ See the [Parts Suppliers](#parts-suppliers) section below for links to suppliers
 Below are parts lists based on geographic location:
 
 * [Czech Republic](docs/parts-lists/czech-republic.md)
+* [United Kingdom](docs/parts-lists/uk.md)
 * [USA](docs/parts-lists/usa.md)
 
 If you'd like to add your own list, please create a pull-request using [this template](docs/parts-lists/TEMPLATE.md) as a guide. Links with referral codes will not be accepted.
