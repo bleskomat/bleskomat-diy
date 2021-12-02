@@ -109,7 +109,7 @@ Familiarize yourself with the ESP32 devkit's pinout reference below.
 
 #### ESP32 devkit pinout
 
-![](docs/bleskomat-diy-build-ESP32.jpg)
+![](docs/ESP32-D0WDQ6-pinout.jpg)
 
 
 ### Wiring the Power Supply
