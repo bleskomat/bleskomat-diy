@@ -8,9 +8,9 @@ The Bleskomat ATM uses the Lightning Network to send bitcoin payments instantly 
 * Easily hackable and extendible
 * Plug it in and it's ready to accept fiat in seconds
 
-The Bleskomat ATM must be paired with one of these Lightning Network servers
-* [LNbits Bleskomat extension](https://github.com/lnbits/lnbits/tree/master/lnbits/extensions/bleskomat) which is easy to setup with [Umbrel](https://github.com/getumbrel/umbrel) or [MyNode](https://github.com/mynodebtc/mynode) Lightning node solution.
-* [bleskomat-server](https://github.com/samotari/bleskomat-server) which can facilitate Lightning Network payments on behalf of one or more ATMs
+The Bleskomat ATM must be paired with a server which supports [Signed LNURLs](https://github.com/chill117/lnurl-rfc/blob/lud-21-signed-lnurls/21.md). The server facilitates Lightning payments on behalf of your Bleskomat ATM. Below is a list of server software which you can use with your Bleskomat:
+* [bleskomat-server](https://github.com/samotari/bleskomat-server) - supports several Lightning backends including Lightning Network Daemon (lnd), coinos, lnbits, lndhub (BlueWallet), lnpay, lntxbot, opennode.
+* [lnbits](https://github.com/lnbits/lnbits-legend) w/ the Bleskomat extension
 
 The rest of this document details how you can build your own version of the Bleskomat ATM project:
 * [Requirements](#requirements)
@@ -75,6 +75,7 @@ See the [Parts Suppliers](#parts-suppliers) section below for links to suppliers
 Below are parts lists based on geographic location:
 
 * [Czech Republic](docs/parts-lists/czech-republic.md)
+* [United Kingdom](docs/parts-lists/uk.md)
 * [USA](docs/parts-lists/usa.md)
 
 If you'd like to add your own list, please create a pull-request using [this template](docs/parts-lists/TEMPLATE.md) as a guide. Links with referral codes will not be accepted.
