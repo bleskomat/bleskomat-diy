@@ -151,15 +151,15 @@ namespace config {
 		}
 		// Hard-coded configuration overrides - for development purposes.
 		// Uncomment the following lines, as needed, to override config options.
-		// values.lnurl.apiKey.id = "lnbits-ext-apiid";
-		// values.lnurl.apiKey.key = "lnbits-ext-apikey";
-		// values.lnurl.apiKey.encoding = "hex";
-		// values.lnurl.callbackUrl = "https://lnbits-server.com/u";
+		// values.lnurl.apiKey.id = "";
+		// values.lnurl.apiKey.key = "";
+		// values.lnurl.apiKey.encoding = "";
+		// values.lnurl.callbackUrl = "https://your-bleskomat-server.com/u";
 		// values.lnurl.shorten = true;
 		// values.uriSchemaPrefix = "";
-		// values.fiatCurrency = "CZK";
+		// values.fiatCurrency = "EUR";
 		// values.fiatPrecision = 2;
-		// values.coinValues = { 1, 2, 5, 10, 20, 50 };
+		// values.coinValues = { 0.05, 0.10, 0.20, 0.50, 1.00, 2.00 };
 		printConfig(values);
 	}
 

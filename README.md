@@ -361,7 +361,7 @@ shorten=true
 uriSchemaPrefix=
 fiatCurrency=EUR
 fiatPrecision=2
-coinValues=1,2,5,10,20,50
+coinValues=0.05,0.10,0.20,0.50,1,2
 ```
 
 
