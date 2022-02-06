@@ -159,7 +159,6 @@ Use the table below to connect the ESP32 devkit to the TFT display module.
 | GPIO2        | AO (RS)     |
 | GPIO23       | SDA         |
 | GPIO18       | SCK (CLK)   |
-| 3V3          | LED (NC)    |
 
 Notes on pin naming:
 * There are boards where `GPIXXX` are marked as `GXX` instead of `DXX`.
