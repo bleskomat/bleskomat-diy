@@ -1,5 +1,7 @@
 # Bleskomat DIY
 
+This is a Linux (Ubuntu, Debian etc.) manual.
+
 This is the do-it-yourself (DIY) version of the Bleskomat ATM. If you're looking for the product which comes ready-to-go, you can find more information and order your own on the official website: [Bleskomat Bitcoin Lightning ATM](https://www.bleskomat.com).
 
 The Bleskomat ATM uses the Lightning Network to send bitcoin payments instantly and with very low fees. The key features include:
