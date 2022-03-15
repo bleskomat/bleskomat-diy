@@ -37,6 +37,7 @@ struct BleskomatConfig {
 	unsigned short fiatPrecision = 2;
 	std::vector<float> coinValues;
 	float coinValueIncrement;
+	unsigned short tftRotation = 2;
 };
 
 namespace config {
@@ -47,6 +48,7 @@ namespace config {
 	unsigned short getFiatPrecision();
 	std::vector<float> getCoinValues();
 	float getCoinValueIncrement();
+	unsigned short getTftRotation();
 }
 
 #endif

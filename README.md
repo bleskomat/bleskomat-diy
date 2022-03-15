@@ -371,6 +371,12 @@ The following is a list of possible configuration options for your Bleskomat (DI
 	* 0.50 EUR = 10 pulses
 	* 1.00 EUR = 20 pulses
 	* 2.00 EUR = 40 pulses
+* `tftRotation` The orientation of the TFT display. This is useful to allow different positions of the display. The possible rotation values are:
+	* 0 = 0 degrees
+	* 1 = 90 degrees
+	* 2 = 180 degrees
+	* 3 = 270 degrees
+
 
 It is possible to configure your Bleskomat via the following methods:
 * [Hard-coded configuration](#hard-coded-configuration)
@@ -402,6 +408,7 @@ fiatCurrency=EUR
 fiatPrecision=2
 coinValues=0.05,0.10,0.20,0.50,1,2
 coinValueIncrement=0.05
+tftRotation=2
 ```
 
 

@@ -35,6 +35,7 @@ namespace {
 		"fiatPrecision",
 		"coinValues",
 		"coinValueIncrement",
+		"tftRotation"
 	};
 
 	bool setConfigValue(const std::string &key, const std::string &value, BleskomatConfig &t_values) {
@@ -60,7 +61,10 @@ namespace {
 		} else if (key == "coinValueIncrement") {
 			// Convert string to float:
 			t_values.coinValueIncrement = std::atof(value.c_str());
-		}  else {
+		} else if (key == "tftRotation") {
+			// Convert string to short:
+			t_values.tftRotation = (char)( *value.c_str() - '0' );;
+		} else {
 			return false;
 		}
 		return true;
@@ -87,6 +91,8 @@ namespace {
 			return util::floatVectorToStringList(t_values.coinValues);
 		} else if (key == "coinValueIncrement") {
 			return std::to_string(t_values.coinValueIncrement);
+		} else if (key == "tftRotation") {
+			return std::to_string(t_values.tftRotation);
 		}
 		return "";
 	}
@@ -167,6 +173,7 @@ namespace config {
 		// values.fiatPrecision = 2;
 		// values.coinValues = { 0.05, 0.10, 0.20, 0.50, 1.00, 2.00 };// DG600F
 		// values.coinValueIncrement = 0.05;// HX616
+		// values.tftRotation = 2;
 		printConfig(values);
 	}
 
@@ -193,5 +200,9 @@ namespace config {
 
 	float getCoinValueIncrement() {
 		return values.coinValueIncrement;
+	}
+
+	unsigned short getTftRotation() {
+		return values.tftRotation;
 	}
 }
