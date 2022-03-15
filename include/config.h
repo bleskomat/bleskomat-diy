@@ -35,6 +35,7 @@ struct BleskomatConfig {
 	std::string uriSchemaPrefix = "LIGHTNING";
 	std::string fiatCurrency = "EUR";
 	unsigned short fiatPrecision = 2;
+	unsigned short tftRotation = 2;
 	float coinValueIncrement;
 };
 
@@ -44,6 +45,7 @@ namespace config {
 	std::string get(const char* &t_key);
 	std::string get(const std::string &key);
 	unsigned short getFiatPrecision();
+	unsigned short getTftRotation();
 	float getCoinValueIncrement();
 }
 
