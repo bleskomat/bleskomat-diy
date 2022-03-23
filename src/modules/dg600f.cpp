@@ -15,7 +15,7 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#include "modules/coin-acceptor.h"
+#include "modules/dg600f.h"
 
 namespace {
 
@@ -69,14 +69,14 @@ namespace {
 	}
 }
 
-namespace coinAcceptor {
+namespace dg600f {
 
 	void init() {
 		coinValues = config::getCoinValues();
 		maxCoinValue = findMaxValueInFloatVector(coinValues);
 		Serial2.begin(COIN_ACCEPTOR_BAUDRATE, SERIAL_8N1, COIN_ACCEPTOR_SIGNAL, 0);
 		pinMode(COIN_ACCEPTOR_INHIBIT, OUTPUT);
-		coinAcceptor::on();
+		dg600f::on();
 	}
 
 	void loop() {

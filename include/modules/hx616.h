@@ -15,34 +15,26 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef BLESKOMAT_MODULES_H
-#define BLESKOMAT_MODULES_H
+#ifndef BLESKOMAT_MODULES_HX616_H
+#define BLESKOMAT_MODULES_HX616_H
 
 #include "config.h"
 #include "logger.h"
+#include <Arduino.h>
 
-#ifdef DG600F
-	#include "modules/dg600f.h"
-	namespace coinAcceptor = dg600f;
-#elif HX616
-	#include "modules/hx616.h"
-	namespace coinAcceptor = hx616;
+#ifndef COIN_ACCEPTOR_SIGNAL
+	#define COIN_ACCEPTOR_SIGNAL 3
 #endif
 
-#ifdef BUTTON
-	#include "modules/button.h"
-#endif
-
-#ifdef TFT
-	#include "modules/tft.h"
-	namespace screen = tft;
-#else
-	#include "modules/dummy/screen.h"
-#endif
-
-namespace modules {
+namespace hx616 {
 	void init();
 	void loop();
+	float getAccumulatedValue();
+	void reset();
+	bool isOff();
+	bool isOn();
+	void on();
+	void off();
 }
 
 #endif

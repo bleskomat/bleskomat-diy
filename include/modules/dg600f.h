@@ -15,8 +15,8 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef BLESKOMAT_MODULES_COIN_ACCEPTOR_H
-#define BLESKOMAT_MODULES_COIN_ACCEPTOR_H
+#ifndef BLESKOMAT_MODULES_DG600F_H
+#define BLESKOMAT_MODULES_DG600F_H
 
 #include "config.h"
 #include "logger.h"
@@ -38,7 +38,7 @@
 	#define COIN_ACCEPTOR_BAUDRATE 9600
 #endif
 
-namespace coinAcceptor {
+namespace dg600f {
 	void init();
 	void loop();
 	float getAccumulatedValue();
