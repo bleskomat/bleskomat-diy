@@ -34,7 +34,8 @@ namespace {
 		"uriSchemaPrefix",
 		"fiatCurrency",
 		"fiatPrecision",
-		"coinValueIncrement"
+		"coinValueIncrement",
+		"tftRotation"
 	};
 
 	bool setConfigValue(const std::string &key, const std::string &value, BleskomatConfig &t_values) {
@@ -58,6 +59,9 @@ namespace {
 		} else if (key == "coinValueIncrement") {
 			// Convert string to float:
 			t_values.coinValueIncrement = std::atof(value.c_str());
+		} else if (key == "tftRotation") {
+			// Convert string to short:
+			t_values.tftRotation = (char)( *value.c_str() - '0' );;
 		} else {
 			return false;
 		}
@@ -83,6 +87,8 @@ namespace {
 			return std::to_string(t_values.fiatPrecision);
 		} else if (key == "coinValueIncrement") {
 			return std::to_string(t_values.coinValueIncrement);
+		} else if (key == "tftRotation") {
+			return std::to_string(t_values.tftRotation);
 		}
 		return "";
 	}
@@ -162,6 +168,7 @@ namespace config {
 		// values.fiatCurrency = "EUR";
 		// values.fiatPrecision = 2;
 		// values.coinValueIncrement = 0.05;
+		// values.tftRotation = 2;
 		printConfig(values);
 	}
 
@@ -180,6 +187,10 @@ namespace config {
 
 	unsigned short getFiatPrecision() {
 		return values.fiatPrecision;
+	}
+
+	unsigned short getTftRotation() {
+		return values.tftRotation;
 	}
 
 	float getCoinValueIncrement() {
