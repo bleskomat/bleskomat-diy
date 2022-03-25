@@ -33,7 +33,8 @@ namespace {
 		"uriSchemaPrefix",
 		"fiatCurrency",
 		"fiatPrecision",
-		"coinValues"
+		"coinValues",
+		"coinValueIncrement",
 	};
 
 	bool setConfigValue(const std::string &key, const std::string &value, BleskomatConfig &t_values) {
@@ -56,7 +57,10 @@ namespace {
 			t_values.fiatPrecision = (char)( *value.c_str() - '0' );
 		} else if (key == "coinValues") {
 			t_values.coinValues = util::stringListToFloatVector(value);
-		} else {
+		} else if (key == "coinValueIncrement") {
+			// Convert string to float:
+			t_values.coinValueIncrement = std::atof(value.c_str());
+		}  else {
 			return false;
 		}
 		return true;
@@ -81,6 +85,8 @@ namespace {
 			return std::to_string(t_values.fiatPrecision);
 		} else if (key == "coinValues") {
 			return util::floatVectorToStringList(t_values.coinValues);
+		} else if (key == "coinValueIncrement") {
+			return std::to_string(t_values.coinValueIncrement);
 		}
 		return "";
 	}
@@ -159,7 +165,8 @@ namespace config {
 		// values.uriSchemaPrefix = "";
 		// values.fiatCurrency = "EUR";
 		// values.fiatPrecision = 2;
-		// values.coinValues = { 0.05, 0.10, 0.20, 0.50, 1.00, 2.00 };
+		// values.coinValues = { 0.05, 0.10, 0.20, 0.50, 1.00, 2.00 };// DG600F
+		// values.coinValueIncrement = 0.05;// HX616
 		printConfig(values);
 	}
 
@@ -182,5 +189,9 @@ namespace config {
 
 	std::vector<float> getCoinValues() {
 		return values.coinValues;
+	}
+
+	float getCoinValueIncrement() {
+		return values.coinValueIncrement;
 	}
 }
