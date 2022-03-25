@@ -165,10 +165,8 @@ namespace config {
 		// values.uriSchemaPrefix = "";
 		// values.fiatCurrency = "EUR";
 		// values.fiatPrecision = 2;
-		// // coin acceptor DG600F
-		// values.coinValues = { 0.05, 0.10, 0.20, 0.50, 1.00, 2.00 };
-		// // coin acceptor hx616
-		// values.coinValueIncrement = 0.05;
+		// values.coinValues = { 0.05, 0.10, 0.20, 0.50, 1.00, 2.00 };// DG600F
+		// values.coinValueIncrement = 0.05;// HX616
 		printConfig(values);
 	}
 
