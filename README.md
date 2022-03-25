@@ -386,7 +386,7 @@ It is possible to configure your Bleskomat via the following methods:
 
 ### Hard-coded configuration
 
-Hard-coded configurations can be set by modifying the source file [config.cpp](https://github.com/samotari/bleskomat-diy/blob/master/src/config.cpp#L152-L162).
+Hard-coded configurations can be set by modifying the source file [config.cpp](https://github.com/bleskomat/bleskomat-diy/blob/master/src/config.cpp#L152-L162).
 
 Each time you make changes to the hard-coded configurations, you will need to re-compile and flash the ESP32's firmware.
 
