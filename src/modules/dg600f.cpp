@@ -74,7 +74,7 @@ namespace dg600f {
 	void init() {
 		coinValues = config::getCoinValues();
 		maxCoinValue = findMaxValueInFloatVector(coinValues);
-		Serial2.begin(COIN_ACCEPTOR_BAUDRATE, SERIAL_8N1, COIN_ACCEPTOR_SIGNAL, 0);
+		Serial2.begin(COIN_ACCEPTOR_BAUDRATE, SERIAL_8E1, COIN_ACCEPTOR_SIGNAL, 0);
 		pinMode(COIN_ACCEPTOR_INHIBIT, OUTPUT);
 		dg600f::on();
 	}
