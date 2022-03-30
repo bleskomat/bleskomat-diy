@@ -9,7 +9,7 @@ The Bleskomat ATM uses the Lightning Network to send bitcoin payments instantly 
 * Plug it in and it's ready to accept fiat in seconds
 
 The Bleskomat ATM must be paired with a server which supports [Signed LNURLs](https://github.com/chill117/lnurl-rfc/blob/lud-21-signed-lnurls/21.md). The server facilitates Lightning payments on behalf of your Bleskomat ATM. Below is a list of server software which you can use with your Bleskomat:
-* [bleskomat-server](https://github.com/samotari/bleskomat-server) - supports several Lightning backends including Lightning Network Daemon (lnd), coinos, lnbits, lndhub (BlueWallet), lnpay, lntxbot, opennode.
+* [bleskomat-server](https://github.com/bleskomat/bleskomat-server) - supports several Lightning backends including Lightning Network Daemon (lnd), coinos, lnbits, lndhub (BlueWallet), lnpay, lntxbot, opennode.
 * [lnbits](https://github.com/lnbits/lnbits-legend) w/ the Bleskomat extension
 
 The rest of this document details how you can build your own version of the Bleskomat ATM project:
