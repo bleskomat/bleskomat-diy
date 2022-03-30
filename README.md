@@ -13,6 +13,7 @@ The Bleskomat ATM must be paired with a server which supports [Signed LNURLs](ht
 * [lnbits](https://github.com/lnbits/lnbits-legend) w/ the Bleskomat extension
 
 The rest of this document details how you can build your own version of the Bleskomat ATM project:
+* [Support](#support)
 * [Requirements](#requirements)
 	* [Hardware Requirements](#hardware-requirements)
 		* [Parts Suppliers](#parts-suppliers)
@@ -39,6 +40,11 @@ The rest of this document details how you can build your own version of the Bles
 	* [Configuration via SD card](#configuration-via-sd-card)
 * [License](#license)
 * [Trademark](#trademark)
+
+
+## Support
+
+Need some help? Join us in the official [Telegram group](https://t.me/bleskomat) or send us an email at [support@bleskomat.com](mailto:support@bleskomat.com) and we will try our best to respond in a reasonable time. If you have a feature request or bug to report, please [open an issue](https://github.com/bleskomat/bleskomat-diy/issues) in this project repository.
 
 
 ## Requirements
