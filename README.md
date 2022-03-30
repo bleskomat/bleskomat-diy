@@ -32,6 +32,7 @@ The rest of this document details how you can build your own version of the Bles
 	* [Configure and Train the DG600F](#configure-and-train-the-dg600f)
 	* [Configure and Train the HX616](#configure-and-train-the-hx616)
 * [Installing Libraries and Dependencies](#installing-libraries-and-dependencies)
+* [Configure Firmware Build Flags](#configure-firmware-build-flags)
 * [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
 * [Configuring The Bleskomat](#configuring-the-bleskomat)
 	* [Hard-coded configuration](#hard-coded-configuration)
@@ -327,6 +328,13 @@ If while developing you need to install a new library, use the following as a gu
 platformio lib install LIBRARY_NAME[@VERSION]
 ```
 You can find PlatformIO's libraries repository [here](https://platformio.org/lib).
+
+
+## Configure Firmware Build Flags
+
+There are several build flags that can be changed in file platformio.ini file located at `./platformio.ini` before the firmware is compiled.
+
+If you follow this README mappings for the devices, you most likely do not need to change flag. If you use the coin acceptor HX616 you will need to change the flag in section `[coin_acceptor]` that by default is `DG600F` to `HX616`.
 
 
 ## Compiling and Uploading to Device
