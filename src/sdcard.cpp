@@ -73,6 +73,10 @@ namespace sdcard {
 		return std::string(mountpoint);
 	}
 
+	std::string getMountedPath(const std::string &partialPath) {
+		return std::string(mountpoint) + "/" + partialPath;
+	}
+
 	void init() {
 		if (mount()) {
 			logger::write("SD card mounted");

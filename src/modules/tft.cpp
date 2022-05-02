@@ -135,7 +135,7 @@ namespace {
 namespace tft {
 
 	void init() {
-		logger::write("tft.init");
+		logger::write("Initializing TFT display...");
 		display.begin();
 		display.setRotation(config::getTftRotation());
 		clearScreen();

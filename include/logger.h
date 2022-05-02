@@ -22,7 +22,8 @@
 #include <string>
 
 namespace logger {
-	void write(const std::string &msg);
+	void write(const std::string &t_msg, const std::string &t_type);
+	void write(const std::string &t_msg);
 }
 
 #endif

@@ -35,6 +35,7 @@
 namespace sdcard {
 	bool isMounted();
 	std::string getMountPoint();
+	std::string getMountedPath(const std::string &partialPath);
 	void init();
 }
 

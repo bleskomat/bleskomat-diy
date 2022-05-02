@@ -19,6 +19,7 @@
 
 namespace {
 
+	bool initialized = false;
 	bool inhibited = false;
 	float valueIncrement = 1.00;
 	float accumulatedValue = 0.00;
@@ -47,13 +48,16 @@ namespace {
 
 namespace hx616 {
 
-	void init() {
-		pinMode(COIN_ACCEPTOR_SIGNAL, INPUT_PULLUP);
-		lastPinReadState = readPin();
-		valueIncrement = config::getCoinValueIncrement();
-	}
+	void init() {}
 
 	void loop() {
+		if (!initialized) {
+			initialized = true;
+			logger::write("Initializing HX616 coin acceptor...");
+			pinMode(COIN_ACCEPTOR_SIGNAL, INPUT_PULLUP);
+			lastPinReadState = readPin();
+			valueIncrement = config::getCoinValueIncrement();
+		}
 		if (pinStateHasChanged()) {
 			if (coinWasInserted()) {
 				// This code executes once for each pulse from the HX-616.

@@ -17,8 +17,21 @@
 
 #include "logger.h"
 
-namespace logger {
-	void write(const std::string &msg) {
+namespace {
+
+	void writeToSerialMonitor(const std::string &msg) {
 		std::cout << msg << std::endl;
+	}
+}
+
+namespace logger {
+
+	void write(const std::string &t_msg, const std::string &t_type) {
+		const std::string msg = "[" + t_type + "] " + t_msg;
+		writeToSerialMonitor(msg);
+	}
+
+	void write(const std::string &t_msg) {
+		write(t_msg, "info");
 	}
 }
