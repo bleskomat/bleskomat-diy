@@ -38,6 +38,15 @@ namespace {
 		"tftRotation"
 	};
 
+	// Using Preferences library as a wrapper to Non-Volatile Storage (flash memory):
+	// https://github.com/espressif/arduino-esp32/tree/master/libraries/Preferences
+	// https://docs.espressif.com/projects/esp-idf/en/latest/esp32/api-reference/storage/nvs_flash.html
+	BleskomatConfig nvs_values;
+	const std::string nvs_namespace = "BleskomatConfig";
+	const bool nvs_readonly = false;
+	Preferences nvs_prefs;
+	bool nvs_available = false;
+
 	bool setConfigValue(const std::string &key, const std::string &value, BleskomatConfig &t_values) {
 		if (key == "apiKey.id") {
 			t_values.lnurl.apiKey.id = value;
@@ -90,7 +99,7 @@ namespace {
 		} else if (key == "coinValues") {
 			return util::floatVectorToStringList(t_values.coinValues);
 		} else if (key == "coinValueIncrement") {
-			return std::to_string(t_values.coinValueIncrement);
+			return util::doubleToStringWithPrecision(t_values.coinValueIncrement, t_values.fiatPrecision);
 		} else if (key == "tftRotation") {
 			return std::to_string(t_values.tftRotation);
 		}
@@ -141,12 +150,84 @@ namespace {
 		return true;
 	}
 
+	bool deleteConfigFile() {
+		const std::string filePath = sdcard::getMountedPath(configFileName);
+		return std::remove(filePath.c_str()) == 0;
+	}
+
+	bool initNVS() {
+		const char* name = nvs_namespace.c_str();
+		const bool result = nvs_prefs.begin(name, nvs_readonly);
+		if (result) {
+			nvs_available = true;
+		}
+		return result;
+	}
+
+	bool readKeyValueFromNVS(const std::string &key) {
+		// Maximum NVS key length is 15 characters.
+		const std::string value = nvs_prefs.getString(key.substr(0, 15).c_str(), "").c_str();
+		return setConfigValue(key, value, nvs_values) && setConfigValue(key, value, values);
+	}
+
+	bool readFromNVS() {
+		if (!nvs_available) {
+			if (!initNVS()) {
+				return false;
+			}
+		}
+		for (int index = 0; index < configKeys.size(); index++) {
+			const std::string key = configKeys[index];
+			readKeyValueFromNVS(key);
+		}
+		return true;
+	}
+
+	bool saveKeyValueToNVS(const std::string &key, const std::string &value) {
+		// Maximum NVS key length is 15 characters.
+		return nvs_prefs.putString(key.substr(0, 15).c_str(), value.c_str()) != 0;
+	}
+
+	bool saveConfigurationsToNVS(const BleskomatConfig &t_values) {
+		if (!nvs_available) {
+			if (!initNVS()) {
+				return false;
+			}
+		}
+		for (int index = 0; index < configKeys.size(); index++) {
+			const std::string key = configKeys[index];
+			const std::string value = getConfigValue(key, t_values);
+			if (value != getConfigValue(key, nvs_values)) {
+				// Configuration has been changed.
+				// Save the new value to non-volatile storage.
+				if (!saveKeyValueToNVS(key, value)) {
+					logger::write("Failed to save configuration to non-volatile storage ( " + key + "=" + value + " )");
+				}
+			}
+		}
+		return true;
+	}
+
+	void endNVS() {
+		nvs_prefs.end();
+		nvs_available = false;
+	}
+
 	void printConfig(const BleskomatConfig &t_values) {
 		std::string msg = "Printing Bleskomat configurations:\n";
 		for (int index = 0; index < configKeys.size(); index++) {
 			const std::string key = configKeys[index];
 			const std::string value = getConfigValue(key, t_values);
-			msg += "  " + key + "=" + value + "\n";
+			msg += "  " + key + "=";
+			if (value != "") {
+				if (key == "apiKey.key") {
+					// Don't print some configuration value(s).
+					msg += "XXX";
+				} else {
+					msg += value;
+				}
+			}
+			msg += "\n";
 		}
 		msg.pop_back();// Remove the last line-break character.
 		logger::write(msg);
@@ -156,11 +237,30 @@ namespace {
 namespace config {
 
 	void init() {
+		if (initNVS()) {
+			logger::write("Non-volatile storage initialized");
+			if (!readFromNVS()) {
+				logger::write("Failed to read configurations from non-volatile storage");
+			}
+		} else {
+			logger::write("Failed to initialize non-volatile storage");
+		}
 		if (sdcard::isMounted()) {
-			if (!readFromConfigFile()) {
+			if (readFromConfigFile()) {
+				if (saveConfigurationsToNVS(values)) {
+					if (deleteConfigFile()) {
+						logger::write("Deleted configuration file");
+					} else {
+						logger::write("Failed to delete configuration file");
+					}
+				} else {
+					logger::write("Failed to save configurations to non-volatile storage");
+				}
+			} else {
 				logger::write("Failed to read configurations from file");
 			}
 		}
+		endNVS();
 		// Hard-coded configuration overrides - for development purposes.
 		// Uncomment the following lines, as needed, to override config options.
 		// values.lnurl.apiKey.id = "";
@@ -204,5 +304,37 @@ namespace config {
 
 	unsigned short getTftRotation() {
 		return values.tftRotation;
+	}
+
+	JsonObject getConfigurations() {
+		DynamicJsonDocument doc(4096);
+		for (int index = 0; index < configKeys.size(); index++) {
+			const std::string key = configKeys[index];
+			const std::string value = getConfigValue(key, values);
+			if (value != "" && key == "apiKey.key") {
+				doc[key] = "XXX";
+			} else {
+				doc[key] = value;
+			}
+		}
+		return doc.to<JsonObject>();
+	}
+
+	bool saveConfigurations(const JsonObject &configurations) {
+		if (!nvs_available && !initNVS()) {
+			return false;
+		}
+		for (int index = 0; index < configKeys.size(); index++) {
+			const std::string key = configKeys[index];
+			if (configurations.containsKey(key)) {
+				const std::string value = configurations[key];
+				if (value != getConfigValue(key, nvs_values)) {
+					saveKeyValueToNVS(key, value);
+				}
+				setConfigValue(key, value, values);
+			}
+		}
+		endNVS();
+		return true;
 	}
 }

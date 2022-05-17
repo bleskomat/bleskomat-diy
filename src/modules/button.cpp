@@ -27,6 +27,7 @@ namespace {
 namespace button {
 
 	void init() {
+		logger::write("Initializing button...");
 		pinMode(BUTTON_PIN, INPUT);
 	}
 

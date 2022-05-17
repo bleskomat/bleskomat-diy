@@ -15,37 +15,19 @@
 	along with this program.  If not, see <https://www.gnu.org/licenses/>.
 */
 
-#ifndef BLESKOMAT_MAIN_H
-#define BLESKOMAT_MAIN_H
+#ifndef BLESKOMAT_JSON_RPC_H
+#define BLESKOMAT_JSON_RPC_H
 
 #include "config.h"
-#include "json-rpc.h"
 #include "logger.h"
-#include "modules.h"
-#include "util.h"
+#include "main.h"
 
-#include <lnurl.h>
+#include <ArduinoJson.h>
 #include <string>
 
-#define STRINGIFY(s) STRINGIFY1(s)
-#define STRINGIFY1(s) #s
-
-#ifndef FIRMWARE_COMMIT_HASH
-	#error "Missing required build flag: FIRMWARE_COMMIT_HASH"
-#endif
-
-#ifndef FIRMWARE_VERSION
-	#error "Missing required build flag: FIRMWARE_VERSION"
-#endif
-
-namespace {
-	std::string trimQuotes(const std::string &str) {
-		return str.substr(1, str.length() - 2);
-	}
+namespace jsonRpc {
+	void loop();
+	bool inUse();
 }
-
-const std::string firmwareName = "Bleskomat DIY";
-const std::string firmwareCommitHash(trimQuotes(STRINGIFY(FIRMWARE_COMMIT_HASH)));
-const std::string firmwareVersion(trimQuotes(STRINGIFY(FIRMWARE_VERSION)));
 
 #endif

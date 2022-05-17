@@ -21,6 +21,7 @@
 #include "sdcard.h"
 #include "util.h"
 
+#include <ArduinoJson.h>
 #include <lnurl.h>
 #include <Preferences.h>
 
@@ -32,7 +33,7 @@
 
 struct BleskomatConfig {
 	struct Lnurl::SignerConfig lnurl;
-	std::string uriSchemaPrefix = "LIGHTNING";
+	std::string uriSchemaPrefix = "LIGHTNING:";
 	std::string fiatCurrency = "EUR";
 	unsigned short fiatPrecision = 2;
 	std::vector<float> coinValues;
@@ -49,6 +50,8 @@ namespace config {
 	std::vector<float> getCoinValues();
 	float getCoinValueIncrement();
 	unsigned short getTftRotation();
+	JsonObject getConfigurations();
+	bool saveConfigurations(const JsonObject &configurations);
 }
 
 #endif

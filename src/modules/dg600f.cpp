@@ -19,6 +19,7 @@
 
 namespace {
 
+	bool initialized = false;
 	std::vector<float> coinValues;
 	float maxCoinValue = 0.00;
 	float accumulatedValue = 0.00;
@@ -71,19 +72,21 @@ namespace {
 
 namespace dg600f {
 
-	void init() {
-		coinValues = config::getCoinValues();
-		maxCoinValue = findMaxValueInFloatVector(coinValues);
-		Serial2.begin(COIN_ACCEPTOR_BAUDRATE, SERIAL_8E1, COIN_ACCEPTOR_SIGNAL, 0);
-		pinMode(COIN_ACCEPTOR_INHIBIT, OUTPUT);
-		dg600f::on();
-	}
+	void init() {}
 
 	void loop() {
+		if (!initialized) {
+			initialized = true;
+			logger::write("Initializing DG600F coin acceptor...");
+			coinValues = config::getCoinValues();
+			maxCoinValue = findMaxValueInFloatVector(coinValues);
+			Serial2.begin(COIN_ACCEPTOR_BAUDRATE, SERIAL_8E1, COIN_ACCEPTOR_SIGNAL, 0);
+			pinMode(COIN_ACCEPTOR_INHIBIT, OUTPUT);
+			dg600f::on();
+		}
 		while (Serial2.available()) {
 			const int byteReceived = Serial2.read();
 			if (byteReceived > 0 && byteReceived < 254) {
-				logger::write("Coin acceptor byte received: " + std::to_string(byteReceived));
 				buffer.push_back(byteReceived);
 			}
 		}

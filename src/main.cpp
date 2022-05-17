@@ -19,20 +19,23 @@
 void setup() {
 	Serial.begin(MONITOR_SPEED);
 	sdcard::init();
-	logger::write("Bleskomat DIY firmware commit=" + firmwareCommitHash);
+	logger::write(firmwareName);
+	logger::write("Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
 	config::init();
 	logger::write("Config OK");
 	modules::init();
 	logger::write("Modules OK");
 	logger::write("Setup OK");
-	screen::showInsertFiatScreen(0);
 }
 
 float amountShown = 0;
 
-void loop() {
+void runAppLoop() {
 	modules::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
+	if (currentScreen == "") {
+		screen::showInsertFiatScreen(0);
+	}
 	float accumulatedValue = 0;
 	#ifdef COIN_ACCEPTOR
 		accumulatedValue += coinAcceptor::getAccumulatedValue();
@@ -58,13 +61,10 @@ void loop() {
 				// Create a withdraw request and render it as a QR code.
 				const std::string signedUrl = util::createSignedLnurlWithdraw(accumulatedValue);
 				const std::string encoded = util::lnurlEncode(signedUrl);
-				const std::string uriSchemaPrefix = config::get("uriSchemaPrefix");
 				std::string qrcodeData = "";
-				if (uriSchemaPrefix != "") {
-					// Allows upper or lower case URI schema prefix via a configuration option.
-					// Some wallet apps might not support uppercase URI prefixes.
-					qrcodeData += uriSchemaPrefix + ":";
-				}
+				// Allows upper or lower case URI schema prefix via a configuration option.
+				// Some wallet apps might not support uppercase URI prefixes.
+				qrcodeData += config::get("uriSchemaPrefix");
 				// QR codes with only uppercase letters are less complex (easier to scan).
 				qrcodeData += util::toUpperCase(encoded);
 				screen::showTradeCompleteScreen(accumulatedValue, qrcodeData);
@@ -99,5 +99,12 @@ void loop() {
 			amountShown = 0;
 			screen::showInsertFiatScreen(0);
 		}
+	}
+}
+
+void loop() {
+	jsonRpc::loop();
+	if (!jsonRpc::inUse()) {
+		runAppLoop();
 	}
 }
