@@ -1,20 +1,3 @@
-/*
-	Copyright (C) 2020 Samotari (Charles Hill, Carlos Garcia Ortiz)
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
-
 #include "util.h"
 
 namespace {
@@ -37,11 +20,11 @@ namespace util {
 		Lnurl::Signer signer(config::getLnurlSignerConfig());
 		std::string nonce = generate_nonce();
 		Lnurl::WithdrawParams params;
-		std::string amount = doubleToStringWithPrecision(t_amount, config::getFiatPrecision());
+		std::string amount = floatToStringWithPrecision(t_amount, config::getUnsignedShort("fiatPrecision"));
 		params.minWithdrawable = amount;
 		params.maxWithdrawable = amount;
 		params.defaultDescription = "";
-		params.custom["f"] = config::get("fiatCurrency");
+		params.custom["f"] = config::getString("fiatCurrency");
 		return signer.create_url(params, nonce);
 	}
 
@@ -52,18 +35,6 @@ namespace util {
 	std::string toUpperCase(std::string s) {
 		std::transform(s.begin(), s.end(), s.begin(), [](unsigned char c){ return std::toupper(c); });
 		return s;
-	}
-
-	std::vector<std::string> stringListToStringVector(const std::string &stringList, const char &delimiter) {
-		std::vector<std::string> stringVector;
-		if (stringList != "") {
-			std::istringstream ss(stringList);
-			std::string value;
-			while (std::getline(ss, value, delimiter)) {
-				stringVector.push_back(value);
-			}
-		}
-		return stringVector;
 	}
 
 	std::vector<float> stringListToFloatVector(const std::string &stringList, const char &delimiter) {
@@ -109,7 +80,7 @@ namespace util {
 		return escaped.str();
 	}
 
-	std::string doubleToStringWithPrecision(const double &value, const int &precision) {
+	std::string floatToStringWithPrecision(const float &value, const unsigned short &precision) {
 		std::ostringstream out;
 		out.precision(precision);
 		out << std::fixed << value;

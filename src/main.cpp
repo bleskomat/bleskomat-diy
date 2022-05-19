@@ -1,19 +1,3 @@
-/*
-	Copyright (C) 2020 Samotari (Charles Hill, Carlos Garcia Ortiz)
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
 #include "main.h"
 
 void setup() {
@@ -22,24 +6,24 @@ void setup() {
 	logger::write(firmwareName);
 	logger::write("Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
 	config::init();
-	logger::write("Config OK");
-	modules::init();
-	logger::write("Modules OK");
+	jsonRpc::init();
+	screen::init();
+	coinAcceptor::init();
+	button::init();
 	logger::write("Setup OK");
 }
 
 float amountShown = 0;
 
 void runAppLoop() {
-	modules::loop();
+	coinAcceptor::loop();
+	button::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
 	if (currentScreen == "") {
 		screen::showInsertFiatScreen(0);
 	}
 	float accumulatedValue = 0;
-	#ifdef COIN_ACCEPTOR
-		accumulatedValue += coinAcceptor::getAccumulatedValue();
-	#endif
+	accumulatedValue += coinAcceptor::getAccumulatedValue();
 	if (
 		accumulatedValue > 0 &&
 		currentScreen != "insertFiat" &&
@@ -49,12 +33,10 @@ void runAppLoop() {
 		amountShown = accumulatedValue;
 	}
 	if (currentScreen == "insertFiat") {
-		#ifdef COIN_ACCEPTOR
-			if (coinAcceptor::isOff()) {
-				// The coin acceptor should be enabled while insert fiat screen shown.
-				coinAcceptor::on();
-			}
-		#endif
+		if (coinAcceptor::isInhibited()) {
+			// The coin acceptor should be enabled while insert fiat screen shown.
+			coinAcceptor::disinhibit();
+		}
 		if (button::isPressed()) {
 			if (accumulatedValue > 0) {
 				// Button pushed while insert fiat screen shown and accumulated value greater than 0.
@@ -64,16 +46,12 @@ void runAppLoop() {
 				std::string qrcodeData = "";
 				// Allows upper or lower case URI schema prefix via a configuration option.
 				// Some wallet apps might not support uppercase URI prefixes.
-				qrcodeData += config::get("uriSchemaPrefix");
+				qrcodeData += config::getString("uriSchemaPrefix");
 				// QR codes with only uppercase letters are less complex (easier to scan).
 				qrcodeData += util::toUpperCase(encoded);
 				screen::showTradeCompleteScreen(accumulatedValue, qrcodeData);
-				#ifdef COIN_ACCEPTOR
-					coinAcceptor::off();
-				#endif
-				
-				// Wait for 2 seconds to avoid pressing button multiple times and losing the QR code by an accident
-				delay(2000);
+				coinAcceptor::inhibit();
+				delay(config::getUnsignedInt("buttonDelay"));
 			}
 		} else {
 			// Button not pressed.
@@ -84,18 +62,14 @@ void runAppLoop() {
 			}
 		}
 	} else if (currentScreen == "tradeComplete") {
-		#ifdef COIN_ACCEPTOR
-			if (coinAcceptor::isOn()) {
-				// Don't allow inserting more coins while trade complete screen shown.
-				coinAcceptor::off();
-			}
-		#endif
+		if (!coinAcceptor::isInhibited()) {
+			// Don't allow inserting more coins while trade complete screen shown.
+			coinAcceptor::inhibit();
+		}
 		if (button::isPressed()) {
 			// Button pushed while showing the trade complete screen.
 			// Reset accumulated values.
-			#ifdef COIN_ACCEPTOR
-				coinAcceptor::reset();
-			#endif
+			coinAcceptor::resetAccumulatedValue();
 			amountShown = 0;
 			screen::showInsertFiatScreen(0);
 		}
@@ -103,8 +77,10 @@ void runAppLoop() {
 }
 
 void loop() {
+	// Un-comment the following to enable extra debugging information:
+	debugger::loop();
 	jsonRpc::loop();
-	if (!jsonRpc::inUse()) {
+	if (!jsonRpc::hasPinConflict() || !jsonRpc::inUse()) {
 		runAppLoop();
 	}
 }

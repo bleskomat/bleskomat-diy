@@ -1,21 +1,4 @@
-/*
-	Copyright (C) 2020 Samotari (Charles Hill, Carlos Garcia Ortiz)
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
-
-#include "modules/tft.h"
+#include "screen/tft.h"
 
 namespace {
 
@@ -37,8 +20,8 @@ namespace {
 
 	BoundingBox amount_text_bbox;
 
-	std::string getAmountFiatCurrencyString(const double &amount) {
-		return util::doubleToStringWithPrecision(amount, config::getFiatPrecision()) + " " + config::get("fiatCurrency");
+	std::string getAmountFiatCurrencyString(const float &amount) {
+		return util::floatToStringWithPrecision(amount, config::getUnsignedShort("fiatPrecision")) + " " + config::getString("fiatCurrency");
 	}
 
 	BoundingBox renderText(
@@ -132,17 +115,13 @@ namespace {
 	}
 }
 
-namespace tft {
+namespace screen_tft {
 
 	void init() {
 		logger::write("Initializing TFT display...");
 		display.begin();
-		display.setRotation(config::getTftRotation());
+		display.setRotation(config::getUnsignedShort("tftRotation"));
 		clearScreen();
-	}
-
-	std::string getCurrentScreen() {
-		return current_screen;
 	}
 
 	void showInsertFiatScreen(const float &amount) {

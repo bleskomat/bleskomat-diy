@@ -1,33 +1,16 @@
-/*
-	Copyright (C) 2020 Samotari (Charles Hill, Carlos Garcia Ortiz)
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
-
 #include "json-rpc.h"
 
 namespace {
 
-	uint32_t bootTime = micros();
-	uint32_t maxInitialMessageWaitTime = 2000000;// microseconds
+	const uint32_t bootTime = micros();
+	const uint32_t maxInitialMessageWaitTime = 2000000;// microseconds
 	bool sentWaitingMessage = false;
 	bool receivedMessage = false;
 	bool timedOut = false;
 
 	// https://arduinojson.org/
 	// https://www.jsonrpc.org/specification
-	const std::string jsonRpcVersion = "2.0";
+	const char* jsonRpcVersion = "2.0";
 
 	void onMessage(const std::string &message) {
 		try {
@@ -35,7 +18,7 @@ namespace {
 				// !! Important !!
 				// Keep the JsonDocument instance until done reading from the deserialized document; more info:
 				// https://arduinojson.org/v6/issues/garbage-out/
-				DynamicJsonDocument docIn(1024);
+				DynamicJsonDocument docIn(8192);
 				const DeserializationError err = deserializeJson(docIn, message);
 				if (err) {
 					throw std::runtime_error("deserializeJson failed: " + std::string(err.c_str()));
@@ -80,19 +63,23 @@ namespace {
 					serializeJson(docOut, Serial);
 					Serial.println();
 				} else if (method == "getconfig") {
-					DynamicJsonDocument docOut(4096);
-					const JsonObject configurations = config::getConfigurations();
+					DynamicJsonDocument docOut(8192);
 					docOut["jsonrpc"] = jsonRpcVersion;
 					docOut["id"] = id;
-					docOut["result"] = configurations;
+					docOut["result"] = config::getConfigurations();
 					serializeJson(docOut, Serial);
 					Serial.println();
 				} else if (method == "setconfig") {
-					DynamicJsonDocument docOut(4096);
-					const JsonObject configurations = json["params"];
+					DynamicJsonDocument docOut(512);
 					docOut["jsonrpc"] = jsonRpcVersion;
 					docOut["id"] = id;
-					docOut["result"] = config::saveConfigurations(configurations);
+					try {
+						config::saveConfigurations(json["params"].as<JsonObject>());
+						docOut["result"] = true;
+					} catch (const std::exception &e) {
+						docOut["result"] = false;
+						std::cerr << e.what() << std::endl;
+					}
 					serializeJson(docOut, Serial);
 					Serial.println();
 				} else {
@@ -105,27 +92,59 @@ namespace {
 				}
 			}
 		} catch (const std::exception &e) {
-			logger::write("JSON-RPC: " + std::string(e.what()), "error");
+			std::cerr << e.what() << std::endl;
+		}
+	}
+
+	bool pinConflict = false;
+	void checkForPinConflicts() {
+		const std::vector<const char*> pinConfigKeys = {
+			"coinSignalPin", "coinInhibitPin",
+			"buttonPin"
+		};
+		for (int index = 0; index < pinConfigKeys.size(); index++) {
+			const char* key = pinConfigKeys[index];
+			const unsigned short value = config::getUnsignedShort(key);
+			if (value == 3 || value == 1) {
+				logger::write("GPIO conflict detected (\"" + std::string(key) + "\" = " + std::to_string(value) + "). Do not use GPIO3 or GPIO1.", "warn");
+				pinConflict = true;
+			}
+		}
+	}
+
+	void parseSerialInput() {
+		if (Serial.available() > 0) {
+			onMessage(std::string(Serial.readStringUntil('\n').c_str()));
 		}
 	}
 }
 
 namespace jsonRpc {
 
-	void loop() {
-		if (!sentWaitingMessage) {
-			sentWaitingMessage = true;
+	void init() {
+		logger::write("Initializing JSON-RPC serial interface...");
+		checkForPinConflicts();
+		if (!pinConflict) {
 			logger::write("JSON-RPC serial interface now listening...");
 		}
-		if (!timedOut && !receivedMessage && micros() - bootTime > maxInitialMessageWaitTime) {
-			timedOut = true;
-			logger::write("Timed-out while waiting for initial JSON-RPC message");
-			delay(50);// Allow some time to finish writing the above log message.
-		}
-		if (jsonRpc::inUse()) {
-			if (Serial.available() > 0) {
-				onMessage(std::string(Serial.readStringUntil('\n').c_str()));
+	}
+
+	void loop() {
+		if (pinConflict) {
+			if (!sentWaitingMessage) {
+				sentWaitingMessage = true;
+				logger::write("JSON-RPC serial interface now listening...");
 			}
+			if (!timedOut && !receivedMessage && micros() - bootTime > maxInitialMessageWaitTime) {
+				timedOut = true;
+				logger::write("Timed-out while waiting for initial JSON-RPC message");
+				delay(50);// Allow some time to finish writing the above log message.
+			}
+			if (jsonRpc::inUse()) {
+				parseSerialInput();
+			}
+		} else {
+			parseSerialInput();
 		}
 	}
 
@@ -133,5 +152,9 @@ namespace jsonRpc {
 		// Consider JSON-RPC interface to be "in-use" when either:
 		// A JSON-RPC message has been received or we are still waiting for an initial message.
 		return receivedMessage || !timedOut;
+	}
+
+	bool hasPinConflict() {
+		return pinConflict;
 	}
 }

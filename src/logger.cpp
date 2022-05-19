@@ -1,20 +1,3 @@
-/*
-	Copyright (C) 2020 Samotari (Charles Hill, Carlos Garcia Ortiz)
-
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version.
-
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <https://www.gnu.org/licenses/>.
-*/
-
 #include "logger.h"
 
 namespace {
@@ -26,12 +9,24 @@ namespace {
 
 namespace logger {
 
-	void write(const std::string &t_msg, const std::string &t_type) {
-		const std::string msg = "[" + t_type + "] " + t_msg;
-		writeToSerialMonitor(msg);
+	void write(const std::string &msg, const std::string &type) {
+		logger::write(msg.c_str(), type.c_str());
 	}
 
-	void write(const std::string &t_msg) {
-		write(t_msg, "info");
+	void write(const std::string &msg, const char* type) {
+		logger::write(msg.c_str(), type);
+	}
+
+	void write(const std::string &msg) {
+		logger::write(msg.c_str());
+	}
+
+	void write(const char* msg) {
+		write(msg, "info");
+	}
+
+	void write(const char* t_msg, const char* type) {
+		const std::string msg = "[" + std::string(type) + "] " + std::string(t_msg);
+		writeToSerialMonitor(msg);
 	}
 }
