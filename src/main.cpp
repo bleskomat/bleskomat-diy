@@ -5,6 +5,7 @@ unsigned int buttonDelay;
 void setup() {
 	Serial.begin(MONITOR_SPEED);
 	spiffs::init();
+	sdcard::init();
 	config::init();
 	logger::init();
 	logger::write(firmwareName + ": Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);

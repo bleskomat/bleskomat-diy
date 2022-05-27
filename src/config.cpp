@@ -2,9 +2,9 @@
 
 namespace {
 
-	const char* configFileName = "bleskomat.conf";
+	const char* configFilePath = "/bleskomat.conf";
 
-	typedef std::pair<const char*, const std::string> KeyValuePair;
+	typedef std::pair<const std::string, const std::string> KeyValuePair;
 
 	const std::map<const char*, const char*> defaultValues = {
 		{ "apiKey.id", "" },
@@ -126,8 +126,8 @@ namespace {
 		const auto pos = line.find(delimiter);
 		if (pos != std::string::npos) {
 			// Found delimiter.
-			const char* key = line.substr(0, pos).c_str();
-			if (isConfigKey(key)) {
+			const std::string key = line.substr(0, pos);
+			if (isConfigKey(key.c_str())) {
 				const std::string value = line.substr(pos + 1);
 				return std::make_pair(key, value);
 			} else {
@@ -139,25 +139,24 @@ namespace {
 
 	bool readFromConfigFile() {
 		try {
-			const std::string filePath = sdcard::getMountedPath(configFileName);
-			// Open the config file for reading.
-			std::ifstream file(filePath);
-			if (!file) {
-				logger::write("Failed to open configuration file " + filePath);
+			File file = SD.open(configFilePath, FILE_READ);
+			if (!file || file.isDirectory()) {
+				logger::write("Failed to open configuration file " + std::string(configFilePath));
 				return false;
 			}
-			std::string line = "";
-			while (std::getline(file, line)) {
+			while (file.available()) {
+				const std::string line = file.readStringUntil('\n').c_str();
 				const KeyValuePair kv = readFromConfigLine(line);
-				const char* key = kv.first;
+				const std::string key = kv.first;
 				if (key != "") {
 					const std::string value = kv.second;
-					setConfigValue(key, value);
-					saveKeyValueToNVS(key, value);
+					setConfigValue(key.c_str(), value);
+					saveKeyValueToNVS(key.c_str(), value);
 				}
 			}
 			file.close();
 		} catch (const std::exception &e) {
+			logger::write(e.what(), "error");
 			std::cerr << e.what() << std::endl;
 			return false;
 		}
@@ -165,7 +164,7 @@ namespace {
 	}
 
 	bool deleteConfigFile() {
-		return std::remove(sdcard::getMountedPath(configFileName).c_str()) == 0;
+		return SD.remove(configFilePath);
 	}
 }
 
@@ -213,6 +212,7 @@ namespace config {
 		// values["buttonDelay"] = "2000";
 		// values["buttonDebounce"] = "50";
 		// values["tftRotation"] = "2";
+		// values["logLevel"] = "info";
 	}
 
 	Lnurl::SignerConfig getLnurlSignerConfig() {
