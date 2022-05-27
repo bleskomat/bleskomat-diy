@@ -56,8 +56,8 @@ namespace coinAcceptor_dg600f {
 
 	void loop() {
 		if (initialized) {
-			while (Serial1.available()) {
-				const int byteReceived = Serial1.read();
+			while (Serial2.available()) {
+				const int byteReceived = Serial2.read();
 				if (byteReceived > 0 && byteReceived < 254) {
 					buffer.push_back(byteReceived);
 				}
@@ -72,7 +72,7 @@ namespace coinAcceptor_dg600f {
 		} else {
 			logger::write("Initializing DG600F coin acceptor...");
 			initialized = true;
-			Serial1.begin(coinBaudRate, SERIAL_8E1, coinSignalPin, 0);
+			Serial2.begin(coinBaudRate, SERIAL_8E1, coinSignalPin, 0);
 			pinMode(coinInhibitPin, OUTPUT);
 			coinAcceptor_dg600f::disinhibit();
 		}
