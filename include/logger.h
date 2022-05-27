@@ -1,15 +1,21 @@
 #ifndef BLESKOMAT_LOGGER_H
 #define BLESKOMAT_LOGGER_H
 
+#include "config.h"
+#include "spiffs.h"
+#include <Arduino.h>
 #include <iostream>
+#include <map>
 #include <string>
 
 namespace logger {
-	void write(const std::string &msg, const std::string &type);
-	void write(const std::string &msg, const char* type);
+	void init();
+	void loop();
+	void write(const std::string &msg, const char* logLevel);
 	void write(const std::string &msg);
 	void write(const char* msg);
-	void write(const char* t_msg, const char* type);
+	void write(const char* msg, const char* logLevel);
+	std::string getLogFilePath(const uint8_t &num = 0);
 }
 
 #endif

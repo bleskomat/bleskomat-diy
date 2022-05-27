@@ -4,6 +4,7 @@
 #include "config.h"
 #include "logger.h"
 #include "main.h"
+#include "spiffs.h"
 
 #include <ArduinoJson.h>
 #include <string>

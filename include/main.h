@@ -4,10 +4,10 @@
 #include "button.h"
 #include "coin-acceptor.h"
 #include "config.h"
-#include "debugger.h"
 #include "json-rpc.h"
 #include "logger.h"
 #include "screen.h"
+#include "spiffs.h"
 #include "util.h"
 
 #include <lnurl.h>

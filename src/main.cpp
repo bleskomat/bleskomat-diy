@@ -1,19 +1,30 @@
 #include "main.h"
 
+unsigned int buttonDelay;
+
 void setup() {
 	Serial.begin(MONITOR_SPEED);
-	sdcard::init();
-	logger::write(firmwareName);
-	logger::write("Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
+	spiffs::init();
 	config::init();
+	logger::init();
+	logger::write(firmwareName + ": Firmware version = " + firmwareVersion + ", commit hash = " + firmwareCommitHash);
+	logger::write(config::getConfigurationsAsString());
 	jsonRpc::init();
 	screen::init();
 	coinAcceptor::init();
 	button::init();
-	logger::write("Setup OK");
+	buttonDelay = config::getUnsignedInt("buttonDelay");
 }
 
 float amountShown = 0;
+unsigned long tradeCompleteTime = 0;
+
+void writeTradeCompleteLog(const float &amount, const std::string &signedUrl) {
+	std::string msg = "Trade completed:\n";
+	msg += "  Amount  = " + util::floatToStringWithPrecision(amount, config::getUnsignedShort("fiatPrecision")) + " " + config::getString("fiatCurrency") + "\n";
+	msg += "  URL     = " + signedUrl;
+	logger::write(msg);
+}
 
 void runAppLoop() {
 	coinAcceptor::loop();
@@ -50,8 +61,9 @@ void runAppLoop() {
 				// QR codes with only uppercase letters are less complex (easier to scan).
 				qrcodeData += util::toUpperCase(encoded);
 				screen::showTradeCompleteScreen(accumulatedValue, qrcodeData);
+				writeTradeCompleteLog(accumulatedValue, signedUrl);
 				coinAcceptor::inhibit();
-				delay(config::getUnsignedInt("buttonDelay"));
+				tradeCompleteTime = millis();
 			}
 		} else {
 			// Button not pressed.
@@ -66,19 +78,19 @@ void runAppLoop() {
 			// Don't allow inserting more coins while trade complete screen shown.
 			coinAcceptor::inhibit();
 		}
-		if (button::isPressed()) {
+		if (button::isPressed() && millis() - tradeCompleteTime > buttonDelay) {
 			// Button pushed while showing the trade complete screen.
 			// Reset accumulated values.
 			coinAcceptor::resetAccumulatedValue();
 			amountShown = 0;
 			screen::showInsertFiatScreen(0);
+			logger::write("Screen cleared");
 		}
 	}
 }
 
 void loop() {
-	// Un-comment the following to enable extra debugging information:
-	debugger::loop();
+	logger::loop();
 	jsonRpc::loop();
 	if (!jsonRpc::hasPinConflict() || !jsonRpc::inUse()) {
 		runAppLoop();

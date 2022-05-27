@@ -30,7 +30,6 @@ namespace {
 		const int16_t &y,
 		const bool &center = true
 	) {
-		logger::write("tft.renderText \"" + t_text + "\"");
 		const char* text = t_text.c_str();
 		display.setTextColor(text_color);
 		display.setTextFont(text_font);
@@ -63,7 +62,6 @@ namespace {
 		const bool &center = true
 	) {
 		BoundingBox bbox;
-		logger::write("tft.renderQRCode \"" + t_data + "\"");
 		try {
 			const char* data = t_data.c_str();
 			uint8_t version = 1;
@@ -110,7 +108,6 @@ namespace {
 	}
 
 	void clearScreen() {
-		logger::write("tft.clearScreen");
 		display.fillScreen(bg_color);
 	}
 }
@@ -125,7 +122,6 @@ namespace screen_tft {
 	}
 
 	void showInsertFiatScreen(const float &amount) {
-		logger::write("tft.showInsertFiatScreen");
 		if (current_screen == "insertFiat") {
 			// Clear previous text by drawing a rectangle over it.
 			display.fillRect(
@@ -148,7 +144,6 @@ namespace screen_tft {
 	}
 
 	void showTradeCompleteScreen(const float &amount, const std::string &qrcodeData) {
-		logger::write("tft.showTradeCompleteScreen");
 		clearScreen();
 		const std::string text = getAmountFiatCurrencyString(amount);
 		const int16_t center_x = display.width() / 2;

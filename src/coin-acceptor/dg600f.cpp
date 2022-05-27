@@ -9,6 +9,7 @@ namespace {
 	unsigned short coinSignalPin;
 	unsigned short coinInhibitPin;
 	unsigned int coinBaudRate;
+	unsigned short fiatPrecision;
 
 	float getCoinValue(const int &byteIn) {
 		const int index = byteIn - 1;
@@ -34,7 +35,7 @@ namespace {
 					const int byte3 = buffer.front();
 					buffer.pop_front();
 					if (byte3 == (byte1 ^ byte2)) {
-						logger::write("Coin inserted with value = " + std::to_string(coinValue));
+						logger::write("Coin inserted with value = " + util::floatToStringWithPrecision(coinValue, fiatPrecision));
 						accumulatedValue += coinValue;
 					}
 				}
@@ -50,6 +51,7 @@ namespace coinAcceptor_dg600f {
 		coinInhibitPin = config::getUnsignedShort("coinInhibitPin");
 		coinBaudRate = config::getUnsignedInt("coinBaudRate");
 		coinValues = config::getFloatVector("coinValues");
+		fiatPrecision = config::getUnsignedShort("fiatPrecision");
 	}
 
 	void loop() {

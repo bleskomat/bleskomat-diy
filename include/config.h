@@ -25,6 +25,7 @@ namespace config {
 	std::vector<float> getFloatVector(const char* key);
 	bool getBool(const char* key);
 	JsonObject getConfigurations();
+	std::string getConfigurationsAsString();
 	bool saveConfigurations(const JsonObject &configurations);
 }
 

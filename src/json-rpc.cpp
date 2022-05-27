@@ -2,8 +2,8 @@
 
 namespace {
 
-	const uint32_t bootTime = micros();
-	const uint32_t maxInitialMessageWaitTime = 2000000;// microseconds
+	const uint32_t bootTime = millis();
+	const uint32_t maxInitialMessageWaitTime = 2000;// milliseconds
 	bool sentWaitingMessage = false;
 	bool receivedMessage = false;
 	bool timedOut = false;
@@ -11,6 +11,20 @@ namespace {
 	// https://arduinojson.org/
 	// https://www.jsonrpc.org/specification
 	const char* jsonRpcVersion = "2.0";
+
+	std::string escapeLine(const std::string &line) {
+		const unsigned int numBytes = line.size();
+		const unsigned int remainderNumBytes = numBytes % 256;
+		const unsigned int allocateNumBytes = remainderNumBytes > 0 ? (numBytes + 256) - remainderNumBytes : numBytes;
+		DynamicJsonDocument docLine(allocateNumBytes + 256);
+		docLine.set(line);
+		String output;// Buffer the serialized JSON string.
+		serializeJson(docLine, output);
+		std::string escaped = std::string(output.c_str()).substr(1);// Remove first double-quote character.
+		escaped.pop_back();// Remove last double-quote character.
+		escaped += "\\n";// Escaped line-break character.
+		return escaped;
+	}
 
 	void onMessage(const std::string &message) {
 		try {
@@ -35,27 +49,28 @@ namespace {
 				const std::string id = json["id"].as<const char*>();
 				const std::string method = json["method"].as<const char*>();
 				if (method == "") {
-					DynamicJsonDocument docOut(256);
+					DynamicJsonDocument docOut(512);
 					docOut["jsonrpc"] = jsonRpcVersion;
 					docOut["id"] = id;
 					docOut["error"] = "\"method\" is required";
 					serializeJson(docOut, Serial);
 					Serial.println();
 				} else if (method == "restart") {
+					logger::write("Restarting...");
 					esp_restart();
 				} else if (method == "echo") {
 					const std::string text = json["params"][0].as<const char*>();
-					DynamicJsonDocument docOut(256);
+					DynamicJsonDocument docOut(1024);
 					docOut["jsonrpc"] = jsonRpcVersion;
 					docOut["id"] = id;
 					docOut["result"] = text;
 					serializeJson(docOut, Serial);
 					Serial.println();
 				} else if (method == "getinfo") {
-					DynamicJsonDocument docOut(512);
+					DynamicJsonDocument docOut(1024);
 					docOut["jsonrpc"] = jsonRpcVersion;
 					docOut["id"] = id;
-					DynamicJsonDocument docInfo(384);
+					DynamicJsonDocument docInfo(768);
 					docInfo["firmwareName"] = firmwareName;
 					docInfo["firmwareCommitHash"] = firmwareCommitHash;
 					docInfo["firmwareVersion"] = firmwareVersion;
@@ -78,20 +93,89 @@ namespace {
 						docOut["result"] = true;
 					} catch (const std::exception &e) {
 						docOut["result"] = false;
+						logger::write(e.what(), "error");
 						std::cerr << e.what() << std::endl;
 					}
 					serializeJson(docOut, Serial);
 					Serial.println();
-				} else {
-					DynamicJsonDocument docOut(256);
+				} else if (method == "getlogs") {
+					if (!spiffs::isInitialized()) {
+						const std::string errorMsg = "SPIFFS file system not initialized. Reformat SPIFFS then try again.";
+						logger::write("Failed JSON-RPC command: " + errorMsg, "error");
+						DynamicJsonDocument docOut(512);
+						docOut["jsonrpc"] = jsonRpcVersion;
+						docOut["id"] = id;
+						docOut["error"] = errorMsg;
+						serializeJson(docOut, Serial);
+						Serial.println();
+					} else {
+						Serial.print(std::string("{\"jsonrpc\":\"" + std::string(jsonRpcVersion) + "\",\"id\":\"" + std::string(id) + "\",\"result\":\"").c_str());
+						for (int num = 3; num >= 0; num--) {
+							const std::string logFilePath = logger::getLogFilePath(num);
+							if (spiffs::fileExists(logFilePath.c_str())) {
+								File file = SPIFFS.open(logFilePath.c_str(), FILE_READ);
+								if (file) {
+									while (file.available()) {
+										Serial.print(escapeLine(file.readStringUntil('\n').c_str()).c_str());
+									}
+									file.close();
+								}
+							}
+						}
+						Serial.println(std::string("\"}").c_str());
+					}
+				} else if (method == "deletelogs") {
+					if (!spiffs::isInitialized()) {
+						const std::string errorMsg = "SPIFFS file system not initialized. Reformat SPIFFS then try again.";
+						logger::write("Failed JSON-RPC command: " + errorMsg, "error");
+						DynamicJsonDocument docOut(512);
+						docOut["jsonrpc"] = jsonRpcVersion;
+						docOut["id"] = id;
+						docOut["error"] = errorMsg;
+						serializeJson(docOut, Serial);
+						Serial.println();
+					} else {
+						logger::write("Deleting logs...");
+						DynamicJsonDocument docOut(512);
+						docOut["jsonrpc"] = jsonRpcVersion;
+						docOut["id"] = id;
+						try {
+							for (int num = 3; num >= 0; num--) {
+								const std::string logFilePath = logger::getLogFilePath(num);
+								if (spiffs::fileExists(logFilePath.c_str())) {
+									spiffs::deleteFile(logFilePath.c_str());
+								}
+							}
+							docOut["result"] = true;
+						} catch (const std::exception &e) {
+							docOut["result"] = false;
+							logger::write(e.what(), "error");
+							std::cerr << e.what() << std::endl;
+						}
+						serializeJson(docOut, Serial);
+						Serial.println();
+					}
+				} else if (method == "spiffs_reformat") {
+					logger::write("Reformatting SPIFFS file system...");
+					DynamicJsonDocument docOut(512);
 					docOut["jsonrpc"] = jsonRpcVersion;
 					docOut["id"] = id;
-					docOut["error"] = "Unknown method: \"" + method + "\"";
+					docOut["result"] = SPIFFS.format();
+					serializeJson(docOut, Serial);
+					Serial.println();
+				} else {
+					const std::string errorMsg = "Unknown method: \"" + method + "\"";
+					logger::write("Failed JSON-RPC command: " + errorMsg, "error");
+					DynamicJsonDocument docOut(512);
+					docOut["jsonrpc"] = jsonRpcVersion;
+					docOut["id"] = id;
+					docOut["error"] = errorMsg;
 					serializeJson(docOut, Serial);
 					Serial.println();
 				}
 			}
 		} catch (const std::exception &e) {
+			logger::write(e.what(), "error");
 			std::cerr << e.what() << std::endl;
 		}
 	}
@@ -135,7 +219,7 @@ namespace jsonRpc {
 				sentWaitingMessage = true;
 				logger::write("JSON-RPC serial interface now listening...");
 			}
-			if (!timedOut && !receivedMessage && micros() - bootTime > maxInitialMessageWaitTime) {
+			if (!timedOut && !receivedMessage && millis() - bootTime > maxInitialMessageWaitTime) {
 				timedOut = true;
 				logger::write("Timed-out while waiting for initial JSON-RPC message");
 				delay(50);// Allow some time to finish writing the above log message.
