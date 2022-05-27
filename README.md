@@ -38,6 +38,7 @@ The rest of this document details how you can build your own version of the Bles
 * [Configuring The Bleskomat](#configuring-the-bleskomat)
 	* [Hard-coded configuration](#hard-coded-configuration)
 	* [Configuration via SD card](#configuration-via-sd-card)
+* [Changelog](#changelog)
 * [License](#license)
 * [Trademark](#trademark)
 
@@ -425,6 +426,10 @@ coinValues=0.05,0.10,0.20,0.50,1,2
 coinValueIncrement=0.05
 tftRotation=2
 ```
+
+## Changelog
+
+See [CHANGELOG.md](https://github.com/bleskomat/bleskomat-diy/blob/master/CHANGELOG.md)
 
 
 ## License
