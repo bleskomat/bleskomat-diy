@@ -26,158 +26,174 @@ namespace {
 		return escaped;
 	}
 
+	class JsonRpcError : public std::exception {
+		public:
+			JsonRpcError(const std::string &t_message) noexcept;
+			virtual ~JsonRpcError() = default;
+			virtual const char* what() const noexcept override;
+		private:
+			std::string message;
+	};
+
+	JsonRpcError::JsonRpcError(const std::string &t_message) noexcept : message(t_message) {}
+
+	const char* JsonRpcError::what() const noexcept {
+		return this->message.c_str();
+	}
+
 	void onMessage(const std::string &message) {
+		std::string id;
+		std::string method;
 		try {
-			if (message != "" && message.substr(0, 1) == "{") {
-				// !! Important !!
-				// Keep the JsonDocument instance until done reading from the deserialized document; more info:
-				// https://arduinojson.org/v6/issues/garbage-out/
-				DynamicJsonDocument docIn(8192);
-				const DeserializationError err = deserializeJson(docIn, message);
-				if (err) {
-					throw std::runtime_error("deserializeJson failed: " + std::string(err.c_str()));
+			if (message == "" || message.substr(0, 1) != "{") return;
+			if (!receivedMessage) {
+				logger::write("JSON-RPC serial interface active");
+				receivedMessage = true;
+			}
+			// !! Important !!
+			// Keep the JsonDocument instance until done reading from the deserialized document; more info:
+			// https://arduinojson.org/v6/issues/garbage-out/
+			DynamicJsonDocument docIn(8192);
+			const DeserializationError deserializationError = deserializeJson(docIn, message);
+			if (deserializationError) {
+				std::cerr << "deserializeJson error: " << deserializationError.c_str();
+				throw JsonRpcError("Invalid JSON");
+			}
+			const JsonObject data = docIn.as<JsonObject>();
+			if (!data.containsKey("jsonrpc")) {
+				throw JsonRpcError("Missing required attribute: \"jsonrpc\"");
+			}
+			const std::string jsonrpc = data["jsonrpc"].as<const char*>();
+			if (jsonrpc != "2.0") {
+				throw JsonRpcError("Invalid attribute (\"jsonrpc\"): Only JSON-RPC version 2.0 is supported");
+			}
+			if (!data.containsKey("id")) {
+				throw JsonRpcError("Missing required attribute: \"id\"");
+			}
+			id = data["id"].as<const char*>();
+			method = data["method"].as<const char*>();
+			if (method == "") {
+				throw JsonRpcError("\"method\" is required");
+			}
+			logger::write("JSON-RPC command received: " + method);
+			if (method == "restart") {
+				logger::write("Restarting...");
+				esp_restart();
+			} else if (method == "echo") {
+				const std::string text = data["params"][0].as<const char*>();
+				DynamicJsonDocument docOut(1024);
+				docOut["jsonrpc"] = jsonRpcVersion;
+				docOut["id"] = id;
+				docOut["result"] = text;
+				serializeJson(docOut, Serial);
+				Serial.println();
+			} else if (method == "getinfo") {
+				DynamicJsonDocument docOut(1024);
+				docOut["jsonrpc"] = jsonRpcVersion;
+				docOut["id"] = id;
+				DynamicJsonDocument docInfo(768);
+				docInfo["firmwareName"] = firmwareName;
+				docInfo["firmwareCommitHash"] = firmwareCommitHash;
+				docInfo["firmwareVersion"] = firmwareVersion;
+				docOut["result"] = docInfo;
+				serializeJson(docOut, Serial);
+				Serial.println();
+			} else if (method == "getconfig") {
+				DynamicJsonDocument docOut(8192);
+				docOut["jsonrpc"] = jsonRpcVersion;
+				docOut["id"] = id;
+				docOut["result"] = config::getConfigurations();
+				serializeJson(docOut, Serial);
+				Serial.println();
+			} else if (method == "setconfig") {
+				logger::write("Saving configurations...");
+				config::saveConfigurations(data["params"].as<JsonObject>());
+				DynamicJsonDocument docOut(512);
+				docOut["jsonrpc"] = jsonRpcVersion;
+				docOut["id"] = id;
+				docOut["result"] = true;
+				serializeJson(docOut, Serial);
+				Serial.println();
+			} else if (method == "getlogs") {
+				if (!spiffs::isInitialized()) {
+					throw JsonRpcError("SPIFFS file system not initialized. Reformat SPIFFS then try again.");
 				}
-				const JsonObject json = docIn.as<JsonObject>();
-				const std::string jsonrpc = json["jsonrpc"].as<const char*>();
-				if (jsonrpc != "2.0") {
-					throw std::runtime_error("Unknown JSON-RPC version: \"" + jsonrpc + "\"");
-				}
-				if (!receivedMessage) {
-					logger::write("JSON-RPC serial interface active");
-					receivedMessage = true;
-				}
-				const std::string id = json["id"].as<const char*>();
-				const std::string method = json["method"].as<const char*>();
-				if (method == "") {
-					DynamicJsonDocument docOut(512);
-					docOut["jsonrpc"] = jsonRpcVersion;
-					docOut["id"] = id;
-					docOut["error"] = "\"method\" is required";
-					serializeJson(docOut, Serial);
-					Serial.println();
-				} else if (method == "restart") {
-					logger::write("Restarting...");
-					esp_restart();
-				} else if (method == "echo") {
-					const std::string text = json["params"][0].as<const char*>();
-					DynamicJsonDocument docOut(1024);
-					docOut["jsonrpc"] = jsonRpcVersion;
-					docOut["id"] = id;
-					docOut["result"] = text;
-					serializeJson(docOut, Serial);
-					Serial.println();
-				} else if (method == "getinfo") {
-					DynamicJsonDocument docOut(1024);
-					docOut["jsonrpc"] = jsonRpcVersion;
-					docOut["id"] = id;
-					DynamicJsonDocument docInfo(768);
-					docInfo["firmwareName"] = firmwareName;
-					docInfo["firmwareCommitHash"] = firmwareCommitHash;
-					docInfo["firmwareVersion"] = firmwareVersion;
-					docOut["result"] = docInfo;
-					serializeJson(docOut, Serial);
-					Serial.println();
-				} else if (method == "getconfig") {
-					DynamicJsonDocument docOut(8192);
-					docOut["jsonrpc"] = jsonRpcVersion;
-					docOut["id"] = id;
-					docOut["result"] = config::getConfigurations();
-					serializeJson(docOut, Serial);
-					Serial.println();
-				} else if (method == "setconfig") {
-					DynamicJsonDocument docOut(512);
-					docOut["jsonrpc"] = jsonRpcVersion;
-					docOut["id"] = id;
-					try {
-						config::saveConfigurations(json["params"].as<JsonObject>());
-						docOut["result"] = true;
-					} catch (const std::exception &e) {
-						docOut["result"] = false;
-						logger::write(e.what(), "error");
-						std::cerr << e.what() << std::endl;
-					}
-					serializeJson(docOut, Serial);
-					Serial.println();
-				} else if (method == "getlogs") {
-					if (!spiffs::isInitialized()) {
-						const std::string errorMsg = "SPIFFS file system not initialized. Reformat SPIFFS then try again.";
-						logger::write("Failed JSON-RPC command: " + errorMsg, "error");
-						DynamicJsonDocument docOut(512);
-						docOut["jsonrpc"] = jsonRpcVersion;
-						docOut["id"] = id;
-						docOut["error"] = errorMsg;
-						serializeJson(docOut, Serial);
-						Serial.println();
-					} else {
-						logger::write("Reading logs from SPIFFS file system...");
-						Serial.print(std::string("{\"jsonrpc\":\"" + std::string(jsonRpcVersion) + "\",\"id\":\"" + std::string(id) + "\",\"result\":\"").c_str());
-						for (int num = 3; num >= 0; num--) {
-							const std::string logFilePath = logger::getLogFilePath(num);
-							if (spiffs::fileExists(logFilePath.c_str())) {
-								File file = SPIFFS.open(logFilePath.c_str(), FILE_READ);
-								if (file) {
-									while (file.available()) {
-										Serial.print(escapeLine(file.readStringUntil('\n').c_str()).c_str());
-									}
-									file.close();
-								}
+				logger::write("Reading logs from SPIFFS file system...");
+				Serial.print(std::string("{\"jsonrpc\":\"" + std::string(jsonRpcVersion) + "\",\"id\":\"" + std::string(id) + "\",\"result\":\"").c_str());
+				for (int num = 3; num >= 0; num--) {
+					const std::string logFilePath = logger::getLogFilePath(num);
+					if (spiffs::fileExists(logFilePath.c_str())) {
+						File file = SPIFFS.open(logFilePath.c_str(), FILE_READ);
+						if (file) {
+							while (file.available()) {
+								Serial.print(escapeLine(file.readStringUntil('\n').c_str()).c_str());
 							}
+							file.close();
 						}
-						Serial.println(std::string("\"}").c_str());
 					}
-				} else if (method == "deletelogs") {
-					if (!spiffs::isInitialized()) {
-						const std::string errorMsg = "SPIFFS file system not initialized. Reformat SPIFFS then try again.";
-						logger::write("Failed JSON-RPC command: " + errorMsg, "error");
-						DynamicJsonDocument docOut(512);
-						docOut["jsonrpc"] = jsonRpcVersion;
-						docOut["id"] = id;
-						docOut["error"] = errorMsg;
-						serializeJson(docOut, Serial);
-						Serial.println();
-					} else {
-						logger::write("Deleting logs...");
-						DynamicJsonDocument docOut(512);
-						docOut["jsonrpc"] = jsonRpcVersion;
-						docOut["id"] = id;
-						try {
-							for (int num = 3; num >= 0; num--) {
-								const std::string logFilePath = logger::getLogFilePath(num);
-								if (spiffs::fileExists(logFilePath.c_str())) {
-									spiffs::deleteFile(logFilePath.c_str());
-								}
-							}
-							docOut["result"] = true;
-						} catch (const std::exception &e) {
-							docOut["result"] = false;
-							logger::write(e.what(), "error");
-							std::cerr << e.what() << std::endl;
-						}
-						serializeJson(docOut, Serial);
-						Serial.println();
-					}
-				} else if (method == "spiffs_reformat") {
-					logger::write("Reformatting SPIFFS file system...");
-					DynamicJsonDocument docOut(512);
-					docOut["jsonrpc"] = jsonRpcVersion;
-					docOut["id"] = id;
-					docOut["result"] = SPIFFS.format();
-					serializeJson(docOut, Serial);
-					Serial.println();
-				} else {
-					const std::string errorMsg = "Unknown method: \"" + method + "\"";
-					logger::write("Failed JSON-RPC command: " + errorMsg, "error");
-					DynamicJsonDocument docOut(512);
-					docOut["jsonrpc"] = jsonRpcVersion;
-					docOut["id"] = id;
-					docOut["error"] = errorMsg;
-					serializeJson(docOut, Serial);
-					Serial.println();
 				}
+				Serial.println(std::string("\"}").c_str());
+			} else if (method == "deletelogs") {
+				if (!spiffs::isInitialized()) {
+					throw JsonRpcError("SPIFFS file system not initialized. Reformat SPIFFS then try again.");
+				}
+				logger::write("Deleting log files...");
+				for (int num = 3; num >= 0; num--) {
+					const std::string logFilePath = logger::getLogFilePath(num);
+					if (spiffs::fileExists(logFilePath.c_str())) {
+						spiffs::deleteFile(logFilePath.c_str());
+					}
+				}
+				logger::write("Log files deleted");
+				DynamicJsonDocument docOut(512);
+				docOut["jsonrpc"] = jsonRpcVersion;
+				docOut["id"] = id;
+				docOut["result"] = true;
+				serializeJson(docOut, Serial);
+				Serial.println();
+			} else if (method == "spiffs_reformat") {
+				logger::write("Reformatting SPIFFS file system...");
+				if (!SPIFFS.format()) {
+					throw JsonRpcError("Failed to reformat SPIFFS file system");
+				}
+				logger::write("SPIFFS file system reformatted");
+				DynamicJsonDocument docOut(512);
+				docOut["jsonrpc"] = jsonRpcVersion;
+				docOut["id"] = id;
+				docOut["result"] = true;
+				serializeJson(docOut, Serial);
+				Serial.println();
+			} else {
+				throw JsonRpcError("Unknown method");
+			}
+		} catch (const JsonRpcError &e) {
+			DynamicJsonDocument docOut(512);
+			docOut["jsonrpc"] = jsonRpcVersion;
+			if (id != "") {
+				docOut["id"] = id;
+			}
+			docOut["error"] = e.what();
+			serializeJson(docOut, Serial);
+			Serial.println();
+			if (method != "") {
+				logger::write("JSON-RPC Error (" + method + "): " + std::string(e.what()), "error");
+			} else {
+				logger::write("JSON-RPC Error: " + std::string(e.what()), "error");
 			}
 		} catch (const std::exception &e) {
-			logger::write(e.what(), "error");
-			std::cerr << e.what() << std::endl;
+			DynamicJsonDocument docOut(512);
+			docOut["jsonrpc"] = jsonRpcVersion;
+			if (id != "") {
+				docOut["id"] = id;
+			}
+			docOut["error"] = "Unexpected error";
+			serializeJson(docOut, Serial);
+			Serial.println();
+			if (method != "") {
+				logger::write("JSON-RPC Exception (" + method + "): " + std::string(e.what()), "error");
+			} else {
+				logger::write("JSON-RPC Exception: " + std::string(e.what()), "error");
+			}
 		}
 	}
 
