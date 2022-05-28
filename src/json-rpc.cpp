@@ -2,8 +2,8 @@
 
 namespace {
 
-	const uint32_t bootTime = millis();
-	const uint32_t maxInitialMessageWaitTime = 2000;// milliseconds
+	uint32_t initTime;
+	const uint32_t maxInitialMessageWaitTime = 3000;// milliseconds
 	bool sentWaitingMessage = false;
 	bool receivedMessage = false;
 	bool timedOut = false;
@@ -109,6 +109,7 @@ namespace {
 						serializeJson(docOut, Serial);
 						Serial.println();
 					} else {
+						logger::write("Reading logs from SPIFFS file system...");
 						Serial.print(std::string("{\"jsonrpc\":\"" + std::string(jsonRpcVersion) + "\",\"id\":\"" + std::string(id) + "\",\"result\":\"").c_str());
 						for (int num = 3; num >= 0; num--) {
 							const std::string logFilePath = logger::getLogFilePath(num);
@@ -211,6 +212,7 @@ namespace jsonRpc {
 		if (!pinConflict) {
 			logger::write("JSON-RPC serial interface now listening...");
 		}
+		initTime = millis();
 	}
 
 	void loop() {
@@ -219,7 +221,7 @@ namespace jsonRpc {
 				sentWaitingMessage = true;
 				logger::write("JSON-RPC serial interface now listening...");
 			}
-			if (!timedOut && !receivedMessage && millis() - bootTime > maxInitialMessageWaitTime) {
+			if (!timedOut && !receivedMessage && millis() - initTime > maxInitialMessageWaitTime) {
 				timedOut = true;
 				logger::write("Timed-out while waiting for initial JSON-RPC message");
 				delay(50);// Allow some time to finish writing the above log message.
