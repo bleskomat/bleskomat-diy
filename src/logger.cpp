@@ -3,8 +3,8 @@
 namespace {
 
 	const char* logFilePath = "/bleskomat.log";
-	const unsigned int logFileMaxBytes = 65536;
-	const uint8_t maxLogFileNum = 3;
+	const unsigned int logFileMaxBytes = 32768;
+	const uint8_t maxLogFileNum = 5;
 	unsigned long lastLogFileSizeCheckTime = millis();
 	const unsigned int logFileSizeCheckDelay = 5000;
 	const char* defaultLogLevel = "info";
