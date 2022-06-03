@@ -25,7 +25,8 @@ namespace {
 		{ "buttonDelay", "5000" },
 		{ "buttonDebounce", "100" },
 		{ "tftRotation", "2" },
-		{ "logLevel", "info" }
+		{ "logLevel", "info" },
+		{ "spiffsFormatted", "false" }
 	};
 
 	// https://arduinojson.org/v6/api/dynamicjsondocument/

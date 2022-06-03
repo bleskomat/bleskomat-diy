@@ -78,6 +78,13 @@ namespace {
 			logger::write("JSON-RPC command received: " + method);
 			if (method == "restart") {
 				logger::write("Restarting...");
+				DynamicJsonDocument docOut(512);
+				docOut["jsonrpc"] = jsonRpcVersion;
+				docOut["id"] = id;
+				docOut["result"] = true;
+				serializeJson(docOut, Serial);
+				Serial.println();
+				delay(500);// wait before restarting...
 				esp_restart();
 			} else if (method == "echo") {
 				const std::string text = data["params"][0].as<const char*>();
@@ -95,6 +102,7 @@ namespace {
 				docInfo["firmwareName"] = firmwareName;
 				docInfo["firmwareCommitHash"] = firmwareCommitHash;
 				docInfo["firmwareVersion"] = firmwareVersion;
+				docInfo["spiffsInitialized"] = spiffs::isInitialized();
 				docOut["result"] = docInfo;
 				serializeJson(docOut, Serial);
 				Serial.println();
