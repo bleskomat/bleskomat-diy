@@ -231,15 +231,27 @@ namespace config {
 	}
 
 	unsigned int getUnsignedInt(const char* key) {
-		return (unsigned int) std::stoi(getConfigValue(key));
+		const std::string value = getConfigValue(key);
+		if (value != "") {
+			return (unsigned int) std::stoi(value);
+		}
+		return 0;
 	}
 
 	unsigned short getUnsignedShort(const char* key) {
-		return (unsigned short) std::stoi(getConfigValue(key));
+		const std::string value = getConfigValue(key);
+		if (value != "") {
+			return (unsigned short) std::stoi(value);
+		}
+		return 0;
 	}
 
 	float getFloat(const char* key) {
-		return std::atof(getConfigValue(key).c_str());
+		const std::string value = getConfigValue(key);
+		if (value != "") {
+			return std::atof(value.c_str());
+		}
+		return 0;
 	}
 
 	std::vector<float> getFloatVector(const char* key) {
