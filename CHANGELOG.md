@@ -1,5 +1,9 @@
 # Changelog
 
+* v1.2.2:
+	* Added spiffsFormatted config flag
+	* Return spiffsInitialized flag in getinfo JSON-RPC command
+	* Send response for restart JSON-RPC command
 * v1.2.1:
 	* Smaller log file size
 * v1.2.0:
