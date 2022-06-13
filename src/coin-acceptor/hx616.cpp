@@ -2,7 +2,13 @@
 
 namespace {
 
-	bool initialized = false;
+	enum class State {
+		uninitialized,
+		initialized,
+		failed
+	};
+	State state = State::uninitialized;
+
 	float valueIncrement = 1.00;
 	float accumulatedValue = 0.00;
 	uint8_t lastPinReadState;
@@ -37,7 +43,7 @@ namespace coinAcceptor_hx616 {
 	}
 
 	void loop() {
-		if (initialized) {
+		if (state == State::initialized) {
 			if (pinStateHasChanged()) {
 				if (coinWasInserted()) {
 					// This code executes once for each pulse from the HX-616.
@@ -46,13 +52,16 @@ namespace coinAcceptor_hx616 {
 				}
 				flipPinState();
 			}
-		} else if (!(coinSignalPin > 0)) {
-			logger::write("Cannot initialize coin acceptor: \"coinSignalPin\" not set");
-		} else {
-			logger::write("Initializing HX616 coin acceptor...");
-			initialized = true;
-			pinMode(coinSignalPin, INPUT_PULLUP);
-			lastPinReadState = readPin();
+		} else if (state == State::uninitialized) {
+			if (!(coinSignalPin > 0)) {
+				logger::write("Cannot initialize coin acceptor: \"coinSignalPin\" not set", "warn");
+				state = State::failed;
+			} else {
+				logger::write("Initializing HX616 coin acceptor...");
+				pinMode(coinSignalPin, INPUT_PULLUP);
+				lastPinReadState = readPin();
+				state = State::initialized;
+			}
 		}
 	}
 

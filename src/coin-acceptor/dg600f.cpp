@@ -2,7 +2,13 @@
 
 namespace {
 
-	bool initialized = false;
+	enum class State {
+		uninitialized,
+		initialized,
+		failed
+	};
+	State state = State::uninitialized;
+
 	float accumulatedValue = 0.00;
 	std::deque<int> buffer;
 	std::vector<float> coinValues;
@@ -55,7 +61,7 @@ namespace coinAcceptor_dg600f {
 	}
 
 	void loop() {
-		if (initialized) {
+		if (state == State::initialized) {
 			while (Serial2.available()) {
 				const int byteReceived = Serial2.read();
 				if (byteReceived > 0 && byteReceived < 254) {
@@ -63,18 +69,23 @@ namespace coinAcceptor_dg600f {
 				}
 			}
 			parseBuffer();
-		} else if (!(coinSignalPin > 0)) {
-			logger::write("Cannot initialize coin acceptor: \"coinSignalPin\" not set");
-		} else if (!(coinInhibitPin > 0)) {
-			logger::write("Cannot initialize coin acceptor: \"coinInhibitPin\" not set");
-		} else if (!(coinBaudRate > 0)) {
-			logger::write("Cannot initialize coin acceptor: \"coinBaudRate\" not set");
-		} else {
-			logger::write("Initializing DG600F coin acceptor...");
-			initialized = true;
-			Serial2.begin(coinBaudRate, SERIAL_8E1, coinSignalPin, 0);
-			pinMode(coinInhibitPin, OUTPUT);
-			coinAcceptor_dg600f::disinhibit();
+		} else if (state == State::uninitialized) {
+			if (!(coinSignalPin > 0)) {
+				logger::write("Cannot initialize coin acceptor: \"coinSignalPin\" not set", "warn");
+				state = State::failed;
+			} else if (!(coinInhibitPin > 0)) {
+				logger::write("Cannot initialize coin acceptor: \"coinInhibitPin\" not set", "warn");
+				state = State::failed;
+			} else if (!(coinBaudRate > 0)) {
+				logger::write("Cannot initialize coin acceptor: \"coinBaudRate\" not set", "warn");
+				state = State::failed;
+			} else {
+				logger::write("Initializing DG600F coin acceptor...");
+				Serial2.begin(coinBaudRate, SERIAL_8E1, coinSignalPin, 0);
+				pinMode(coinInhibitPin, OUTPUT);
+				coinAcceptor_dg600f::disinhibit();
+				state = State::initialized;
+			}
 		}
 	}
 
@@ -87,10 +98,14 @@ namespace coinAcceptor_dg600f {
 	}
 
 	void inhibit() {
-		digitalWrite(coinInhibitPin, LOW);
+		if (state == State::initialized) {
+			digitalWrite(coinInhibitPin, LOW);
+		}
 	}
 
 	void disinhibit() {
-		digitalWrite(coinInhibitPin, HIGH);
+		if (state == State::initialized) {
+			digitalWrite(coinInhibitPin, HIGH);
+		}
 	}
 }

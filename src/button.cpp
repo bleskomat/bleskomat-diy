@@ -1,7 +1,14 @@
 #include "button.h"
 
 namespace {
-	bool initialized = false;
+
+	enum class State {
+		uninitialized,
+		initialized,
+		failed
+	};
+	State state = State::uninitialized;
+
 	bool pressed = false;
 	int lastState;
 	unsigned long lastStateChangeTime = 0;// Last time the button pin was toggled.
@@ -15,29 +22,32 @@ namespace button {
 		pinNumber = config::getUnsignedShort("buttonPin");
 		debounceDelay = config::getUnsignedInt("buttonDebounce");
 		if (!(pinNumber > 0)) {
-			logger::write("Cannot initialize button: \"buttonPin\" not set");
+			logger::write("Cannot initialize button: \"buttonPin\" not set", "warn");
+			state = State::failed;
 		} else {
 			logger::write("Initializing button...");
 			pinMode(pinNumber, INPUT);
-			initialized = true;
+			state = State::initialized;
 		}
 	}
 
 	void loop() {
-		if (initialized && (millis() - lastStateChangeTime) > debounceDelay) {
-			const int state = digitalRead(pinNumber);
-			if (state != lastState) {
-				if (state == HIGH) {
-					pressed = true;
-					logger::write("Button pressed");
-				} else {
-					pressed = false;
-					logger::write("Button released");
+		if (state == State::initialized) {
+			if (millis() - lastStateChangeTime > debounceDelay) {
+				const int state = digitalRead(pinNumber);
+				if (state != lastState) {
+					if (state == HIGH) {
+						pressed = true;
+						logger::write("Button pressed");
+					} else {
+						pressed = false;
+						logger::write("Button released");
+					}
+					// Reset the debouncing timer.
+					// We track time in order to avoid noise state changes.
+					lastStateChangeTime = millis();
+					lastState = state;
 				}
-				// Reset the debouncing timer.
-				// We track time in order to avoid noise state changes.
-				lastStateChangeTime = millis();
-				lastState = state;
 			}
 		}
 	}
