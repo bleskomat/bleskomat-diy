@@ -1,19 +1,17 @@
 # Bleskomat DIY
 
-This is the do-it-yourself (DIY) version of the Bleskomat ATM. If you're looking for the product which comes ready-to-go, you can find more information and order your own on the official website: [Bleskomat Bitcoin Lightning ATM](https://www.bleskomat.com).
+The Bleskomat DIY is an offline Bitcoin Lightning Network ATM which accepts coins and pays-out bitcoin. It's a great educational tool to give others a practical first experience with Bitcoin's Lightning Network.
 
-The Bleskomat ATM uses the Lightning Network to send bitcoin payments instantly and with very low fees. The key features include:
-* Works offline - no WiFi required
-* Inexpensive, easily-sourced components
-* Easily hackable and extendible
-* Plug it in and it's ready to accept fiat in seconds
+You can buy the [Bleskomat DIY kit](https://shop.bleskomat.com/product/bleskomat-diy-kit/) from the official Bleskomat shop - includes all the parts needed to build the project. Alternatively, you can find all the components and equipment needed from various other sources - see [Parts Suppliers](#parts-suppliers).
 
-The Bleskomat ATM must be paired with a server which supports [Signed LNURLs](https://github.com/chill117/lnurl-rfc/blob/lud-21-signed-lnurls/21.md). The server facilitates Lightning payments on behalf of your Bleskomat ATM. Below is a list of server software which you can use with your Bleskomat:
-* [bleskomat-server](https://github.com/bleskomat/bleskomat-server) - supports several Lightning backends including Lightning Network Daemon (lnd), coinos, lnbits, lndhub (BlueWallet), lnpay, lntxbot, opennode.
-* [lnbits](https://github.com/lnbits/lnbits-legend) w/ the Bleskomat extension
+The Bleskomat DIY must be paired with a server to facilitate Lightning Network payments on its behalf; see the options below:
+* [Bleskomat Platform](https://platform.bleskomat.com) - non-custodial, requires a monthly subscription
+* [bleskomat-server](https://github.com/bleskomat/bleskomat-server) - non-custodial, open-source, self-hosted solution
+* [lnbits](https://github.com/lnbits/lnbits-legend) via the Bleskomat extension - open-source, self-hosted and possible to use custodial instances hosted by others; public instances of lnbits:
+	* [legend.lnbits.com](https://legend.lnbits.com) - unstable, don't leave funds on this instance for very long
 
-The rest of this document details how you can build your own version of the Bleskomat ATM project:
-* [Support](#support)
+The rest of this document details the hardware and software requirements, how to build the hardware yourself, and instructions for compiling and uploading the firmware from source.
+
 * [Requirements](#requirements)
 	* [Hardware Requirements](#hardware-requirements)
 		* [Parts Suppliers](#parts-suppliers)
@@ -36,16 +34,13 @@ The rest of this document details how you can build your own version of the Bles
 * [Configure Firmware Build Flags](#configure-firmware-build-flags)
 * [Compiling and Uploading to Device](#compiling-and-uploading-to-device)
 * [Configuring The Bleskomat](#configuring-the-bleskomat)
+	* [Browser-based configuration](#browser-based-configuration-tool)
 	* [Hard-coded configuration](#hard-coded-configuration)
 	* [Configuration via SD card](#configuration-via-sd-card)
 * [Changelog](#changelog)
+* [Support](#support)
 * [License](#license)
 * [Trademark](#trademark)
-
-
-## Support
-
-Need some help? Join us in the official [Telegram group](https://t.me/bleskomat) or send us an email at [support@bleskomat.com](mailto:support@bleskomat.com) and we will try our best to respond in a reasonable time. If you have a feature request or bug to report, please [open an issue](https://github.com/bleskomat/bleskomat-diy/issues) in this project repository.
 
 
 ## Requirements
@@ -55,7 +50,7 @@ This section includes information about the software and hardware requirements n
 
 ### Hardware Requirements
 
-Basic components/equipment needed to build your own Bleskomat (DIY) ATM:
+Basic components/equipment needed to build your own Bleskomat DIY:
 * 2 x breadboard (400-pin)
 * Jumper wires (M-M)
 * Jumper wires (M-F)
@@ -369,7 +364,7 @@ Again the device path here could be different for your operating system.
 
 ## Configuring The Bleskomat
 
-The following is a list of possible configuration options for your Bleskomat (DIY) ATM:
+The following is a list of possible configuration options for your Bleskomat DIY:
 * `apiKey.id` - The API key ID of the device. This is needed by the server to verify signatures created by the device.
 * `apiKey.key` - The API key secret that is used to generate signatures.
 * `apiKey.encoding` - The explicit encoding of the API key secret. This can be "hex", "base64", or empty-string (e.g "") to mean no encoding. When generating a new API key on the server, it will store the encoding along with the ID and secret.
@@ -395,13 +390,19 @@ The following is a list of possible configuration options for your Bleskomat (DI
 
 
 It is possible to configure your Bleskomat via the following methods:
+* [Browser-based configuration](#browser-based-configuration-tool)
 * [Hard-coded configuration](#hard-coded-configuration)
 * [Configuration via SD card](#configuration-via-sd-card)
 
 
+### Browser-based configuration tool
+
+The Bleskomat Platform provides a [browser-based configuration tool](https://platform.bleskomat.com/serial) to upload pre-built device firmware, view real-time log output, update device configurations, run JSON-RPC serial commands, and more.
+
+
 ### Hard-coded configuration
 
-Hard-coded configurations can be set by modifying the source file [config.cpp](https://github.com/bleskomat/bleskomat-diy/blob/master/src/config.cpp#L164).
+Hard-coded configurations can be set by modifying the source file [config.cpp](https://github.com/bleskomat/bleskomat-diy/blob/master/src/config.cpp#L196).
 
 Each time you make changes to the hard-coded configurations, you will need to re-compile and flash the ESP32's firmware.
 
@@ -430,6 +431,11 @@ tftRotation=2
 ## Changelog
 
 See [CHANGELOG.md](https://github.com/bleskomat/bleskomat-diy/blob/master/CHANGELOG.md)
+
+
+## Support
+
+Need some help? Join us in the official [Telegram group](https://t.me/bleskomat) or send us an email at [support@bleskomat.com](mailto:support@bleskomat.com) and we will try our best to respond in a reasonable time. If you have a feature request or bug to report, please [open an issue](https://github.com/bleskomat/bleskomat-diy/issues) in this project repository.
 
 
 ## License
