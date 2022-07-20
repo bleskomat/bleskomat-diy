@@ -1,6 +1,7 @@
 # Changelog
 
 * v1.2.5:
+	* Improved reliability of counting pulses with hx616 coin acceptor
 	* Fix for non-integer coin increment value
 * v1.2.4:
 	* Better initialization state handling
