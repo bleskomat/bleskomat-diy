@@ -201,8 +201,8 @@ namespace config {
 		// values["fiatPrecision"] = "2";
 		// values["coinValues"] = "0.05,0.10,0.20,0.50,1.00,2.00";// DG600F
 		// values["coinValueIncrement"] = "0.05";// HX616
-		// values["coinSignalPin"] = "9";
-		// values["coinInhibitPin"] = "10";
+		// values["coinSignalPin"] = "16";
+		// values["coinInhibitPin"] = "17";
 		// values["coinBaudRate"] = "9600";
 		// values["coinAcceptorType"] = "hx616";
 		// values["buttonPin"] = "33";
