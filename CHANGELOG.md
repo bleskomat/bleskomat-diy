@@ -1,5 +1,7 @@
 # Changelog
 
+* v1.2.5:
+	* Fix for non-integer coin increment value
 * v1.2.4:
 	* Better initialization state handling
 * v1.2.3:
