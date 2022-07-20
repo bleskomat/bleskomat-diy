@@ -83,8 +83,8 @@ namespace coinAcceptor_dg600f {
 				logger::write("Initializing DG600F coin acceptor...");
 				Serial2.begin(coinBaudRate, SERIAL_8E1, coinSignalPin, 0);
 				pinMode(coinInhibitPin, OUTPUT);
-				coinAcceptor_dg600f::disinhibit();
 				state = State::initialized;
+				coinAcceptor_dg600f::disinhibit();
 			}
 		}
 	}

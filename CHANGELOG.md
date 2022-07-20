@@ -3,6 +3,7 @@
 * v1.2.5:
 	* Improved reliability of counting pulses with hx616 coin acceptor
 	* Fix for non-integer coin increment value
+	* Disinhibit DG600F after initialization
 * v1.2.4:
 	* Better initialization state handling
 * v1.2.3:
