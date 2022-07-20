@@ -60,10 +60,6 @@ namespace {
 	std::string getConfigValue(const char* key) {
 		if (values.containsKey(key)) {
 			const std::string value = values[key].as<const char*>();
-			if (key == "coinValueIncrement") {
-				const unsigned short fiatPrecision = (unsigned short) std::stoi(getConfigValue("fiatPrecision"));
-				return util::floatToStringWithPrecision((unsigned short) std::stoi(value), fiatPrecision);
-			}
 			return value;
 		}
 		return "";
