@@ -13,8 +13,32 @@ void setup() {
 	jsonRpc::init();
 	screen::init();
 	coinAcceptor::init();
+	billAcceptor::init();
 	button::init();
 	buttonDelay = config::getUnsignedInt("buttonDelay");
+}
+
+void disinhibitAcceptors() {
+	if (coinAcceptor::isInhibited()) {
+		coinAcceptor::disinhibit();
+	}
+	if (billAcceptor::isInhibited()) {
+		billAcceptor::disinhibit();
+	}
+}
+
+void inhibitAcceptors() {
+	if (!coinAcceptor::isInhibited()) {
+		coinAcceptor::inhibit();
+	}
+	if (!billAcceptor::isInhibited()) {
+		billAcceptor::inhibit();
+	}
+}
+
+void resetAccumulatedValues() {
+	coinAcceptor::resetAccumulatedValue();
+	billAcceptor::resetAccumulatedValue();
 }
 
 float amountShown = 0;
@@ -29,6 +53,7 @@ void writeTradeCompleteLog(const float &amount, const std::string &signedUrl) {
 
 void runAppLoop() {
 	coinAcceptor::loop();
+	billAcceptor::loop();
 	button::loop();
 	const std::string currentScreen = screen::getCurrentScreen();
 	if (currentScreen == "") {
@@ -36,6 +61,7 @@ void runAppLoop() {
 	}
 	float accumulatedValue = 0;
 	accumulatedValue += coinAcceptor::getAccumulatedValue();
+	accumulatedValue += billAcceptor::getAccumulatedValue();
 	if (
 		accumulatedValue > 0 &&
 		currentScreen != "insertFiat" &&
@@ -45,10 +71,7 @@ void runAppLoop() {
 		amountShown = accumulatedValue;
 	}
 	if (currentScreen == "insertFiat") {
-		if (coinAcceptor::isInhibited()) {
-			// The coin acceptor should be enabled while insert fiat screen shown.
-			coinAcceptor::disinhibit();
-		}
+		disinhibitAcceptors();
 		if (button::isPressed()) {
 			if (accumulatedValue > 0) {
 				// Button pushed while insert fiat screen shown and accumulated value greater than 0.
@@ -63,7 +86,7 @@ void runAppLoop() {
 				qrcodeData += util::toUpperCase(encoded);
 				screen::showTradeCompleteScreen(accumulatedValue, qrcodeData);
 				writeTradeCompleteLog(accumulatedValue, signedUrl);
-				coinAcceptor::inhibit();
+				inhibitAcceptors();
 				tradeCompleteTime = millis();
 			}
 		} else {
@@ -75,14 +98,11 @@ void runAppLoop() {
 			}
 		}
 	} else if (currentScreen == "tradeComplete") {
-		if (!coinAcceptor::isInhibited()) {
-			// Don't allow inserting more coins while trade complete screen shown.
-			coinAcceptor::inhibit();
-		}
+		inhibitAcceptors();
 		if (button::isPressed() && millis() - tradeCompleteTime > buttonDelay) {
 			// Button pushed while showing the trade complete screen.
 			// Reset accumulated values.
-			coinAcceptor::resetAccumulatedValue();
+			resetAccumulatedValues();
 			amountShown = 0;
 			screen::showInsertFiatScreen(0);
 			logger::write("Screen cleared");

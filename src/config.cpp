@@ -15,6 +15,10 @@ namespace {
 		{ "uriSchemaPrefix", "" },
 		{ "fiatCurrency", "EUR" },
 		{ "fiatPrecision", "2" },
+		{ "billValues", "5,10,20,50,100,200" },
+		{ "billTxPin", "16" },
+		{ "billRxPin", "17" },
+		{ "billBaudRate", "300" },
 		{ "coinValues", "0.05,0.10,0.20,0.50,1.00,2.00" },// DG600F
 		{ "coinValueIncrement", "0.05" },// HX616
 		{ "coinSignalPin", "3" },
@@ -199,10 +203,14 @@ namespace config {
 		// values["uriSchemaPrefix"] = "";
 		// values["fiatCurrency"] = "EUR";
 		// values["fiatPrecision"] = "2";
+		// values["billValues"] = "5,10,20,50,100,200";
+		// values["billTxPin"] = "16";
+		// values["billRxPin"] = "17";
+		// values["billBaudRate"] = "300";
 		// values["coinValues"] = "0.05,0.10,0.20,0.50,1.00,2.00";// DG600F
 		// values["coinValueIncrement"] = "0.05";// HX616
-		// values["coinSignalPin"] = "16";
-		// values["coinInhibitPin"] = "17";
+		// values["coinSignalPin"] = "3";
+		// values["coinInhibitPin"] = "1";
 		// values["coinBaudRate"] = "9600";
 		// values["coinAcceptorType"] = "hx616";
 		// values["buttonPin"] = "33";

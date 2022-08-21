@@ -1,7 +1,6 @@
 #include "coin-acceptor.h"
 
 namespace {
-	float accumulatedValue = 0.00;
 	std::string coinAcceptorType;
 	bool inhibited = false;
 }
@@ -31,7 +30,7 @@ namespace coinAcceptor {
 		} else if (coinAcceptorType == "dg600f") {
 			return coinAcceptor_dg600f::getAccumulatedValue();
 		}
-		return accumulatedValue;
+		return 0.00;
 	}
 
 	void resetAccumulatedValue() {
