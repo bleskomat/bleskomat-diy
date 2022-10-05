@@ -35,7 +35,7 @@ namespace {
 		display.setTextFont(text_font);
 		display.setTextSize(text_size);
 		int16_t tbw = display.textWidth(text);
-		int16_t tbh = display.fontHeight() * text_size;
+		int16_t tbh = display.fontHeight(); // no need to multiply by text_size because TFT_eSPI does this automatically after setTextSize() is called
 		int16_t box_x = x;
 		int16_t box_y = y;
 		if (center) {
