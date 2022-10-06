@@ -21,16 +21,15 @@ upload\
 monitor
 
 install:
-	platformio lib install
-	platformio platform install ${PLATFORM}
+	pio pkg install --platform ${PLATFORM}
 
 compile:
-	platformio run
+	pio run
 
 upload:
 	sudo chown ${USER}:${USER} ${DEVICE}
-	platformio run --upload-port ${DEVICE} --target upload
+	pio run --upload-port ${DEVICE} --target upload
 
 monitor:
 	sudo chown ${USER}:${USER} ${DEVICE}
-	platformio device monitor --baud ${BAUDRATE} --port ${DEVICE}
+	pio device monitor --baud ${BAUDRATE} --port ${DEVICE}
