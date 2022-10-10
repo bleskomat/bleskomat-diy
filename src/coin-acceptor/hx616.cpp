@@ -13,8 +13,20 @@ namespace {
 	uint16_t numPulses = 0;
 	unsigned short coinSignalPin;
 
+	uint8_t minPulseTime = 20;// milliseconds
+	uint8_t maxPulseTime = 200;// milliseconds
+	unsigned long pinFallTime;
+
 	void IRAM_ATTR onPinStateChange() {
-		numPulses++;
+		const auto pinState = digitalRead(coinSignalPin);
+		if (pinState == LOW) {
+			pinFallTime = millis();
+		} else if (pinFallTime > 0) {
+			const unsigned long diffTime = millis() - pinFallTime;
+			if (diffTime >= minPulseTime && diffTime <= maxPulseTime) {
+				numPulses++;
+			}
+		}
 	}
 }
 
@@ -33,7 +45,7 @@ namespace coinAcceptor_hx616 {
 			} else {
 				logger::write("Initializing HX616 coin acceptor...");
 				pinMode(coinSignalPin, INPUT_PULLUP);
-				attachInterrupt(coinSignalPin, onPinStateChange, RISING);
+				attachInterrupt(coinSignalPin, onPinStateChange, CHANGE);
 				state = State::initialized;
 			}
 		}
