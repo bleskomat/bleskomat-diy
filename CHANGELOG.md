@@ -1,5 +1,9 @@
 # Changelog
 
+* v1.3.0:
+	* Bill acceptor support
+	* Debounce hx616 pulse counting to prevent extraneous accumulated value. Don't count pulses caused by reconnecting coin signal pin, or when powering on the hx616, or when changing the physical switches on the hx616. Still possible but less likely as pulse high/low must be 20-200ms.
+	* Fix QR code too small when text_size increased
 * v1.2.5:
 	* Improved reliability of counting pulses with hx616 coin acceptor
 	* Fix for non-integer coin increment value
