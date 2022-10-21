@@ -49,7 +49,7 @@ namespace coinAcceptor {
 	void inhibit() {
 		logger::write("Inhibiting coin acceptor");
 		if (coinAcceptorType == "hx616") {
-			// inhibit() not implemented for HX616
+			coinAcceptor_hx616::inhibit();
 		} else if (coinAcceptorType == "dg600f") {
 			coinAcceptor_dg600f::inhibit();
 		}
@@ -59,7 +59,7 @@ namespace coinAcceptor {
 	void disinhibit() {
 		logger::write("Disinhibiting coin acceptor");
 		if (coinAcceptorType == "hx616") {
-			// disinhibit() not implemented for HX616
+			coinAcceptor_hx616::disinhibit();
 		} else if (coinAcceptorType == "dg600f") {
 			coinAcceptor_dg600f::disinhibit();
 		}
