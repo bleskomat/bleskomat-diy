@@ -93,7 +93,6 @@ If you'd like to add your own list, please create a pull-request using [this tem
 
 ### Software Requirements
 
-* [git](https://git-scm.com/downloads)
 * [make](https://www.gnu.org/software/make/)
 * [PlatformIO Core (CLI)](https://docs.platformio.org/en/latest/core/)
 	* Version 6 or newer

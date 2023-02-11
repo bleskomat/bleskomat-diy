@@ -18,18 +18,22 @@ PLATFORM=espressif32
 .PHONY: install\
 compile\
 upload\
-monitor
+monitor\
+.git-commit-hash
 
 install:
 	pio pkg install --platform ${PLATFORM}
 
-compile:
+compile: .git-commit-hash
 	pio run
 
-upload:
+upload: .git-commit-hash
 	sudo chown ${USER}:${USER} ${DEVICE}
 	pio run --upload-port ${DEVICE} --target upload
 
 monitor:
 	sudo chown ${USER}:${USER} ${DEVICE}
 	pio device monitor --baud ${BAUDRATE} --port ${DEVICE}
+
+.git-commit-hash:
+	-git rev-parse HEAD 2>/dev/null && git rev-parse HEAD > .git-commit-hash
