@@ -10,6 +10,8 @@ namespace coinAcceptor_hx616 {
 	void loop();
 	float getAccumulatedValue();
 	void resetAccumulatedValue();
+	void inhibit();
+	void disinhibit();
 }
 
 #endif

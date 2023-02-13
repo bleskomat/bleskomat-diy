@@ -11,6 +11,7 @@ namespace {
 
 	float valueIncrement = 1.00;
 	uint16_t numPulses = 0;
+	unsigned short coinInhibitPin;
 	unsigned short coinSignalPin;
 
 	uint8_t minPulseTime = 20;// milliseconds
@@ -34,6 +35,7 @@ namespace coinAcceptor_hx616 {
 
 	void init() {
 		coinSignalPin = config::getUnsignedShort("coinSignalPin");
+		coinInhibitPin = config::getUnsignedShort("coinInhibitPin");
 		valueIncrement = config::getFloat("coinValueIncrement");
 	}
 
@@ -44,9 +46,16 @@ namespace coinAcceptor_hx616 {
 				state = State::failed;
 			} else {
 				logger::write("Initializing HX616 coin acceptor...");
+
+				// Coin inhibit is optional so only initialize if coinInhibitPin is set:
+				if (coinInhibitPin > 0) pinMode(coinInhibitPin, OUTPUT);
+
+				// Initialize coin signal interrupt pin:
 				pinMode(coinSignalPin, INPUT_PULLUP);
 				attachInterrupt(coinSignalPin, onPinStateChange, CHANGE);
+
 				state = State::initialized;
+				coinAcceptor_hx616::disinhibit();
 			}
 		}
 	}
@@ -58,4 +67,21 @@ namespace coinAcceptor_hx616 {
 	void resetAccumulatedValue() {
 		numPulses = 0;
 	}
+
+	void inhibit() {
+                if (state == State::initialized && coinInhibitPin > 0) {
+			digitalWrite(coinInhibitPin, LOW);
+		} else {
+			logger::write("Not inhibiting coin acceptor because state is not initialized or coinInhibitPin is not set.", "warn");
+                }
+        }
+
+        void disinhibit() {
+                if (state == State::initialized && coinInhibitPin > 0) {
+			digitalWrite(coinInhibitPin, HIGH);
+		} else {
+			logger::write("Not disinhibiting coin acceptor because state is not initialized or coinInhibitPin is not set.", "warn");
+		}
+        }
+
 }
