@@ -4,7 +4,7 @@ unsigned int buttonDelay;
 
 void setup() {
 	Serial.begin(MONITOR_SPEED);
-	spiffs::init();
+	blesfs::init();
 	sdcard::init();
 	config::init();
 	logger::init();
