@@ -1,4 +1,5 @@
 #include "json-rpc.h"
+#include "blesfs.h"
 
 namespace {
 

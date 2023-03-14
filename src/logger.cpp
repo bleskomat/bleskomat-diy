@@ -1,4 +1,5 @@
 #include "logger.h"
+#include "SPIFFS.h"
 
 namespace {
 
