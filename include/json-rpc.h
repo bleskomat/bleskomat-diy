@@ -5,8 +5,6 @@
 #include "logger.h"
 #include "main.h"
 #include "blesfs.h"
-
-
 #include <ArduinoJson.h>
 #include <string>
 
