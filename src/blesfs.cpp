@@ -1,4 +1,4 @@
-#include "spiffs.h"
+#include "blesfs.h"
 
 namespace {
 
@@ -27,7 +27,7 @@ namespace {
 	}
 }
 
-namespace spiffs {
+namespace blesfs {
 
 	void init() {
 		if (!SPIFFS.begin()) {

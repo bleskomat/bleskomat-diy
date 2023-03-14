@@ -6,7 +6,7 @@
 #include <iostream>
 #include <string>
 
-namespace spiffs {
+namespace blesfs {
 	void init();
 	bool isInitialized();
 	bool fileExists (const char* filePath);

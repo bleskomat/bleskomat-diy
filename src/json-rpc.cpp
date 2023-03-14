@@ -102,7 +102,7 @@ namespace {
 				docInfo["firmwareName"] = firmwareName;
 				docInfo["firmwareCommitHash"] = firmwareCommitHash;
 				docInfo["firmwareVersion"] = firmwareVersion;
-				docInfo["spiffsInitialized"] = spiffs::isInitialized();
+				docInfo["blesfsInitialized"] = blesfs::isInitialized();
 				docOut["result"] = docInfo;
 				serializeJson(docOut, Serial);
 				Serial.println();
@@ -123,14 +123,14 @@ namespace {
 				serializeJson(docOut, Serial);
 				Serial.println();
 			} else if (method == "getlogs") {
-				if (!spiffs::isInitialized()) {
+				if (!blesfs::isInitialized()) {
 					throw JsonRpcError("SPIFFS file system not initialized. Reformat SPIFFS then try again.");
 				}
 				logger::write("Reading logs from SPIFFS file system...");
 				Serial.print(std::string("{\"jsonrpc\":\"" + std::string(jsonRpcVersion) + "\",\"id\":\"" + std::string(id) + "\",\"result\":\"").c_str());
 				for (int num = 3; num >= 0; num--) {
 					const std::string logFilePath = logger::getLogFilePath(num);
-					if (spiffs::fileExists(logFilePath.c_str())) {
+					if (blesfs::fileExists(logFilePath.c_str())) {
 						File file = SPIFFS.open(logFilePath.c_str(), FILE_READ);
 						if (file) {
 							while (file.available()) {
@@ -142,14 +142,14 @@ namespace {
 				}
 				Serial.println(std::string("\"}").c_str());
 			} else if (method == "deletelogs") {
-				if (!spiffs::isInitialized()) {
+				if (!blesfs::isInitialized()) {
 					throw JsonRpcError("SPIFFS file system not initialized. Reformat SPIFFS then try again.");
 				}
 				logger::write("Deleting log files...");
 				for (int num = 3; num >= 0; num--) {
 					const std::string logFilePath = logger::getLogFilePath(num);
-					if (spiffs::fileExists(logFilePath.c_str())) {
-						spiffs::deleteFile(logFilePath.c_str());
+					if (blesfs::fileExists(logFilePath.c_str())) {
+						blesfs::deleteFile(logFilePath.c_str());
 					}
 				}
 				logger::write("Log files deleted");

@@ -2,7 +2,7 @@
 #define BLESKOMAT_LOGGER_H
 
 #include "config.h"
-#include "spiffs.h"
+#include "blesfs.h"
 #include <Arduino.h>
 #include <iostream>
 #include <map>
