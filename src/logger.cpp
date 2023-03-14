@@ -1,5 +1,5 @@
 #include "logger.h"
-#include "SPIFFS.h"
+#include "blesfs.h"
 
 namespace {
 
@@ -24,7 +24,7 @@ namespace {
 	};
 
 	void handleOverSizedLogFile() {
-		if (!spiffs::isInitialized()) return;
+		if (!blesfs::isInitialized()) return;
 		File file = SPIFFS.open(logFilePath, FILE_READ);
 		if (file) {
 			const auto logFileSize = file.size();
@@ -32,12 +32,12 @@ namespace {
 			if (logFileSize >= logFileMaxBytes) {
 				for (int num = maxLogFileNum; num >= 0; num--) {
 					const std::string oldFilePath = logger::getLogFilePath(num);
-					if (spiffs::fileExists(oldFilePath.c_str())) {
+					if (blesfs::fileExists(oldFilePath.c_str())) {
 						if (num >= maxLogFileNum) {
-							spiffs::deleteFile(oldFilePath.c_str());
+							blesfs::deleteFile(oldFilePath.c_str());
 						} else {
 							const std::string newLogFilePath = logger::getLogFilePath(num + 1);
-							spiffs::renameFile(oldFilePath.c_str(), newLogFilePath.c_str());
+							blesfs::renameFile(oldFilePath.c_str(), newLogFilePath.c_str());
 						}
 					}
 				}
@@ -57,7 +57,7 @@ namespace {
 	}
 
 	void writeToLogFile(const std::string &msg) {
-		spiffs::appendFile(logFilePath, msg.c_str());
+		blesfs::appendFile(logFilePath, msg.c_str());
 	}
 }
 
