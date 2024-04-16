@@ -38,6 +38,7 @@ The rest of this document details the hardware and software requirements, how to
 * [Configuring the Device](#configuring-the-device)
 	* [List of Configuration Options](#list-of-configuration-options)
 	* [Browser-Based Configuration Tool](#browser-based-configuration-tool)
+	* [Command-Line Configuration Tool](#command-line-configuration-tool)
 	* [Hard-Coded Configuration](#hard-coded-configuration)
 	* [Configuration via SD Card](#configuration-via-sd-card)
 * [Changelog](#changelog)
@@ -359,9 +360,7 @@ You can find PlatformIO's libraries repository [here](https://platformio.org/lib
 
 ## Configure Firmware Build Flags
 
-There are several build flags that can be changed in file platformio.ini file located at `./platformio.ini` before the firmware is compiled.
-
-If you follow this README mappings for the devices, you most likely do not need to change flag. If you use the coin acceptor HX616 you will need to change the flag in section `[coin_acceptor]` that by default is `DG600F` to `HX616`.
+There are several build flags that can be changed in file platformio.ini file located at `./platformio.ini` before the firmware is compiled. If you follow the wire mappings in this readme file, then you most likely do not need to change any flags.
 
 
 ## Compiling and Uploading to Device
@@ -391,6 +390,7 @@ Again the device path here could be different for your operating system.
 
 It is possible to configure the device via the following methods:
 * [Browser-Based Configuration Tool](#browser-based-configuration-tool)
+* [Command-Line Configuration Tool](#command-line-configuration-tool)
 * [Hard-Coded Configuration](#hard-coded-configuration)
 * [Configuration via SD Card](#configuration-via-sd-card)
 
@@ -445,6 +445,11 @@ The following is a list of possible configuration options for the Bleskomat DIY:
 ### Browser-Based Configuration Tool
 
 The Bleskomat Platform provides a [browser-based configuration tool](https://platform.bleskomat.com/serial) to upload pre-built device firmware, view real-time log output, update device configurations, run JSON-RPC serial commands, and more.
+
+
+### Command-Line Configuration Tool
+
+It is also possible to use the [bleskomat-cli](https://github.com/bleskomat/bleskomat-cli) command-line utility to communicate with a Bleskomat hardware device via JSON-RPC over serial API. Please refer to that project's readme for installation and usage information.
 
 
 ### Hard-Coded Configuration
