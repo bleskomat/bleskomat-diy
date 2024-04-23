@@ -2,7 +2,7 @@
 #define BLESKOMAT_SPIFFS_H
 
 #include "FS.h"
-#include "SPIFFS.h"
+#include "LittleFS.h"
 #include <iostream>
 #include <string>
 
